@@ -29,6 +29,7 @@ public enum CKeyword implements GrammarRuleKey {
    * "as" is not keyword in ActionScript 2, so we treat it as syntactic keyword
    */
   AS(true),
+  ASM,
   BREAK,
   CASE,
   CATCH,
@@ -80,12 +81,35 @@ public enum CKeyword implements GrammarRuleKey {
   INCLUDE(true),
   DYNAMIC(true),
   FINAL(true),
-  // "native" strangely appears in both the "keywords" and "syntactic keywords" lists of the language spec
-  // It seems that "native" is accepted as a valid identifier by the compiler and should be considered as a "syntactic keyword"
+  // "native" strangely appears in both the "keywords" and "syntactic keywords"
+  // lists of the language spec
+  // It seems that "native" is accepted as a valid identifier by the compiler and
+  // should be considered as a "syntactic keyword"
   NATIVE(true),
   OVERRIDE(true),
   STATIC(true),
-  XML(true);
+  XML(true),
+  AUTO,
+  REGISTER,
+  TYPEDEF,
+  EXTERN,
+  inline,
+  asm,
+  INT,
+  CHAR,
+  SHORT,
+  LONG,
+  DOUBLE,
+  FLOAT,
+  signed,
+  unsigned,
+  __FAR,
+  VOLATILE,
+  sizeof,
+  GOTO,
+  STRUCT,
+  UNION,
+  __NEAR;
 
   private final boolean syntactic;
 
@@ -100,7 +124,7 @@ public enum CKeyword implements GrammarRuleKey {
   public static String[] keywordValues() {
     String[] keywordsValue = new String[CKeyword.values().length];
     int i = 0;
-    for (CKeyword keyword : CKeyword.values()) {
+    for (CKeyword keyword: CKeyword.values()) {
       keywordsValue[i] = keyword.getValue();
       i++;
     }
@@ -109,8 +133,8 @@ public enum CKeyword implements GrammarRuleKey {
 
   public static List<CKeyword> keywords() {
     return Collections.unmodifiableList(Arrays.stream(values())
-      .filter(cKeyword -> !cKeyword.syntactic)
-      .collect(Collectors.toList()));
+        .filter(cKeyword -> !cKeyword.syntactic)
+        .collect(Collectors.toList()));
   }
 
   public String getValue() {
