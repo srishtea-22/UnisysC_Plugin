@@ -26,6 +26,6 @@ public class DuplicateBranchImplementationCheckTest {
 
   @Test
   public void test() {
-    FlexVerifier.verify(new File("src/test/resources/checks/DuplicateBranchImplementation.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/DuplicateBranchImplementation.as"), check);
   }
 }

@@ -29,14 +29,14 @@ public class ASDocCheckTest {
 
   @Test
   public void test_default() {
-    FlexVerifier.verify(TEST_FILE, check);
+    CVerifier.verify(TEST_FILE, check);
   }
 
   @Test
   public void test_all_off() throws IllegalAccessException {
     deactivateAll();
 
-    FlexVerifier.verifyNoIssueIgnoringExpected(TEST_FILE, check);
+    CVerifier.verifyNoIssueIgnoringExpected(TEST_FILE, check);
   }
 
   protected void activeOnly(String... fieldNames) throws IllegalAccessException {

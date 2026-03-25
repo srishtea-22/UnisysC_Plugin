@@ -19,7 +19,7 @@ package org.sonar.c.checks.asdoc;
 import java.io.File;
 import org.junit.jupiter.api.Test;
 import org.sonar.c.checks.ASDocCheckTest;
-import org.sonar.c.checks.FlexVerifier;
+import org.sonar.c.checks.CVerifier;
 
 public class ASDocClassCheckTest extends ASDocCheckTest {
 
@@ -27,7 +27,7 @@ public class ASDocClassCheckTest extends ASDocCheckTest {
   public void custom_only_classes_property_on() throws IllegalAccessException {
     activeOnly("classes");
 
-    FlexVerifier.verify(new File("src/test/resources/checks/ASDoc-classes.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/ASDoc-classes.as"), check);
   }
 
 }

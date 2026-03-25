@@ -26,6 +26,6 @@ public class TooManyUnaryOperatorCheckTest {
 
   @Test
   public void test() {
-    FlexVerifier.verify(new File("src/test/resources/checks/TooManyUnaryOperator.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/TooManyUnaryOperator.as"), check);
   }
 }

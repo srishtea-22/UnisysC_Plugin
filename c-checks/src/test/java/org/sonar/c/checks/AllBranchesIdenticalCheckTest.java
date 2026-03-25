@@ -24,7 +24,7 @@ public class AllBranchesIdenticalCheckTest {
 
   @Test
   public void test() {
-    FlexVerifier.verify(new File("src/test/resources/checks/AllBranchesIdentical.as"), new AllBranchesIdenticalCheck());
+    CVerifier.verify(new File("src/test/resources/checks/AllBranchesIdentical.as"), new AllBranchesIdenticalCheck());
   }
 
 }

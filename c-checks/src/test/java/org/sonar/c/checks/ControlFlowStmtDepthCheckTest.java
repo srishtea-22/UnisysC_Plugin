@@ -26,14 +26,14 @@ public class ControlFlowStmtDepthCheckTest {
 
   @Test
   public void testDefault() {
-    FlexVerifier.verify(new File("src/test/resources/checks/NestedIfDepth.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/NestedIfDepth.as"), check);
   }
 
   @Test
   public void testCustomDepth() {
     check.max = 1;
 
-    FlexVerifier.verify(new File("src/test/resources/checks/NestedIfDepth-1.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/NestedIfDepth-1.as"), check);
   }
 
 }

@@ -26,7 +26,7 @@ public class WithStatementCheckTest {
   public void test() {
     WithStatementCheck check = new WithStatementCheck();
 
-    FlexVerifier.verify(new File("src/test/resources/checks/WithStatement.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/WithStatement.as"), check);
   }
 
 }

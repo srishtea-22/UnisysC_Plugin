@@ -26,7 +26,7 @@ public class EmptyMethodCheckTest {
 
   @Test
   public void defaults() {
-    FlexVerifier.verify(new File("src/test/resources/checks/EmptyMethod.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/EmptyMethod.as"), check);
   }
 
 }

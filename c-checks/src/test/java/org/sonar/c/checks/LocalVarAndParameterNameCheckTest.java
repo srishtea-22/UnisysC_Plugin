@@ -26,6 +26,6 @@ public class LocalVarAndParameterNameCheckTest {
 
   @Test
   public void defaults(){
-    FlexVerifier.verify(new File("src/test/resources/checks/LocalVarAndParameterName.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/LocalVarAndParameterName.as"), check);
   }
 }

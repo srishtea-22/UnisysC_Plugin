@@ -26,7 +26,7 @@ public class OneStatementPerLineCheckTest {
   public void test() {
     OneStatementPerLineCheck check = new OneStatementPerLineCheck();
 
-    FlexVerifier.verify(new File("src/test/resources/checks/OneStatementPerLine.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/OneStatementPerLine.as"), check);
   }
 
 }

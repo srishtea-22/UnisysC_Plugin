@@ -14,7 +14,7 @@
  * You should have received a copy of the Sonar Source-Available License
  * along with this program; if not, see https://sonarsource.com/license/ssal/
  */
-package com.sonar.it.flex;
+package com.sonar.it.c;
 
 import com.sonar.orchestrator.build.SonarScanner;
 import com.sonar.orchestrator.junit4.OrchestratorRule;
@@ -23,14 +23,14 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import static com.sonar.it.flex.Tests.getComponent;
-import static com.sonar.it.flex.Tests.getMeasureAsInteger;
+import static com.sonar.it.c.Tests.getComponent;
+import static com.sonar.it.c.Tests.getMeasureAsInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * This test class is used to reproduce various issues.
  */
-public class FlexSimpleProjectTest {
+public class CSimpleProjectTest {
 
   private static final String PROJECT = "simple-project";
 

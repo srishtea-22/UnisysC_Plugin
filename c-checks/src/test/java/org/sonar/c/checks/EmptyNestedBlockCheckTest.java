@@ -25,6 +25,6 @@ public class EmptyNestedBlockCheckTest {
 
   @Test
   public void test() throws Exception {
-    FlexVerifier.verify(new File("src/test/resources/checks/EmptyNestedBlock.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/EmptyNestedBlock.as"), check);
   }
 }

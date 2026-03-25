@@ -25,6 +25,6 @@ public class EqEqEqCheckTest {
   private EqEqEqCheck check = new EqEqEqCheck();
 
   @Test public void test() {
-    FlexVerifier.verify(new File("src/test/resources/checks/EqEqEq.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/EqEqEq.as"), check);
   }
 }

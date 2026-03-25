@@ -26,12 +26,12 @@ public class TooManyReturnCheckTest {
 
   @Test
   public void defaults() {
-    FlexVerifier.verify(new File("src/test/resources/checks/TooManyReturn.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/TooManyReturn.as"), check);
   }
 
   @Test
   public void custom() {
     check.max = 2;
-    FlexVerifier.verify(new File("src/test/resources/checks/TooManyReturn-custom.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/TooManyReturn-custom.as"), check);
   }
 }

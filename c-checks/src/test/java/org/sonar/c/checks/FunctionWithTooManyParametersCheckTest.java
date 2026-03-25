@@ -26,13 +26,13 @@ public class FunctionWithTooManyParametersCheckTest {
 
   @Test
   public void defaults() {
-    FlexVerifier.verify(new File("src/test/resources/checks/FunctionWithTooManyParameters.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/FunctionWithTooManyParameters.as"), check);
   }
 
   @Test
   public void custom() {
     check.max = 4;
-    FlexVerifier.verify(new File("src/test/resources/checks/FunctionWithTooManyParameters-custom.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/FunctionWithTooManyParameters-custom.as"), check);
   }
 
 }

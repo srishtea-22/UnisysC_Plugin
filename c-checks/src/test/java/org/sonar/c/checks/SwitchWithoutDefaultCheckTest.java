@@ -26,7 +26,7 @@ public class SwitchWithoutDefaultCheckTest {
   public void test() {
     SwitchWithoutDefaultCheck check = new SwitchWithoutDefaultCheck();
 
-    FlexVerifier.verify(new File("src/test/resources/checks/SwitchWithoutDefault.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/SwitchWithoutDefault.as"), check);
   }
 
 }

@@ -26,21 +26,21 @@ public class ClassWithTooManyFunctionsCheckTest {
 
   @Test
   public void defaults() {
-    FlexVerifier.verify(new File("src/test/resources/checks/ClassWithTooManyFunctions.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/ClassWithTooManyFunctions.as"), check);
   }
 
   @Test
   public void custom_maximum_function_threshold() {
     check.maximumFunctionThreshold = 1;
 
-    FlexVerifier.verify(new File("src/test/resources/checks/ClassWithTooManyFunctions-1.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/ClassWithTooManyFunctions-1.as"), check);
   }
 
   @Test
   public void custom_count_non_publicMethods() {
     check.countNonpublicMethods = false;
 
-    FlexVerifier.verifyNoIssueIgnoringExpected(new File("src/test/resources/checks/ClassWithTooManyFunctions.as"), check);
+    CVerifier.verifyNoIssueIgnoringExpected(new File("src/test/resources/checks/ClassWithTooManyFunctions.as"), check);
   }
 
   @Test
@@ -48,6 +48,6 @@ public class ClassWithTooManyFunctionsCheckTest {
     check.maximumFunctionThreshold = 1;
     check.countNonpublicMethods = false;
 
-    FlexVerifier.verify(new File("src/test/resources/checks/ClassWithTooManyFunctions-1-public.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/ClassWithTooManyFunctions-1-public.as"), check);
   }
 }

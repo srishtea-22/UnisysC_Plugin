@@ -14,7 +14,7 @@
  * You should have received a copy of the Sonar Source-Available License
  * along with this program; if not, see https://sonarsource.com/license/ssal/
  */
-package com.sonar.it.flex;
+package com.sonar.it.c;
 
 import com.sonar.orchestrator.build.MavenBuild;
 import com.sonar.orchestrator.junit4.OrchestratorRule;
@@ -25,12 +25,12 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.sonarqube.ws.Measures;
 
-import static com.sonar.it.flex.Tests.getComponent;
-import static com.sonar.it.flex.Tests.getMeasure;
-import static com.sonar.it.flex.Tests.getMeasureAsDouble;
+import static com.sonar.it.c.Tests.getComponent;
+import static com.sonar.it.c.Tests.getMeasure;
+import static com.sonar.it.c.Tests.getMeasureAsDouble;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FlexIntegrationTest {
+public class CIntegrationTest {
 
   @ClassRule
   public static OrchestratorRule orchestrator = Tests.ORCHESTRATOR;

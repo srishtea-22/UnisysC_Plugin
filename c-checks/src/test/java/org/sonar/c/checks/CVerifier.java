@@ -34,7 +34,7 @@ import org.sonarsource.analyzer.commons.checks.verifier.SingleFileVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FlexVerifier {
+public class CVerifier {
 
   public static void verify(File file, CCheck check) {
     createVerifier(file, check, true).assertOneOrMoreIssues();

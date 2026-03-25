@@ -26,13 +26,13 @@ public class PackageNameCheckTest {
 
   @Test
   public void defaults() {
-    FlexVerifier.verify(new File("src/test/resources/checks/PackageName.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/PackageName.as"), check);
   }
 
   @Test
   public void custom() {
     check.format = "^[a-z]+(\\.[A-Z][a-z0-9]*)*$";
-    FlexVerifier.verify(new File("src/test/resources/checks/PackageName-custom.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/PackageName-custom.as"), check);
   }
 
 }

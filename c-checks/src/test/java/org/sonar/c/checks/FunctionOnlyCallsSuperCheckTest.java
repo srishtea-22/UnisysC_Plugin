@@ -26,6 +26,6 @@ public class FunctionOnlyCallsSuperCheckTest {
 
   @Test
   public void test() throws Exception {
-    FlexVerifier.verify(new File("src/test/resources/checks/FunctionOnlyCallsSuper.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/FunctionOnlyCallsSuper.as"), check);
   }
 }

@@ -32,12 +32,12 @@ public class CommentRegularExpressionCheckTest {
     check.regularExpression = "(?i).*TODO.*";
     check.message = "Avoid TODO";
 
-    FlexVerifier.verify(new File("src/test/resources/checks/CommentRegularExpression.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/CommentRegularExpression.as"), check);
   }
 
   @Test
   public void test_default_regex() {
-    FlexVerifier.verifyNoIssue(new File("src/test/resources/checks/CommentRegularExpressionDefault.as"), new CommentRegularExpressionCheck());
+    CVerifier.verifyNoIssue(new File("src/test/resources/checks/CommentRegularExpressionDefault.as"), new CommentRegularExpressionCheck());
   }
 
   @Test
@@ -48,7 +48,7 @@ public class CommentRegularExpressionCheckTest {
     check.message = "Avoid TODO";
 
     final File file = new File("src/test/resources/checks/CommentRegularExpression.as");
-    RuntimeException e = assertThrows(RuntimeException.class, () -> FlexVerifier.verify(file, check));
+    RuntimeException e = assertThrows(RuntimeException.class, () -> CVerifier.verify(file, check));
     assertEquals("Unable to compile regular expression: [a-z", e.getMessage());
   }
 

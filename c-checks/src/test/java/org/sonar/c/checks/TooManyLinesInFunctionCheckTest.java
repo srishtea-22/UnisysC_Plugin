@@ -25,12 +25,12 @@ public class TooManyLinesInFunctionCheckTest {
 
   @Test
   public void testDefault() throws Exception {
-    FlexVerifier.verifyNoIssueIgnoringExpected(new File("src/test/resources/checks/TooManyLinesInFunction.as"), check);
+    CVerifier.verifyNoIssueIgnoringExpected(new File("src/test/resources/checks/TooManyLinesInFunction.as"), check);
   }
 
   @Test
   public void custom() {
     check.max = 3;
-    FlexVerifier.verify(new File("src/test/resources/checks/TooManyLinesInFunction.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/TooManyLinesInFunction.as"), check);
   }
 }

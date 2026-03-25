@@ -26,6 +26,6 @@ public class SemicolonCheckTest {
 
   @Test
   public void test() {
-    FlexVerifier.verify(new File("src/test/resources/checks/Semicolon.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/Semicolon.as"), check);
   }
 }

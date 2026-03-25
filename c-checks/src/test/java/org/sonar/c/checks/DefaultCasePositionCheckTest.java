@@ -24,6 +24,6 @@ public class DefaultCasePositionCheckTest {
 
   @Test
   public void test(){
-    FlexVerifier.verify(new File("src/test/resources/checks/DefaultCasePosition.as"), new DefaultCasePositionCheck());
+    CVerifier.verify(new File("src/test/resources/checks/DefaultCasePosition.as"), new DefaultCasePositionCheck());
   }
 }

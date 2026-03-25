@@ -26,6 +26,6 @@ public class ConstructorNotLightweightCheckTest {
 
   @Test
   public void test() {
-    FlexVerifier.verify(new File("src/test/resources/checks/ConstructorNotLightweight.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/ConstructorNotLightweight.as"), check);
   }
 }

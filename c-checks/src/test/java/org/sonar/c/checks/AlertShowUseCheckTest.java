@@ -26,6 +26,6 @@ public class AlertShowUseCheckTest {
 
   @Test
   public void test() {
-    FlexVerifier.verify(new File("src/test/resources/checks/AlertShowUse.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/AlertShowUse.as"), check);
   }
 }

@@ -26,13 +26,13 @@ public class TooManyLinesInCaseCheckTest {
 
   @Test
   public void defaults(){
-    FlexVerifier.verify(new File("src/test/resources/checks/TooManyLinesInCase.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/TooManyLinesInCase.as"), check);
   }
 
   @Test
   public void custom() {
     check.max = 4;
-    FlexVerifier.verify(new File("src/test/resources/checks/TooManyLinesInCase-custom.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/TooManyLinesInCase-custom.as"), check);
   }
 
 }

@@ -67,11 +67,11 @@ public class FileHeaderCheckTest {
   }
 
   private void assertHasIssue(FileHeaderCheck check, File file) {
-    FlexVerifier.verifySingleIssueOnFile(file, check, "Add or update the header of this file.");
+    CVerifier.verifySingleIssueOnFile(file, check, "Add or update the header of this file.");
   }
 
   private void assertNoIssue(FileHeaderCheck check, File file) {
-    FlexVerifier.verifyNoIssue(file, check);
+    CVerifier.verifyNoIssue(file, check);
   }
 
 }

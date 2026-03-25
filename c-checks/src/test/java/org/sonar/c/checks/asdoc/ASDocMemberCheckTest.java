@@ -19,7 +19,7 @@ package org.sonar.c.checks.asdoc;
 import java.io.File;
 import org.junit.jupiter.api.Test;
 import org.sonar.c.checks.ASDocCheckTest;
-import org.sonar.c.checks.FlexVerifier;
+import org.sonar.c.checks.CVerifier;
 
 public class ASDocMemberCheckTest extends ASDocCheckTest {
 
@@ -27,14 +27,14 @@ public class ASDocMemberCheckTest extends ASDocCheckTest {
   public void custom_only_properties_property_on() throws IllegalAccessException {
     activeOnly("properties");
 
-    FlexVerifier.verify(new File("src/test/resources/checks/ASDoc-properties.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/ASDoc-properties.as"), check);
   }
 
   @Test
   public void custom_only_methods() throws IllegalAccessException {
     activeOnly("methods");
 
-    FlexVerifier.verify(new File("src/test/resources/checks/ASDoc-methods.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/ASDoc-methods.as"), check);
   }
 
 }

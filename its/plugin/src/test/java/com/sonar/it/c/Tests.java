@@ -14,7 +14,7 @@
  * You should have received a copy of the Sonar Source-Available License
  * along with this program; if not, see https://sonarsource.com/license/ssal/
  */
-package com.sonar.it.flex;
+package com.sonar.it.c;
 
 import com.sonar.orchestrator.build.MavenBuild;
 import com.sonar.orchestrator.build.SonarScanner;
@@ -41,8 +41,8 @@ import org.sonarqube.ws.client.measures.ComponentRequest;
 @RunWith(Suite.class)
 @SuiteClasses({
   CoverageTest.class,
-  FlexIntegrationTest.class,
-  FlexSimpleProjectTest.class
+  CIntegrationTest.class,
+  CSimpleProjectTest.class
 })
 public class Tests {
 

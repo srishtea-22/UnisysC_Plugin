@@ -26,6 +26,6 @@ public class OverrideEventCloneFunctionCheckTest {
 
   @Test
   public void test() {
-    FlexVerifier.verify(new File("src/test/resources/checks/OverrideEventCloneFunction.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/OverrideEventCloneFunction.as"), check);
   }
 }

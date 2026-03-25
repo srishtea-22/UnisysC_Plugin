@@ -28,7 +28,7 @@ public class FunctionComplexityCheckTest {
     // Function complexity can't be less than 1
     check.setMaximumFunctionComplexityThreshold(0);
 
-    FlexVerifier.verify(new File("src/test/resources/checks/FunctionComplexity.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/FunctionComplexity.as"), check);
   }
 
 }
