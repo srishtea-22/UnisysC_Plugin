@@ -24,14 +24,15 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 import org.sonar.flex.checks.utils.Clazz;
 import org.sonar.flex.checks.utils.Function;
 
 @Rule(key = "S1467")
-public class ConstructorCallsDispatchEventCheck extends FlexCheck {
+public class ConstructorCallsDispatchEventCheck extends CCheck {
 
   boolean isInClass;
   private Deque<ClassState> classStack = new ArrayDeque<>();
@@ -48,9 +49,9 @@ public class ConstructorCallsDispatchEventCheck extends FlexCheck {
   @Override
   public List<AstNodeType> subscribedTo() {
     return Arrays.asList(
-      FlexGrammar.CLASS_DEF,
-      FlexGrammar.FUNCTION_DEF,
-      FlexGrammar.PRIMARY_EXPR);
+      CGrammar.CLASS_DEF,
+      CGrammar.FUNCTION_DEF,
+      CGrammar.PRIMARY_EXPR);
   }
 
   @Override
@@ -60,7 +61,7 @@ public class ConstructorCallsDispatchEventCheck extends FlexCheck {
 
   @Override
   public void visitNode(AstNode astNode) {
-    if (astNode.is(FlexGrammar.CLASS_DEF)) {
+    if (astNode.is(CGrammar.CLASS_DEF)) {
       isInClass = true;
       String className = Clazz.getName(astNode);
       classStack.push(new ClassState(className));
@@ -72,24 +73,24 @@ public class ConstructorCallsDispatchEventCheck extends FlexCheck {
   }
 
   private boolean isConstructor(AstNode astNode) {
-    return isInClass && astNode.is(FlexGrammar.FUNCTION_DEF) && Function.isConstructor(astNode, classStack.peek().className);
+    return isInClass && astNode.is(CGrammar.FUNCTION_DEF) && Function.isConstructor(astNode, classStack.peek().className);
   }
 
   private boolean isCallToDispatchEventInConstructor(AstNode astNode) {
-    return isInClass && classStack.peek().isInConstructor && astNode.is(FlexGrammar.PRIMARY_EXPR) && isCallToDispatchEvent(astNode);
+    return isInClass && classStack.peek().isInConstructor && astNode.is(CGrammar.PRIMARY_EXPR) && isCallToDispatchEvent(astNode);
   }
 
   private static boolean isCallToDispatchEvent(AstNode primaryExpr) {
     return "dispatchEvent".equals(primaryExpr.getTokenValue())
-      && primaryExpr.getNextAstNode().is(FlexGrammar.ARGUMENTS)
-      && primaryExpr.getNextAstNode().getFirstChild(FlexGrammar.LIST_EXPRESSION) != null;
+      && primaryExpr.getNextAstNode().is(CGrammar.ARGUMENTS)
+      && primaryExpr.getNextAstNode().getFirstChild(CGrammar.LIST_EXPRESSION) != null;
   }
 
   @Override
   public void leaveNode(AstNode astNode) {
-    if (isInClass && classStack.peek().isInConstructor && astNode.is(FlexGrammar.FUNCTION_DEF)) {
+    if (isInClass && classStack.peek().isInConstructor && astNode.is(CGrammar.FUNCTION_DEF)) {
       classStack.peek().isInConstructor = false;
-    } else if (isInClass && astNode.is(FlexGrammar.CLASS_DEF)) {
+    } else if (isInClass && astNode.is(CGrammar.CLASS_DEF)) {
       classStack.pop();
       isInClass = !classStack.isEmpty();
     }

@@ -25,16 +25,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 import org.sonar.flex.checks.utils.Clazz;
 import org.sonar.flex.checks.utils.Function;
 import org.sonar.flex.checks.utils.Modifiers;
 
 @Rule(key = "S1144")
-public class UnusedPrivateFunctionCheck extends FlexCheck {
+public class UnusedPrivateFunctionCheck extends CCheck {
 
   static class PrivateFunction {
     final AstNode declaration;
@@ -61,8 +62,8 @@ public class UnusedPrivateFunctionCheck extends FlexCheck {
           && Modifiers.getModifiers(functionDef.getPreviousAstNode()).contains(CKeyword.PRIVATE)
           && !Function.isEmptyConstructor(functionDef, Clazz.getName(classDef))) {
           AstNode identifierNode = functionDef
-            .getFirstChild(FlexGrammar.FUNCTION_NAME)
-            .getFirstChild(FlexGrammar.IDENTIFIER);
+            .getFirstChild(CGrammar.FUNCTION_NAME)
+            .getFirstChild(CGrammar.IDENTIFIER);
 
           functions.put(identifierNode.getTokenValue(), new PrivateFunction(identifierNode, 0));
         }
@@ -85,9 +86,9 @@ public class UnusedPrivateFunctionCheck extends FlexCheck {
   @Override
   public List<AstNodeType> subscribedTo() {
     return Arrays.asList(
-      FlexGrammar.CLASS_DEF,
-      FlexGrammar.FUNCTION_DEF,
-      FlexGrammar.QUALIFIED_IDENTIFIER);
+      CGrammar.CLASS_DEF,
+      CGrammar.FUNCTION_DEF,
+      CGrammar.QUALIFIED_IDENTIFIER);
   }
 
   @Override
@@ -97,10 +98,10 @@ public class UnusedPrivateFunctionCheck extends FlexCheck {
 
   @Override
   public void visitNode(AstNode astNode) {
-    if (astNode.is(FlexGrammar.CLASS_DEF)) {
+    if (astNode.is(CGrammar.CLASS_DEF)) {
       inClass = true;
       classStack.push(new ClassState(astNode));
-    } else if (inClass && astNode.is(FlexGrammar.QUALIFIED_IDENTIFIER)) {
+    } else if (inClass && astNode.is(CGrammar.QUALIFIED_IDENTIFIER)) {
       classStack.peek().use(astNode);
     }
   }
@@ -108,7 +109,7 @@ public class UnusedPrivateFunctionCheck extends FlexCheck {
 
   @Override
   public void leaveNode(AstNode astNode) {
-    if (astNode.is(FlexGrammar.CLASS_DEF)) {
+    if (astNode.is(CGrammar.CLASS_DEF)) {
       reportUnusedPrivateFunction();
       classStack.pop();
       inClass = !classStack.isEmpty();

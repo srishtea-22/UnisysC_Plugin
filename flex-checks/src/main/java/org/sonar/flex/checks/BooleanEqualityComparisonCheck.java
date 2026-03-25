@@ -20,29 +20,30 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 
 @Rule(key = "S1125")
-public class BooleanEqualityComparisonCheck extends FlexCheck {
+public class BooleanEqualityComparisonCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.EQUALITY_EXPR);
+    return Collections.singletonList(CGrammar.EQUALITY_EXPR);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
-    if (hasBooleanLiteralOperand(astNode.getFirstChild(FlexGrammar.EQUALITY_OPERATOR).getNextAstNode())) {
+    if (hasBooleanLiteralOperand(astNode.getFirstChild(CGrammar.EQUALITY_OPERATOR).getNextAstNode())) {
       addIssue("Remove the unnecessary boolean comparison to simplify this expression.", astNode);
     }
   }
 
   private static boolean hasBooleanLiteralOperand(AstNode astNode) {
-    return astNode.is(FlexGrammar.POSTFIX_EXPR)
-      && astNode.getFirstChild().is(FlexGrammar.PRIMARY_EXPR)
+    return astNode.is(CGrammar.POSTFIX_EXPR)
+      && astNode.getFirstChild().is(CGrammar.PRIMARY_EXPR)
       && astNode.getFirstChild().getFirstChild().is(CKeyword.TRUE, CKeyword.FALSE);
   }
 }

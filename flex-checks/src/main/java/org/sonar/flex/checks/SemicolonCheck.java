@@ -21,17 +21,18 @@ import com.sonar.sslr.api.AstNodeType;
 import com.sonar.sslr.api.Token;
 import java.util.Arrays;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CPunctuator;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CPunctuator;
 
 @Rule(key = "S1438")
-public class SemicolonCheck extends FlexCheck {
+public class SemicolonCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Arrays.asList(FlexGrammar.EOS, FlexGrammar.EOS_NO_LB);
+    return Arrays.asList(CGrammar.EOS, CGrammar.EOS_NO_LB);
   }
 
   @Override

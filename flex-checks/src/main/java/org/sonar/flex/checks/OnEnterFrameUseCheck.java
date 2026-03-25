@@ -20,17 +20,18 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 import org.sonar.flex.checks.utils.Expression;
 
 @Rule(key = "S1982")
-public class OnEnterFrameUseCheck extends FlexCheck {
+public class OnEnterFrameUseCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.ASSIGNMENT_EXPR);
+    return Collections.singletonList(CGrammar.ASSIGNMENT_EXPR);
   }
 
   @Override
@@ -42,7 +43,7 @@ public class OnEnterFrameUseCheck extends FlexCheck {
 
   private static boolean isFunctionExpr(AstNode assignementExpr) {
     AstNode assignmentExprChild = assignementExpr.getFirstChild();
-    return assignmentExprChild.is(FlexGrammar.POSTFIX_EXPR) && assignmentExprChild.getFirstChild().getFirstChild().is(FlexGrammar.FUNCTION_EXPR);
+    return assignmentExprChild.is(CGrammar.POSTFIX_EXPR) && assignmentExprChild.getFirstChild().getFirstChild().is(CGrammar.FUNCTION_EXPR);
   }
 
   private static boolean isOnEnterFrame(AstNode postfixExpr) {

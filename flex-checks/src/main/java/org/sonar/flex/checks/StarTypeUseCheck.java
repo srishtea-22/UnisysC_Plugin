@@ -20,22 +20,23 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CPunctuator;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CPunctuator;
 
 @Rule(key = "S1435")
-public class StarTypeUseCheck extends FlexCheck {
+public class StarTypeUseCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.VARIABLE_BINDING);
+    return Collections.singletonList(CGrammar.VARIABLE_BINDING);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
-    AstNode typeExprNode = astNode.getFirstChild(FlexGrammar.TYPED_IDENTIFIER).getFirstChild(FlexGrammar.TYPE_EXPR);
+    AstNode typeExprNode = astNode.getFirstChild(CGrammar.TYPED_IDENTIFIER).getFirstChild(CGrammar.TYPE_EXPR);
     if (typeExprNode != null && typeExprNode.getFirstChild(CPunctuator.STAR) != null) {
       addIssue("Remove usage of this \"star\" type", typeExprNode);
     }

@@ -23,27 +23,28 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 import org.sonar.flex.checks.utils.Expression;
 
 @Rule(key = "S1950")
-public class DuplicateSwitchCaseConditionCheck extends FlexCheck {
+public class DuplicateSwitchCaseConditionCheck extends CCheck {
 
   private Map<String, AstNode> casesByCondition = new HashMap<>();
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.SWITCH_STATEMENT);
+    return Collections.singletonList(CGrammar.SWITCH_STATEMENT);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
 
-    for (AstNode caseElement : astNode.getChildren(FlexGrammar.CASE_ELEMENT)) {
-      for (AstNode caseLabel : caseElement.getChildren(FlexGrammar.CASE_LABEL)) {
+    for (AstNode caseElement : astNode.getChildren(CGrammar.CASE_ELEMENT)) {
+      for (AstNode caseLabel : caseElement.getChildren(CGrammar.CASE_LABEL)) {
 
         if (!caseLabel.getFirstChild().is(CKeyword.DEFAULT)) {
           checkCondition(caseLabel);
@@ -54,7 +55,7 @@ public class DuplicateSwitchCaseConditionCheck extends FlexCheck {
   }
 
   private void checkCondition(AstNode caseLabel) {
-    String expression = Expression.exprToString(caseLabel.getFirstChild(FlexGrammar.LIST_EXPRESSION));
+    String expression = Expression.exprToString(caseLabel.getFirstChild(CGrammar.LIST_EXPRESSION));
     AstNode duplicateCase = casesByCondition.get(expression);
 
     if (duplicateCase != null) {

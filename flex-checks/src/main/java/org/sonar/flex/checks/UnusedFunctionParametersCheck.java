@@ -29,15 +29,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 import org.sonar.flex.checks.utils.Function;
 import org.sonar.flex.checks.utils.Preconditions;
 
 @Rule(key = "S1172")
-public class UnusedFunctionParametersCheck extends FlexCheck {
+public class UnusedFunctionParametersCheck extends CCheck {
 
   private Deque<Boolean> classes = new ArrayDeque<>();
 
@@ -53,7 +54,7 @@ public class UnusedFunctionParametersCheck extends FlexCheck {
     }
 
     private void declare(AstNode astNode) {
-      Preconditions.checkState(astNode.is(FlexGrammar.IDENTIFIER));
+      Preconditions.checkState(astNode.is(CGrammar.IDENTIFIER));
       String identifier = astNode.getTokenValue();
       arguments.put(identifier, 0);
     }
@@ -72,15 +73,15 @@ public class UnusedFunctionParametersCheck extends FlexCheck {
     }
   }
 
-  private static final AstNodeType[] FUNCTION_NODES = {FlexGrammar.FUNCTION_DEF, FlexGrammar.FUNCTION_EXPR};
+  private static final AstNodeType[] FUNCTION_NODES = {CGrammar.FUNCTION_DEF, CGrammar.FUNCTION_EXPR};
   private Scope currentScope;
 
   @Override
   public List<AstNodeType> subscribedTo() {
     List<AstNodeType> types = new ArrayList<>();
-    types.add(FlexGrammar.POSTFIX_EXPR);
-    types.add(FlexGrammar.PARAMETERS);
-    types.add(FlexGrammar.CLASS_DEF);
+    types.add(CGrammar.POSTFIX_EXPR);
+    types.add(CGrammar.PARAMETERS);
+    types.add(CGrammar.CLASS_DEF);
     Collections.addAll(types, FUNCTION_NODES);
     return types;
   }
@@ -93,19 +94,19 @@ public class UnusedFunctionParametersCheck extends FlexCheck {
 
   @Override
   public void visitNode(AstNode astNode) {
-    if (astNode.is(FlexGrammar.CLASS_DEF)) {
+    if (astNode.is(CGrammar.CLASS_DEF)) {
       classes.push(implementsAnInterface(astNode));
     } else if (astNode.is(FUNCTION_NODES)) {
       // enter new scope
       currentScope = new Scope(currentScope, astNode);
 
-    } else if (currentScope != null && astNode.is(FlexGrammar.PARAMETERS) && astNode.getParent().is(FlexGrammar.FUNCTION_SIGNATURE)) {
+    } else if (currentScope != null && astNode.is(CGrammar.PARAMETERS) && astNode.getParent().is(CGrammar.FUNCTION_SIGNATURE)) {
       declareInCurrentScope(Function.getParametersIdentifiers(currentScope.functionDec));
 
-    } else if (currentScope != null && astNode.is(FlexGrammar.POSTFIX_EXPR)) {
+    } else if (currentScope != null && astNode.is(CGrammar.POSTFIX_EXPR)) {
       AstNode postfixExprChild = astNode.getFirstChild();
       // check if it is not a call to function with same name than the parameter
-      if (postfixExprChild.is(FlexGrammar.PRIMARY_EXPR) && postfixExprChild.getNextAstNode().isNot(FlexGrammar.ARGUMENTS)) {
+      if (postfixExprChild.is(CGrammar.PRIMARY_EXPR) && postfixExprChild.getNextAstNode().isNot(CGrammar.ARGUMENTS)) {
         currentScope.use(getPrimaryExpressionStringValue(postfixExprChild));
       }
     }
@@ -119,7 +120,7 @@ public class UnusedFunctionParametersCheck extends FlexCheck {
         reportUnusedArgument();
       }
       currentScope = currentScope.outerScope;
-    } else if (astNode.is(FlexGrammar.CLASS_DEF)) {
+    } else if (astNode.is(CGrammar.CLASS_DEF)) {
       classes.pop();
     }
   }
@@ -144,16 +145,16 @@ public class UnusedFunctionParametersCheck extends FlexCheck {
 
   private boolean isExcluded(AstNode functionDec) {
     AstNode directives = functionDec
-      .getFirstChild(FlexGrammar.FUNCTION_COMMON)
-      .getFirstChild(FlexGrammar.BLOCK)
-      .getFirstChild(FlexGrammar.DIRECTIVES);
+      .getFirstChild(CGrammar.FUNCTION_COMMON)
+      .getFirstChild(CGrammar.BLOCK)
+      .getFirstChild(CGrammar.DIRECTIVES);
 
     return isExcludedFunctionDeclaration(functionDec) || isEmpty(directives)
       || containsOnlyThrowStmt(directives) || isInClassImplementingInterface();
   }
 
   private static Boolean implementsAnInterface(AstNode classDef) {
-    AstNode inheritenceNode = classDef.getFirstChild(FlexGrammar.INHERITENCE);
+    AstNode inheritenceNode = classDef.getFirstChild(CGrammar.INHERITENCE);
     return inheritenceNode != null && inheritenceNode.getFirstChild().is(CKeyword.IMPLEMENTS);
   }
 
@@ -166,7 +167,7 @@ public class UnusedFunctionParametersCheck extends FlexCheck {
 
     if (directiveList.size() == 1) {
       AstNode directiveKind = directiveList.get(0).getFirstChild().getFirstChild();
-      return directiveKind.is(FlexGrammar.THROW_STATEMENT);
+      return directiveKind.is(CGrammar.THROW_STATEMENT);
     }
     return false;
   }
@@ -182,25 +183,25 @@ public class UnusedFunctionParametersCheck extends FlexCheck {
   }
 
   private static boolean isExcludedFunctionDeclaration(AstNode functionDec) {
-    return functionDec.is(FlexGrammar.FUNCTION_DEF) && (Function.isOverriding(functionDec) || isEventHandler(functionDec));
+    return functionDec.is(CGrammar.FUNCTION_DEF) && (Function.isOverriding(functionDec) || isEventHandler(functionDec));
   }
 
   private static boolean isEventHandler(AstNode functionDec) {
-    String functionName = functionDec.getFirstChild(FlexGrammar.FUNCTION_NAME).getTokenValue();
+    String functionName = functionDec.getFirstChild(CGrammar.FUNCTION_NAME).getTokenValue();
 
     if (functionName.toLowerCase(Locale.ENGLISH).contains("handle") || startsWithOnPreposition(functionName)) {
       AstNode parameters = functionDec
-        .getFirstChild(FlexGrammar.FUNCTION_COMMON)
-        .getFirstChild(FlexGrammar.FUNCTION_SIGNATURE)
-        .getFirstChild(FlexGrammar.PARAMETERS);
+        .getFirstChild(CGrammar.FUNCTION_COMMON)
+        .getFirstChild(CGrammar.FUNCTION_SIGNATURE)
+        .getFirstChild(CGrammar.PARAMETERS);
 
       if (parameters != null) {
-        AstNode firstParameter = parameters.getFirstChild(FlexGrammar.PARAMETER);
+        AstNode firstParameter = parameters.getFirstChild(CGrammar.PARAMETER);
 
-        if (firstParameter != null && firstParameter.getFirstChild(FlexGrammar.TYPED_IDENTIFIER) != null) {
+        if (firstParameter != null && firstParameter.getFirstChild(CGrammar.TYPED_IDENTIFIER) != null) {
           AstNode firstParameterType = firstParameter
-            .getFirstChild(FlexGrammar.TYPED_IDENTIFIER)
-            .getFirstChild(FlexGrammar.TYPE_EXPR);
+            .getFirstChild(CGrammar.TYPED_IDENTIFIER)
+            .getFirstChild(CGrammar.TYPE_EXPR);
           return firstParameterType != null && firstParameterType.getLastToken().getValue().endsWith("Event");
         }
       }
@@ -213,7 +214,7 @@ public class UnusedFunctionParametersCheck extends FlexCheck {
   }
 
   private static boolean isNotAbstract(AstNode functionDef) {
-    return functionDef.getFirstChild(FlexGrammar.FUNCTION_COMMON).getLastChild().is(FlexGrammar.BLOCK);
+    return functionDef.getFirstChild(CGrammar.FUNCTION_COMMON).getLastChild().is(CGrammar.BLOCK);
   }
 
   private static String getPrimaryExpressionStringValue(AstNode postfixExpr) {

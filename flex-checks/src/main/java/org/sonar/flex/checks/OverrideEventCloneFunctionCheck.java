@@ -21,20 +21,21 @@ import com.sonar.sslr.api.AstNodeType;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 import org.sonar.flex.checks.utils.Function;
 
 @Rule(key = "S1470")
-public class OverrideEventCloneFunctionCheck extends FlexCheck {
+public class OverrideEventCloneFunctionCheck extends CCheck {
 
   private static final String EVENT_TYPE_NAME = "Event";
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override
@@ -43,9 +44,9 @@ public class OverrideEventCloneFunctionCheck extends FlexCheck {
       return;
     }
     List<AstNode> classDirectives = astNode
-      .getFirstChild(FlexGrammar.BLOCK)
-      .getFirstChild(FlexGrammar.DIRECTIVES)
-      .getChildren(FlexGrammar.DIRECTIVE);
+      .getFirstChild(CGrammar.BLOCK)
+      .getFirstChild(CGrammar.DIRECTIVES)
+      .getChildren(CGrammar.DIRECTIVE);
 
     for (AstNode directive : classDirectives) {
       if (isOverridingFunction(directive) && isCloneFunction(directive)) {
@@ -53,14 +54,14 @@ public class OverrideEventCloneFunctionCheck extends FlexCheck {
       }
     }
 
-    String className = astNode.getFirstChild(FlexGrammar.CLASS_NAME).getFirstChild(FlexGrammar.CLASS_IDENTIFIERS).getLastChild().getTokenValue();
+    String className = astNode.getFirstChild(CGrammar.CLASS_NAME).getFirstChild(CGrammar.CLASS_IDENTIFIERS).getLastChild().getTokenValue();
     addIssue(MessageFormat.format("Make this class \"{0}\" override \"Event.clone()\" function.", className), astNode);
   }
 
   private static boolean isCloneFunction(AstNode directive) {
     AstNode functionDef = directive
-      .getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE)
-      .getFirstChild(FlexGrammar.FUNCTION_DEF);
+      .getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE)
+      .getFirstChild(CGrammar.FUNCTION_DEF);
 
     String functionName = Function.getName(functionDef);
 
@@ -69,23 +70,23 @@ public class OverrideEventCloneFunctionCheck extends FlexCheck {
 
   private static String getResultType(AstNode functionDef) {
     AstNode resultType = functionDef
-      .getFirstChild(FlexGrammar.FUNCTION_COMMON)
-      .getFirstChild(FlexGrammar.FUNCTION_SIGNATURE)
-      .getFirstChild(FlexGrammar.RESULT_TYPE);
+      .getFirstChild(CGrammar.FUNCTION_COMMON)
+      .getFirstChild(CGrammar.FUNCTION_SIGNATURE)
+      .getFirstChild(CGrammar.RESULT_TYPE);
 
-    if (resultType != null && resultType.getFirstChild(FlexGrammar.TYPE_EXPR) != null) {
-      return resultType.getFirstChild(FlexGrammar.TYPE_EXPR).getTokenValue();
+    if (resultType != null && resultType.getFirstChild(CGrammar.TYPE_EXPR) != null) {
+      return resultType.getFirstChild(CGrammar.TYPE_EXPR).getTokenValue();
     }
     return null;
   }
 
 
   private static boolean isExtendingEvent(AstNode classDef) {
-    AstNode inheritenceNode = classDef.getFirstChild(FlexGrammar.INHERITENCE);
+    AstNode inheritenceNode = classDef.getFirstChild(CGrammar.INHERITENCE);
 
     if (inheritenceNode != null && inheritenceNode.getFirstChild(CKeyword.EXTENDS) != null) {
-      AstNode qualifiedId = inheritenceNode.getFirstChild(FlexGrammar.TYPE_EXPR).getLastChild();
-      if (qualifiedId.is(FlexGrammar.QUALIFIED_IDENTIFIER) && EVENT_TYPE_NAME.equals(qualifiedId.getTokenValue())) {
+      AstNode qualifiedId = inheritenceNode.getFirstChild(CGrammar.TYPE_EXPR).getLastChild();
+      if (qualifiedId.is(CGrammar.QUALIFIED_IDENTIFIER) && EVENT_TYPE_NAME.equals(qualifiedId.getTokenValue())) {
         return true;
       }
     }
@@ -97,17 +98,17 @@ public class OverrideEventCloneFunctionCheck extends FlexCheck {
   }
 
   private static boolean isFunctionWithAttributes(AstNode directive) {
-    return directive.getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE) != null
-      && directive.getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE).getFirstChild().is(FlexGrammar.FUNCTION_DEF)
-      && directive.getFirstChild(FlexGrammar.ATTRIBUTES) != null;
+    return directive.getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE) != null
+      && directive.getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE).getFirstChild().is(CGrammar.FUNCTION_DEF)
+      && directive.getFirstChild(CGrammar.ATTRIBUTES) != null;
   }
 
   private static boolean isOverriding(AstNode directive) {
-    for (AstNode attribute : directive.getFirstChild(FlexGrammar.ATTRIBUTES).getChildren()) {
+    for (AstNode attribute : directive.getFirstChild(CGrammar.ATTRIBUTES).getChildren()) {
 
-      if (attribute.getFirstChild().is(FlexGrammar.ATTRIBUTE_EXPR)
+      if (attribute.getFirstChild().is(CGrammar.ATTRIBUTE_EXPR)
         && attribute.getFirstChild().getNumberOfChildren() == 1
-        && attribute.getFirstChild().getFirstChild(FlexGrammar.IDENTIFIER).getTokenValue().equals(CKeyword.OVERRIDE.getValue())) {
+        && attribute.getFirstChild().getFirstChild(CGrammar.IDENTIFIER).getTokenValue().equals(CKeyword.OVERRIDE.getValue())) {
         return true;
       }
     }

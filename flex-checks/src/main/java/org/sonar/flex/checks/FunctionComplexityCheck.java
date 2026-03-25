@@ -20,14 +20,15 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Arrays;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.metrics.ComplexityVisitor;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.metrics.ComplexityVisitor;
 
 @Rule(key = "FunctionComplexity")
-public class FunctionComplexityCheck extends FlexCheck {
+public class FunctionComplexityCheck extends CCheck {
 
   private static final int DEFAULT_MAXIMUM_FUNCTION_COMPLEXITY_THRESHOLD = 10;
 
@@ -39,7 +40,7 @@ public class FunctionComplexityCheck extends FlexCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Arrays.asList(FlexGrammar.FUNCTION_DEF, FlexGrammar.FUNCTION_EXPR);
+    return Arrays.asList(CGrammar.FUNCTION_DEF, CGrammar.FUNCTION_EXPR);
   }
 
   @Override

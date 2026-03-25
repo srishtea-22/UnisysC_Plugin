@@ -21,14 +21,15 @@ import com.sonar.sslr.api.AstNodeType;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.metrics.FileLinesVisitor;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.metrics.FileLinesVisitor;
 
 @Rule(key = "S1151")
-public class TooManyLinesInCaseCheck extends FlexCheck {
+public class TooManyLinesInCaseCheck extends CCheck {
 
   private static final int DEFAULT = 5;
 
@@ -41,7 +42,7 @@ public class TooManyLinesInCaseCheck extends FlexCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CASE_ELEMENT);
+    return Collections.singletonList(CGrammar.CASE_ELEMENT);
   }
 
   @Override
@@ -50,7 +51,7 @@ public class TooManyLinesInCaseCheck extends FlexCheck {
     linesVisitor.scanNode(astNode);
 
     // Lines which contain case labels are not taken into account in LoC
-    List<AstNode> children = astNode.getChildren(FlexGrammar.CASE_LABEL);
+    List<AstNode> children = astNode.getChildren(CGrammar.CASE_LABEL);
     AstNode firstLabelNode = children.get(0);
     AstNode lastLabelNode = children.get(children.size() - 1);
     int caseLabelLines = lastLabelNode.getTokenLine() - firstLabelNode.getTokenLine();

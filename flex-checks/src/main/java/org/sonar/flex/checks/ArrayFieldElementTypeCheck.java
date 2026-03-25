@@ -21,19 +21,20 @@ import com.sonar.sslr.api.AstNodeType;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 import org.sonar.flex.checks.utils.Clazz;
 import org.sonar.flex.checks.utils.MetadataTag;
 import org.sonar.flex.checks.utils.Variable;
 
 @Rule(key = "S1469")
-public class ArrayFieldElementTypeCheck extends FlexCheck {
+public class ArrayFieldElementTypeCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override
@@ -42,10 +43,10 @@ public class ArrayFieldElementTypeCheck extends FlexCheck {
 
       if (Variable.isVariable(directive)) {
         AstNode varBindingList = directive
-          .getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE)
-          .getFirstChild(FlexGrammar.VARIABLE_DECLARATION_STATEMENT)
-          .getFirstChild(FlexGrammar.VARIABLE_DEF)
-          .getFirstChild(FlexGrammar.VARIABLE_BINDING_LIST);
+          .getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE)
+          .getFirstChild(CGrammar.VARIABLE_DECLARATION_STATEMENT)
+          .getFirstChild(CGrammar.VARIABLE_DEF)
+          .getFirstChild(CGrammar.VARIABLE_BINDING_LIST);
 
         checkVarBindingList(varBindingList, directive);
       }
@@ -54,23 +55,23 @@ public class ArrayFieldElementTypeCheck extends FlexCheck {
   }
 
   private void checkVarBindingList(AstNode varBindingList, AstNode directive) {
-    for (AstNode varBinding : varBindingList.getChildren(FlexGrammar.VARIABLE_BINDING)) {
+    for (AstNode varBinding : varBindingList.getChildren(CGrammar.VARIABLE_BINDING)) {
 
       if (!hasInitialisation(varBinding) && isArray(varBinding) && !hasArrayTypeTag(directive)) {
         String message = MessageFormat.format(
           "Define the element type for this ''{0}'' array",
-          varBinding.getFirstChild(FlexGrammar.TYPED_IDENTIFIER).getFirstChild(FlexGrammar.IDENTIFIER).getTokenValue());
+          varBinding.getFirstChild(CGrammar.TYPED_IDENTIFIER).getFirstChild(CGrammar.IDENTIFIER).getTokenValue());
         addIssue(message, varBinding);
       }
     }
   }
 
   private static boolean hasInitialisation(AstNode varBinding) {
-    return varBinding.getFirstChild(FlexGrammar.VARIABLE_INITIALISATION) != null;
+    return varBinding.getFirstChild(CGrammar.VARIABLE_INITIALISATION) != null;
   }
 
   private static boolean isArray(AstNode varBinding) {
-    AstNode typeExpr = varBinding.getFirstChild(FlexGrammar.TYPED_IDENTIFIER).getFirstChild(FlexGrammar.TYPE_EXPR);
+    AstNode typeExpr = varBinding.getFirstChild(CGrammar.TYPED_IDENTIFIER).getFirstChild(CGrammar.TYPE_EXPR);
 
     return typeExpr != null
       && typeExpr.getNumberOfChildren() == 1
@@ -81,7 +82,7 @@ public class ArrayFieldElementTypeCheck extends FlexCheck {
     AstNode previousDirective = directive.getPreviousAstNode();
 
     while (previousDirective != null && MetadataTag.isMetadataTag(previousDirective)) {
-      if (MetadataTag.isTag(previousDirective.getFirstChild().getFirstChild(FlexGrammar.METADATA_STATEMENT), "ArrayElementType")) {
+      if (MetadataTag.isTag(previousDirective.getFirstChild().getFirstChild(CGrammar.METADATA_STATEMENT), "ArrayElementType")) {
         return true;
       }
       previousDirective = previousDirective.getPreviousAstNode();

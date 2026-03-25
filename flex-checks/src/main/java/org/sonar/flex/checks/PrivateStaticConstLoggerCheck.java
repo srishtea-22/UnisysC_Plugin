@@ -24,16 +24,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 import org.sonar.flex.checks.utils.Clazz;
 import org.sonar.flex.checks.utils.Modifiers;
 
 @Rule(key = "S1312")
-public class PrivateStaticConstLoggerCheck extends FlexCheck {
+public class PrivateStaticConstLoggerCheck extends CCheck {
 
   private static final String DEFAULT = "LOG(?:GER)?";
   private Pattern pattern = null;
@@ -46,7 +47,7 @@ public class PrivateStaticConstLoggerCheck extends FlexCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override
@@ -62,9 +63,9 @@ public class PrivateStaticConstLoggerCheck extends FlexCheck {
 
       if (isVariableDeclaration(directive)) {
         AstNode variableDef = directive
-          .getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE)
-          .getFirstChild(FlexGrammar.VARIABLE_DECLARATION_STATEMENT)
-          .getFirstChild(FlexGrammar.VARIABLE_DEF);
+          .getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE)
+          .getFirstChild(CGrammar.VARIABLE_DECLARATION_STATEMENT)
+          .getFirstChild(CGrammar.VARIABLE_DEF);
 
         visitVariableDefinition(directive, variableDef);
       }
@@ -72,12 +73,12 @@ public class PrivateStaticConstLoggerCheck extends FlexCheck {
   }
 
   private void visitVariableDefinition(AstNode directive, AstNode variableDef) {
-    for (AstNode variableBindingNode : variableDef.getFirstChild(FlexGrammar.VARIABLE_BINDING_LIST).getChildren(FlexGrammar.VARIABLE_BINDING)) {
+    for (AstNode variableBindingNode : variableDef.getFirstChild(CGrammar.VARIABLE_BINDING_LIST).getChildren(CGrammar.VARIABLE_BINDING)) {
       if (isILogger(variableBindingNode)) {
         AstNode identifierNode = variableBindingNode
-          .getFirstChild(FlexGrammar.TYPED_IDENTIFIER)
-          .getFirstChild(FlexGrammar.IDENTIFIER);
-        Set<AstNodeType> modifiers = Modifiers.getModifiers(directive.getFirstChild(FlexGrammar.ATTRIBUTES));
+          .getFirstChild(CGrammar.TYPED_IDENTIFIER)
+          .getFirstChild(CGrammar.IDENTIFIER);
+        Set<AstNodeType> modifiers = Modifiers.getModifiers(directive.getFirstChild(CGrammar.ATTRIBUTES));
         boolean isPrivateStaticConst = modifiers.contains(CKeyword.PRIVATE) && modifiers.contains(CKeyword.STATIC) && isConst(variableDef);
 
         reportIssue(isPrivateStaticConst, pattern.matcher(identifierNode.getTokenValue()).matches(), variableBindingNode);
@@ -99,18 +100,18 @@ public class PrivateStaticConstLoggerCheck extends FlexCheck {
 
   private static boolean isILogger(AstNode variableBinding) {
     AstNode typeExpr = variableBinding
-      .getFirstChild(FlexGrammar.TYPED_IDENTIFIER)
-      .getFirstChild(FlexGrammar.TYPE_EXPR);
+      .getFirstChild(CGrammar.TYPED_IDENTIFIER)
+      .getFirstChild(CGrammar.TYPE_EXPR);
 
     return typeExpr != null && "ILogger".equals(typeExpr.getTokenValue());
   }
 
   private static boolean isConst(AstNode variableDef) {
-    return variableDef.getFirstChild(FlexGrammar.VARIABLE_DEF_KIND).getFirstChild().is(CKeyword.CONST);
+    return variableDef.getFirstChild(CGrammar.VARIABLE_DEF_KIND).getFirstChild().is(CKeyword.CONST);
   }
 
   private static boolean isVariableDeclaration(AstNode directive) {
-    return directive.getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE) != null &&
-      directive.getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE).getFirstChild().is(FlexGrammar.VARIABLE_DECLARATION_STATEMENT);
+    return directive.getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE) != null &&
+      directive.getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE).getFirstChild().is(CGrammar.VARIABLE_DECLARATION_STATEMENT);
   }
 }

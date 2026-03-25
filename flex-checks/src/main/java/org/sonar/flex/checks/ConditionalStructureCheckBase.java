@@ -23,10 +23,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 
-public abstract class ConditionalStructureCheckBase extends FlexCheck {
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+
+public abstract class ConditionalStructureCheckBase extends CCheck {
   private Set<AstNode> visitedIfStatements = new HashSet<>();
   @Override
   public void visitFile(@Nullable AstNode node) {
@@ -35,13 +36,13 @@ public abstract class ConditionalStructureCheckBase extends FlexCheck {
   @Override
   public List<AstNodeType> subscribedTo() {
     return Arrays.asList(
-      FlexGrammar.IF_STATEMENT,
-      FlexGrammar.SWITCH_STATEMENT);
+      CGrammar.IF_STATEMENT,
+      CGrammar.SWITCH_STATEMENT);
   }
   @Override
   public void visitNode(AstNode node) {
     ConditionalStructure conditionalStructure;
-    if (node.is(FlexGrammar.IF_STATEMENT)) {
+    if (node.is(CGrammar.IF_STATEMENT)) {
       if (!visitedIfStatements.add(node)) {
         return;
       }

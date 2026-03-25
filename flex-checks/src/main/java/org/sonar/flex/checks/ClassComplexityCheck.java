@@ -20,15 +20,16 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.metrics.ComplexityVisitor;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.metrics.ComplexityVisitor;
 
 @Rule(key = "ClassComplexity")
 @Deprecated
-public class ClassComplexityCheck extends FlexCheck {
+public class ClassComplexityCheck extends CCheck {
 
   private static final int DEFAULT_MAXIMUM_CLASS_COMPLEXITY_THRESHOLD = 80;
 
@@ -40,7 +41,7 @@ public class ClassComplexityCheck extends FlexCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override

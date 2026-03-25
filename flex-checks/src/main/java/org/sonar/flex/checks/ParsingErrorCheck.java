@@ -22,11 +22,12 @@ import com.sonar.sslr.api.RecognitionException;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
 
 @Rule(key = "ParsingError")
-public class ParsingErrorCheck extends FlexCheck {
+public class ParsingErrorCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {

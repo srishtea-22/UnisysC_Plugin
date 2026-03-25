@@ -21,13 +21,14 @@ import com.sonar.sslr.api.AstNodeType;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 
 @Rule(key = "S107")
-public class FunctionWithTooManyParametersCheck extends FlexCheck {
+public class FunctionWithTooManyParametersCheck extends CCheck {
 
   private static final int DEFAULT = 7;
   @RuleProperty(
@@ -38,12 +39,12 @@ public class FunctionWithTooManyParametersCheck extends FlexCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.PARAMETERS);
+    return Collections.singletonList(CGrammar.PARAMETERS);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
-    int nbParameters = astNode.getChildren(FlexGrammar.PARAMETER, FlexGrammar.REST_PARAMETERS).size();
+    int nbParameters = astNode.getChildren(CGrammar.PARAMETER, CGrammar.REST_PARAMETERS).size();
     if (nbParameters > max) {
       addIssue(
         MessageFormat.format("This function has {0,number,integer} parameters, which is greater than the {1,number,integer} authorized.", nbParameters, max),

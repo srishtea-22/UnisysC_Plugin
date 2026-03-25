@@ -25,10 +25,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CCommentAnalyser;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexCommentAnalyser;
-import org.sonar.flex.api.CKeyword;
 import org.sonarsource.analyzer.commons.recognizers.CodeRecognizer;
 import org.sonarsource.analyzer.commons.recognizers.ContainsDetector;
 import org.sonarsource.analyzer.commons.recognizers.Detector;
@@ -37,7 +38,7 @@ import org.sonarsource.analyzer.commons.recognizers.KeywordsDetector;
 import org.sonarsource.analyzer.commons.recognizers.LanguageFootprint;
 
 @Rule(key = "CommentedCode")
-public class CommentedCodeCheck extends FlexCheck {
+public class CommentedCodeCheck extends CCheck {
 
   private static final double THRESHOLD = 0.9;
 
@@ -66,7 +67,7 @@ public class CommentedCodeCheck extends FlexCheck {
   @Override
   public void visitToken(Token token) {
     for (Trivia trivia : token.getTrivia()) {
-      String[] lines = regexpToDivideStringByLine.split(FlexCommentAnalyser.getContents(trivia.getToken().getOriginalValue()));
+      String[] lines = regexpToDivideStringByLine.split(CCommentAnalyser.getContents(trivia.getToken().getOriginalValue()));
       for (int lineOffset = 0; lineOffset < lines.length; lineOffset++) {
         if (codeRecognizer.isLineOfCode(lines[lineOffset])) {
           addIssueAtLine("Sections of code should not be \"commented out\".", trivia.getToken().getLine() + lineOffset);

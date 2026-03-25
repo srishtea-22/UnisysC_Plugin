@@ -20,28 +20,29 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 
 @Rule(key = "S1145")
-public class IfConditionAlwaysTrueOrFalseCheck extends FlexCheck {
+public class IfConditionAlwaysTrueOrFalseCheck extends CCheck {
 
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.IF_STATEMENT);
+    return Collections.singletonList(CGrammar.IF_STATEMENT);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
-    AstNode conditionalExpr = astNode.getFirstChild(FlexGrammar.PARENTHESIZED_LIST_EXPR).getFirstChild(FlexGrammar.LIST_EXPRESSION);
+    AstNode conditionalExpr = astNode.getFirstChild(CGrammar.PARENTHESIZED_LIST_EXPR).getFirstChild(CGrammar.LIST_EXPRESSION);
     if (conditionalExpr.getChildren().size() == 1) {
 
       AstNode condition = conditionalExpr.getFirstChild().getFirstChild();
-      if ((condition.is(FlexGrammar.POSTFIX_EXPR)
-        && condition.getFirstChild().is(FlexGrammar.PRIMARY_EXPR)
+      if ((condition.is(CGrammar.POSTFIX_EXPR)
+        && condition.getFirstChild().is(CGrammar.PRIMARY_EXPR)
         && condition.getFirstChild().getFirstChild().is(CKeyword.TRUE))
         || condition.getFirstChild().getFirstChild().is(CKeyword.FALSE)) {
 

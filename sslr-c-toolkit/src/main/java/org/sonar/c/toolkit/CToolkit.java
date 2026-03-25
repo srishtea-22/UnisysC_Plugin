@@ -20,14 +20,15 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.api.CKeyword;
+import org.sonar.c.parser.CParser;
 import org.sonar.colorizer.CDocTokenizer;
 import org.sonar.colorizer.CppDocTokenizer;
 import org.sonar.colorizer.JavadocTokenizer;
 import org.sonar.colorizer.KeywordsTokenizer;
 import org.sonar.colorizer.StringTokenizer;
 import org.sonar.colorizer.Tokenizer;
-import org.sonar.flex.api.CKeyword;
-import org.sonar.flex.parser.FlexParser;
 import org.sonar.sslr.toolkit.Toolkit;
 
 public final class CToolkit {
@@ -39,7 +40,7 @@ public final class CToolkit {
 
   public static void main(String[] args) {
     System.setProperty("com.apple.mrj.application.apple.menu.about.name", "SSDK");
-    new Toolkit(FlexParser.create(Charset.defaultCharset()), getTokenizers(), "SSLR Unisys C Toolkit").run();
+    new Toolkit(CParser.create(Charset.defaultCharset()), getTokenizers(), "SSLR Unisys C Toolkit").run();
   }
 
   // Visible for testing

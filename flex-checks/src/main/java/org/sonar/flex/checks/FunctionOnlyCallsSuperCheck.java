@@ -24,18 +24,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 import org.sonar.flex.checks.utils.Function;
 
 @Rule(key = "S1185")
-public class FunctionOnlyCallsSuperCheck extends FlexCheck {
+public class FunctionOnlyCallsSuperCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.FUNCTION_DEF);
+    return Collections.singletonList(CGrammar.FUNCTION_DEF);
   }
 
   @Override
@@ -49,7 +50,7 @@ public class FunctionOnlyCallsSuperCheck extends FlexCheck {
       List<String> parameters = getParametersName(astNode);
       String methodName = Function.getName(astNode);
 
-      if (isUselessCallToSuper(singleDirectiveNode.getFirstChild(FlexGrammar.STATEMENT), methodName, parameters)
+      if (isUselessCallToSuper(singleDirectiveNode.getFirstChild(CGrammar.STATEMENT), methodName, parameters)
         && !hasMetadataTag(astNode.getParent().getParent().getPreviousAstNode())) {
         addIssue(MessageFormat.format("Remove this method \"{0}\" to simply inherit it.", methodName), astNode);
       }
@@ -57,38 +58,38 @@ public class FunctionOnlyCallsSuperCheck extends FlexCheck {
   }
 
   private static boolean hasMetadataTag(AstNode directive) {
-    return directive.getFirstChild().is(FlexGrammar.STATEMENT)
-      && directive.getFirstChild().getFirstChild().is(FlexGrammar.METADATA_STATEMENT);
+    return directive.getFirstChild().is(CGrammar.STATEMENT)
+      && directive.getFirstChild().getFirstChild().is(CGrammar.METADATA_STATEMENT);
   }
 
   private static AstNode getSingleStatementBlock(AstNode functionDef) {
-    AstNode functionBlock = functionDef.getFirstChild(FlexGrammar.FUNCTION_COMMON).getFirstChild(FlexGrammar.BLOCK);
+    AstNode functionBlock = functionDef.getFirstChild(CGrammar.FUNCTION_COMMON).getFirstChild(CGrammar.BLOCK);
 
-    if (functionBlock != null && functionBlock.getFirstChild(FlexGrammar.DIRECTIVES).getNumberOfChildren() == 1) {
-      return functionBlock.getFirstChild(FlexGrammar.DIRECTIVES).getFirstChild();
+    if (functionBlock != null && functionBlock.getFirstChild(CGrammar.DIRECTIVES).getNumberOfChildren() == 1) {
+      return functionBlock.getFirstChild(CGrammar.DIRECTIVES).getFirstChild();
     }
     return null;
   }
 
   private static boolean isSuperReference(AstNode statement) {
-    return statement.getFirstChild(FlexGrammar.EXPRESSION_STATEMENT) != null
+    return statement.getFirstChild(CGrammar.EXPRESSION_STATEMENT) != null
       && isSuperExpression(statement.getFirstChild().getFirstChild().getFirstChild());
   }
 
   private static boolean isSuperExpression(AstNode listExpression) {
-    AstNode postfixExpr = listExpression.getFirstChild(FlexGrammar.ASSIGNMENT_EXPR).getFirstChild(FlexGrammar.POSTFIX_EXPR);
+    AstNode postfixExpr = listExpression.getFirstChild(CGrammar.ASSIGNMENT_EXPR).getFirstChild(CGrammar.POSTFIX_EXPR);
 
-    return postfixExpr != null && postfixExpr.getFirstChild(FlexGrammar.SUPER_EXPR) != null;
+    return postfixExpr != null && postfixExpr.getFirstChild(CGrammar.SUPER_EXPR) != null;
   }
 
   private static boolean isReturnOfSuperReference(AstNode statement) {
-    return statement.getFirstChild().is(FlexGrammar.RETURN_STATEMENT)
-      && statement.getFirstChild().getFirstChild(FlexGrammar.LIST_EXPRESSION) != null
-      && isSuperExpression(statement.getFirstChild().getFirstChild(FlexGrammar.LIST_EXPRESSION));
+    return statement.getFirstChild().is(CGrammar.RETURN_STATEMENT)
+      && statement.getFirstChild().getFirstChild(CGrammar.LIST_EXPRESSION) != null
+      && isSuperExpression(statement.getFirstChild().getFirstChild(CGrammar.LIST_EXPRESSION));
   }
 
   private static boolean isSuperOrReturnOfSuperReference(AstNode directiveChild) {
-    return directiveChild.is(FlexGrammar.STATEMENT) && (isSuperReference(directiveChild) || isReturnOfSuperReference(directiveChild));
+    return directiveChild.is(CGrammar.STATEMENT) && (isSuperReference(directiveChild) || isReturnOfSuperReference(directiveChild));
 
 
   }
@@ -102,12 +103,12 @@ public class FunctionOnlyCallsSuperCheck extends FlexCheck {
   }
 
   private static boolean isOverridingParentFunction(@Nullable AstNode attributesNode) {
-    if (attributesNode != null && attributesNode.is(FlexGrammar.ATTRIBUTES)) {
+    if (attributesNode != null && attributesNode.is(CGrammar.ATTRIBUTES)) {
 
       for (AstNode attribute : attributesNode.getChildren()) {
-        if (attribute.getFirstChild().is(FlexGrammar.ATTRIBUTE_EXPR)
+        if (attribute.getFirstChild().is(CGrammar.ATTRIBUTE_EXPR)
           && attribute.getFirstChild().getNumberOfChildren() == 1
-          && attribute.getFirstChild().getFirstChild(FlexGrammar.IDENTIFIER).getTokenValue().equals(CKeyword.OVERRIDE.getValue())) {
+          && attribute.getFirstChild().getFirstChild(CGrammar.IDENTIFIER).getTokenValue().equals(CKeyword.OVERRIDE.getValue())) {
           return true;
         }
       }

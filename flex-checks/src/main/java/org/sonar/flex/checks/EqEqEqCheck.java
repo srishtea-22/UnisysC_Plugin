@@ -20,12 +20,13 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Arrays;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.api.CPunctuator;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.api.CPunctuator;
 
 @Rule(key = "S1440")
-public class EqEqEqCheck extends FlexCheck {
+public class EqEqEqCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {

@@ -48,14 +48,14 @@ import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.Version;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexVisitorContext;
-import org.sonar.flex.Issue;
+import org.sonar.c.CCheck;
+import org.sonar.c.CVisitorContext;
+import org.sonar.c.Issue;
+import org.sonar.c.lexer.CLexer;
+import org.sonar.c.metrics.ComplexityVisitor;
+import org.sonar.c.metrics.FileMetrics;
+import org.sonar.c.parser.CParser;
 import org.sonar.flex.checks.CheckList;
-import org.sonar.flex.lexer.CLexer;
-import org.sonar.flex.metrics.ComplexityVisitor;
-import org.sonar.flex.metrics.FileMetrics;
-import org.sonar.flex.parser.FlexParser;
 import org.sonar.plugins.c.core.C;
 import org.sonar.sslr.parser.LexerlessGrammar;
 import org.sonarsource.analyzer.commons.ProgressReport;
@@ -65,13 +65,13 @@ public class CSquidSensor implements Sensor {
   private static final Logger LOG = Loggers.get(CSquidSensor.class);
 
   private final SonarRuntime sonarRuntime;
-  private final Checks<FlexCheck> checks;
+  private final Checks<CCheck> checks;
   private final FileLinesContextFactory fileLinesContextFactory;
 
   public CSquidSensor(SonarRuntime sonarRuntime, CheckFactory checkFactory, FileLinesContextFactory fileLinesContextFactory) {
     this.sonarRuntime = sonarRuntime;
     this.checks = checkFactory
-      .<FlexCheck>create(CheckList.REPOSITORY_KEY)
+      .<CCheck>create(CheckList.REPOSITORY_KEY)
       .addAnnotatedChecks(CheckList.getChecks());
     this.fileLinesContextFactory = fileLinesContextFactory;
   }
@@ -131,25 +131,25 @@ public class CSquidSensor implements Sensor {
       throw new IllegalStateException("Cannot read " + inputFile, e);
     }
 
-    Parser<LexerlessGrammar> parser = FlexParser.create(charset);
-    FlexVisitorContext visitorContext;
+    Parser<LexerlessGrammar> parser = CParser.create(charset);
+    CVisitorContext visitorContext;
     try {
-      visitorContext = new FlexVisitorContext(fileContent, parser.parse(fileContent));
+      visitorContext = new CVisitorContext(fileContent, parser.parse(fileContent));
       saveMeasures(context, inputFile, visitorContext);
     } catch (RecognitionException e) {
-      visitorContext = new FlexVisitorContext(fileContent, e);
+      visitorContext = new CVisitorContext(fileContent, e);
       LOG.error("Unable to parse file: {}", inputFile);
       LOG.error(e.getMessage());
     }
 
-    for (FlexCheck check : checks.all()) {
+    for (CCheck check : checks.all()) {
       saveIssues(context, check, check.scanFileForIssues(visitorContext), inputFile);
     }
 
     new CTokensVisitor(context, CLexer.create(charset), inputFile).scanFile(visitorContext);
   }
 
-  private void saveIssues(SensorContext context, FlexCheck check, List<Issue> issues, InputFile inputFile) {
+  private void saveIssues(SensorContext context, CCheck check, List<Issue> issues, InputFile inputFile) {
     for (Issue flexIssue : issues) {
       RuleKey ruleKey = checks.ruleKey(check);
       NewIssue issue = context.newIssue();
@@ -168,7 +168,7 @@ public class CSquidSensor implements Sensor {
     }
   }
 
-  private void saveMeasures(SensorContext context, InputFile inputFile, FlexVisitorContext visitorContext) {
+  private void saveMeasures(SensorContext context, InputFile inputFile, CVisitorContext visitorContext) {
     FileMetrics metrics = new FileMetrics(visitorContext);
     saveMeasure(context, inputFile, CoreMetrics.NCLOC, metrics.linesOfCode().size());
     saveMeasure(context, inputFile, CoreMetrics.COMMENT_LINES, metrics.commentLines().size());

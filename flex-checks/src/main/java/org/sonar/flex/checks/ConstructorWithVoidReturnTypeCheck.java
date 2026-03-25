@@ -21,18 +21,19 @@ import com.sonar.sslr.api.AstNodeType;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 import org.sonar.flex.checks.utils.Clazz;
 
 @Rule(key = "S1445")
-public class ConstructorWithVoidReturnTypeCheck extends FlexCheck {
+public class ConstructorWithVoidReturnTypeCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override
@@ -40,15 +41,15 @@ public class ConstructorWithVoidReturnTypeCheck extends FlexCheck {
     AstNode constructorDef = Clazz.getConstructor(astNode);
 
     if (constructorDef != null && hasVoidReturnType(constructorDef)) {
-      String className = astNode.getFirstChild(FlexGrammar.CLASS_NAME).getFirstChild(FlexGrammar.CLASS_IDENTIFIERS).getLastChild().getTokenValue();
+      String className = astNode.getFirstChild(CGrammar.CLASS_NAME).getFirstChild(CGrammar.CLASS_IDENTIFIERS).getLastChild().getTokenValue();
       addIssue(MessageFormat.format("Remove the \"void\" return type from this \"{0}\" constructor", className), constructorDef);
     }
   }
 
   private static boolean hasVoidReturnType(AstNode functionDef) {
-    AstNode resultTypeNode = functionDef.getFirstChild(FlexGrammar.FUNCTION_COMMON)
-      .getFirstChild(FlexGrammar.FUNCTION_SIGNATURE)
-      .getFirstChild(FlexGrammar.RESULT_TYPE);
+    AstNode resultTypeNode = functionDef.getFirstChild(CGrammar.FUNCTION_COMMON)
+      .getFirstChild(CGrammar.FUNCTION_SIGNATURE)
+      .getFirstChild(CGrammar.RESULT_TYPE);
 
     return resultTypeNode != null && resultTypeNode.getFirstChild(CKeyword.VOID) != null;
   }

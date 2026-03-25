@@ -20,16 +20,17 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 
 @Rule(key = "WithStatement")
-public class WithStatementCheck extends FlexCheck {
+public class WithStatementCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.WITH_STATEMENT);
+    return Collections.singletonList(CGrammar.WITH_STATEMENT);
   }
 
   @Override

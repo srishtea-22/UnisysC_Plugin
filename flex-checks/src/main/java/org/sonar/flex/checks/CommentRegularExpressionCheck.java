@@ -23,12 +23,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
+
+import org.sonar.c.CCheck;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
 
 @Rule(key = "CommentRegularExpression")
-public class CommentRegularExpressionCheck extends FlexCheck {
+public class CommentRegularExpressionCheck extends CCheck {
 
   private static final String DEFAULT_REGULAR_EXPRESSION = "";
   private static final String DEFAULT_MESSAGE = "The regular expression matches this comment.";

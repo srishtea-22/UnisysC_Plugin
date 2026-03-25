@@ -26,17 +26,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 import org.sonar.flex.checks.utils.Clazz;
 import org.sonar.flex.checks.utils.Function;
 import org.sonar.flex.checks.utils.Modifiers;
 import org.sonar.flex.checks.utils.Variable;
 
 @Rule(key = "S1117")
-public class LocalVarShadowsFieldCheck extends FlexCheck {
+public class LocalVarShadowsFieldCheck extends CCheck {
 
 
   private static class ClassState {
@@ -74,9 +75,9 @@ public class LocalVarShadowsFieldCheck extends FlexCheck {
   @Override
   public List<AstNodeType> subscribedTo() {
     return Arrays.asList(
-      FlexGrammar.CLASS_DEF,
-      FlexGrammar.FUNCTION_DEF,
-      FlexGrammar.VARIABLE_DECLARATION_STATEMENT);
+      CGrammar.CLASS_DEF,
+      CGrammar.FUNCTION_DEF,
+      CGrammar.VARIABLE_DECLARATION_STATEMENT);
   }
 
   @Override
@@ -87,17 +88,17 @@ public class LocalVarShadowsFieldCheck extends FlexCheck {
 
   @Override
   public void visitNode(AstNode node) {
-    if (node.is(FlexGrammar.CLASS_DEF)) {
+    if (node.is(CGrammar.CLASS_DEF)) {
       classStack.push(new ClassState(node));
     } else if (isClassFunctionNotConstructor(node) && !isAccessor(node) && !isStatic(node)) {
       functionNestedLevel++;
-    } else if (!classStack.isEmpty() && functionNestedLevel > 0 && node.is(FlexGrammar.VARIABLE_DECLARATION_STATEMENT)) {
+    } else if (!classStack.isEmpty() && functionNestedLevel > 0 && node.is(CGrammar.VARIABLE_DECLARATION_STATEMENT)) {
       checkVariableNames(node);
     }
   }
 
   private boolean isClassFunctionNotConstructor(AstNode node) {
-    return !classStack.isEmpty() && node.is(FlexGrammar.FUNCTION_DEF)
+    return !classStack.isEmpty() && node.is(CGrammar.FUNCTION_DEF)
       && !Function.isConstructor(node, classStack.peek().getClassName());
   }
 
@@ -124,9 +125,9 @@ public class LocalVarShadowsFieldCheck extends FlexCheck {
 
   @Override
   public void leaveNode(AstNode astNode) {
-    if (astNode.is(FlexGrammar.CLASS_DEF)) {
+    if (astNode.is(CGrammar.CLASS_DEF)) {
       classStack.pop();
-    } else if (!classStack.isEmpty() && astNode.is(FlexGrammar.FUNCTION_DEF) && functionNestedLevel > 0) {
+    } else if (!classStack.isEmpty() && astNode.is(CGrammar.FUNCTION_DEF) && functionNestedLevel > 0) {
       functionNestedLevel--;
     }
   }

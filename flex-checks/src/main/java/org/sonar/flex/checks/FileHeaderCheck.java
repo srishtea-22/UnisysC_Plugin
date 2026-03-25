@@ -24,12 +24,13 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
 
 @Rule(key = "S1451")
-public class FileHeaderCheck extends FlexCheck {
+public class FileHeaderCheck extends CCheck {
 
   private static final String DEFAULT_HEADER_FORMAT = "";
 

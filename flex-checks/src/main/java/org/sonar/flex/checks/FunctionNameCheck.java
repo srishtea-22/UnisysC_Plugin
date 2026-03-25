@@ -25,15 +25,16 @@ import java.util.Deque;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 import org.sonar.flex.checks.utils.Clazz;
 import org.sonar.flex.checks.utils.Function;
 
 @Rule(key = "S100")
-public class FunctionNameCheck extends FlexCheck {
+public class FunctionNameCheck extends CCheck {
 
 
   private static final String DEFAULT = "^[a-z][a-zA-Z0-9]*$";
@@ -50,8 +51,8 @@ public class FunctionNameCheck extends FlexCheck {
   @Override
   public List<AstNodeType> subscribedTo() {
     return Arrays.asList(
-      FlexGrammar.FUNCTION_DEF,
-      FlexGrammar.CLASS_DEF);
+      CGrammar.FUNCTION_DEF,
+      CGrammar.CLASS_DEF);
   }
 
   @Override
@@ -64,7 +65,7 @@ public class FunctionNameCheck extends FlexCheck {
 
   @Override
   public void visitNode(AstNode astNode) {
-    if (astNode.is(FlexGrammar.CLASS_DEF)) {
+    if (astNode.is(CGrammar.CLASS_DEF)) {
       classes.push(Clazz.getName(astNode));
     } else {
       String functionName = Function.getName(astNode);
@@ -77,7 +78,7 @@ public class FunctionNameCheck extends FlexCheck {
 
   @Override
   public void leaveNode(AstNode astNode) {
-    if (astNode.is(FlexGrammar.CLASS_DEF)) {
+    if (astNode.is(CGrammar.CLASS_DEF)) {
       classes.pop();
     }
   }

@@ -22,8 +22,9 @@ import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
+
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.flex.checks.ASDocCheck;
 import org.sonar.flex.checks.utils.Function;
 import org.sonar.flex.checks.utils.Modifiers;
@@ -50,17 +51,17 @@ public class ASDocMemberCheck {
 
   private static void checkMember(ASDocCheck check, List<AstNode> classDirectives) {
     for (AstNode directive : classDirectives) {
-      AstNode annotableDirective = directive.getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE);
+      AstNode annotableDirective = directive.getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE);
 
       if (annotableDirective != null && Modifiers.isPublic(annotableDirective.getPreviousAstNode())) {
         AstNode annotableDirChild = annotableDirective.getFirstChild();
 
         // Fields
-        if (check.properties && annotableDirChild.is(FlexGrammar.VARIABLE_DECLARATION_STATEMENT)) {
+        if (check.properties && annotableDirChild.is(CGrammar.VARIABLE_DECLARATION_STATEMENT)) {
           checkField(check, getTrivia(directive), annotableDirChild);
 
           // Methods
-        } else if (check.methods && annotableDirChild.is(FlexGrammar.FUNCTION_DEF)) {
+        } else if (check.methods && annotableDirChild.is(CGrammar.FUNCTION_DEF)) {
           checkMethod(check, getTrivia(directive), annotableDirChild);
         }
       }
@@ -89,7 +90,7 @@ public class ASDocMemberCheck {
 
   private static boolean isMetadata(AstNode directive) {
     AstNode statementKind = directive.getFirstChild().getFirstChild();
-    return statementKind != null && statementKind.is(FlexGrammar.METADATA_STATEMENT);
+    return statementKind != null && statementKind.is(CGrammar.METADATA_STATEMENT);
   }
 
   /**
@@ -186,9 +187,9 @@ public class ASDocMemberCheck {
 
   private static boolean returnsVoid(AstNode functionDef) {
     AstNode returnType = functionDef
-      .getFirstChild(FlexGrammar.FUNCTION_COMMON)
-      .getFirstChild(FlexGrammar.FUNCTION_SIGNATURE)
-      .getFirstChild(FlexGrammar.RESULT_TYPE);
+      .getFirstChild(CGrammar.FUNCTION_COMMON)
+      .getFirstChild(CGrammar.FUNCTION_SIGNATURE)
+      .getFirstChild(CGrammar.RESULT_TYPE);
 
     if (returnType == null) {
       return true;

@@ -24,18 +24,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 
 @Rule(key = "OneStatementPerLine")
-public class OneStatementPerLineCheck extends FlexCheck {
+public class OneStatementPerLineCheck extends CCheck {
 
   private final Map<Integer, Integer> statementsPerLine = new HashMap<>();
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Arrays.asList(FlexGrammar.STATEMENT, FlexGrammar.VARIABLE_DECLARATION_STATEMENT);
+    return Arrays.asList(CGrammar.STATEMENT, CGrammar.VARIABLE_DECLARATION_STATEMENT);
   }
 
   @Override
@@ -64,9 +65,9 @@ public class OneStatementPerLineCheck extends FlexCheck {
 
   public boolean isExcluded(AstNode astNode) {
     AstNode statementNode = astNode.getFirstChild();
-    return statementNode.is(FlexGrammar.BLOCK)
-      || statementNode.is(FlexGrammar.EMPTY_STATEMENT)
-      || statementNode.is(FlexGrammar.LABELED_STATEMENT);
+    return statementNode.is(CGrammar.BLOCK)
+      || statementNode.is(CGrammar.EMPTY_STATEMENT)
+      || statementNode.is(CGrammar.LABELED_STATEMENT);
   }
 
 }

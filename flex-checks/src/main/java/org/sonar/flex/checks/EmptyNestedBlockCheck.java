@@ -20,32 +20,33 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CPunctuator;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CPunctuator;
 
 @Rule(key = "S108")
-public class EmptyNestedBlockCheck extends FlexCheck {
+public class EmptyNestedBlockCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.BLOCK);
+    return Collections.singletonList(CGrammar.BLOCK);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
-    if (!astNode.getFirstChild(FlexGrammar.DIRECTIVES).hasChildren() && isNested(astNode) && !hasComment(astNode)) {
+    if (!astNode.getFirstChild(CGrammar.DIRECTIVES).hasChildren() && isNested(astNode) && !hasComment(astNode)) {
       addIssue("Either remove or fill this block of code.", astNode);
     }
   }
 
   private static boolean isNested(AstNode blockNode) {
     return !blockNode.getParent().is(
-      FlexGrammar.CLASS_DEF,
-      FlexGrammar.INTERFACE_DEF,
-      FlexGrammar.PACKAGE_DEF,
-      FlexGrammar.FUNCTION_COMMON);
+      CGrammar.CLASS_DEF,
+      CGrammar.INTERFACE_DEF,
+      CGrammar.PACKAGE_DEF,
+      CGrammar.FUNCTION_COMMON);
   }
 
   private static boolean hasComment(AstNode blockNode) {

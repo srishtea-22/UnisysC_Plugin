@@ -19,8 +19,9 @@ package org.sonar.flex.checks.utils;
 import com.sonar.sslr.api.AstNode;
 import java.util.ArrayList;
 import java.util.List;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
+
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 
 public final class Variable {
 
@@ -28,24 +29,24 @@ public final class Variable {
   }
 
   public static String getName(AstNode varDeclStatement) {
-    Preconditions.checkState(varDeclStatement.is(FlexGrammar.VARIABLE_DECLARATION_STATEMENT));
+    Preconditions.checkState(varDeclStatement.is(CGrammar.VARIABLE_DECLARATION_STATEMENT));
     return varDeclStatement
-      .getFirstChild(FlexGrammar.VARIABLE_DEF)
-      .getFirstChild(FlexGrammar.VARIABLE_BINDING_LIST)
-      .getFirstChild(FlexGrammar.VARIABLE_BINDING)
-      .getFirstChild(FlexGrammar.TYPED_IDENTIFIER)
-      .getFirstChild(FlexGrammar.IDENTIFIER).getTokenValue();
+      .getFirstChild(CGrammar.VARIABLE_DEF)
+      .getFirstChild(CGrammar.VARIABLE_BINDING_LIST)
+      .getFirstChild(CGrammar.VARIABLE_BINDING)
+      .getFirstChild(CGrammar.TYPED_IDENTIFIER)
+      .getFirstChild(CGrammar.IDENTIFIER).getTokenValue();
   }
 
   public static boolean isVariable(AstNode directive) {
-    Preconditions.checkState(directive.is(FlexGrammar.DIRECTIVE));
-    if (directive.getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE) != null) {
-      AstNode variableDecStmt = directive.getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE).getFirstChild(FlexGrammar.VARIABLE_DECLARATION_STATEMENT);
+    Preconditions.checkState(directive.is(CGrammar.DIRECTIVE));
+    if (directive.getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE) != null) {
+      AstNode variableDecStmt = directive.getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE).getFirstChild(CGrammar.VARIABLE_DECLARATION_STATEMENT);
 
       if (variableDecStmt != null) {
         return variableDecStmt
-          .getFirstChild(FlexGrammar.VARIABLE_DEF)
-          .getFirstChild(FlexGrammar.VARIABLE_DEF_KIND)
+          .getFirstChild(CGrammar.VARIABLE_DEF)
+          .getFirstChild(CGrammar.VARIABLE_DEF_KIND)
           .getFirstChild().is(CKeyword.VAR);
       }
     }
@@ -53,14 +54,14 @@ public final class Variable {
   }
 
   public static boolean isConst(AstNode directive) {
-    Preconditions.checkState(directive.is(FlexGrammar.DIRECTIVE));
-    if (directive.getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE) != null) {
-      AstNode variableDecStmt = directive.getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE).getFirstChild(FlexGrammar.VARIABLE_DECLARATION_STATEMENT);
+    Preconditions.checkState(directive.is(CGrammar.DIRECTIVE));
+    if (directive.getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE) != null) {
+      AstNode variableDecStmt = directive.getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE).getFirstChild(CGrammar.VARIABLE_DECLARATION_STATEMENT);
 
       if (variableDecStmt != null) {
         return variableDecStmt
-          .getFirstChild(FlexGrammar.VARIABLE_DEF)
-          .getFirstChild(FlexGrammar.VARIABLE_DEF_KIND)
+          .getFirstChild(CGrammar.VARIABLE_DEF)
+          .getFirstChild(CGrammar.VARIABLE_DEF_KIND)
           .getFirstChild().is(CKeyword.CONST);
       }
     }
@@ -68,15 +69,15 @@ public final class Variable {
   }
 
   public static List<AstNode> getDeclaredIdentifiers(AstNode varDeclStatement) {
-    Preconditions.checkState(varDeclStatement.is(FlexGrammar.VARIABLE_DECLARATION_STATEMENT));
+    Preconditions.checkState(varDeclStatement.is(CGrammar.VARIABLE_DECLARATION_STATEMENT));
     List<AstNode> identifiers = new ArrayList<>();
-    if (varDeclStatement.is(FlexGrammar.VARIABLE_DECLARATION_STATEMENT)) {
+    if (varDeclStatement.is(CGrammar.VARIABLE_DECLARATION_STATEMENT)) {
       AstNode varBindingList = varDeclStatement
-        .getFirstChild(FlexGrammar.VARIABLE_DEF)
-        .getFirstChild(FlexGrammar.VARIABLE_BINDING_LIST);
+        .getFirstChild(CGrammar.VARIABLE_DEF)
+        .getFirstChild(CGrammar.VARIABLE_BINDING_LIST);
 
-      for (AstNode varBinding : varBindingList.getChildren(FlexGrammar.VARIABLE_BINDING)) {
-        identifiers.add(varBinding.getFirstChild(FlexGrammar.TYPED_IDENTIFIER).getFirstChild(FlexGrammar.IDENTIFIER));
+      for (AstNode varBinding : varBindingList.getChildren(CGrammar.VARIABLE_BINDING)) {
+        identifiers.add(varBinding.getFirstChild(CGrammar.TYPED_IDENTIFIER).getFirstChild(CGrammar.IDENTIFIER));
       }
     }
     return identifiers;

@@ -21,18 +21,19 @@ import com.sonar.sslr.api.AstNodeType;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 import org.sonar.flex.checks.utils.Clazz;
 import org.sonar.flex.checks.utils.Function;
 
 @Rule(key = "S1447")
-public class ConstructorNotLightweightCheck extends FlexCheck {
+public class ConstructorNotLightweightCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override
@@ -47,11 +48,11 @@ public class ConstructorNotLightweightCheck extends FlexCheck {
   }
 
   private static boolean containsBranch(AstNode constructorDef) {
-    AstNode blockNode = constructorDef.getFirstChild(FlexGrammar.FUNCTION_COMMON).getFirstChild(FlexGrammar.BLOCK);
+    AstNode blockNode = constructorDef.getFirstChild(CGrammar.FUNCTION_COMMON).getFirstChild(CGrammar.BLOCK);
 
     if (blockNode != null) {
 
-      for (AstNode directive : blockNode.getFirstChild(FlexGrammar.DIRECTIVES).getChildren()) {
+      for (AstNode directive : blockNode.getFirstChild(CGrammar.DIRECTIVES).getChildren()) {
         if (isBranch(directive)) {
           return true;
         }
@@ -62,13 +63,13 @@ public class ConstructorNotLightweightCheck extends FlexCheck {
 
   private static boolean isBranch(AstNode directive) {
     AstNode astNode = directive.getFirstChild();
-    return astNode.is(FlexGrammar.STATEMENT)
+    return astNode.is(CGrammar.STATEMENT)
       && astNode.getFirstChild().is(
-      FlexGrammar.IF_STATEMENT,
-      FlexGrammar.SWITCH_STATEMENT,
-      FlexGrammar.DO_STATEMENT,
-      FlexGrammar.WHILE_STATEMENT,
-      FlexGrammar.FOR_STATEMENT);
+      CGrammar.IF_STATEMENT,
+      CGrammar.SWITCH_STATEMENT,
+      CGrammar.DO_STATEMENT,
+      CGrammar.WHILE_STATEMENT,
+      CGrammar.FOR_STATEMENT);
   }
 
 }

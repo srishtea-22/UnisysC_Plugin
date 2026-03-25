@@ -21,8 +21,9 @@ import com.sonar.sslr.api.AstNodeType;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.Nullable;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
+
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 
 public final class Modifiers {
 
@@ -32,14 +33,14 @@ public final class Modifiers {
   public static Set<AstNodeType> getModifiers(@Nullable AstNode attributes) {
     Set<AstNodeType> modifiersSet = new HashSet<>();
 
-    if (attributes != null && attributes.is(FlexGrammar.ATTRIBUTES)) {
-      for (AstNode attribute : attributes.getChildren(FlexGrammar.ATTRIBUTE)) {
+    if (attributes != null && attributes.is(CGrammar.ATTRIBUTES)) {
+      for (AstNode attribute : attributes.getChildren(CGrammar.ATTRIBUTE)) {
 
-        if (attribute.getFirstChild().is(FlexGrammar.RESERVED_NAMESPACE)) {
-          modifiersSet.add(attribute.getFirstChild(FlexGrammar.RESERVED_NAMESPACE).getFirstChild().getType());
+        if (attribute.getFirstChild().is(CGrammar.RESERVED_NAMESPACE)) {
+          modifiersSet.add(attribute.getFirstChild(CGrammar.RESERVED_NAMESPACE).getFirstChild().getType());
 
-        } else if (attribute.getFirstChild().is(FlexGrammar.ATTRIBUTE_EXPR) && attribute.getFirstChild().getNumberOfChildren() == 1) {
-          modifiersSet.add(attribute.getFirstChild().getFirstChild(FlexGrammar.IDENTIFIER).getFirstChild().getType());
+        } else if (attribute.getFirstChild().is(CGrammar.ATTRIBUTE_EXPR) && attribute.getFirstChild().getNumberOfChildren() == 1) {
+          modifiersSet.add(attribute.getFirstChild().getFirstChild(CGrammar.IDENTIFIER).getFirstChild().getType());
         }
       }
     }

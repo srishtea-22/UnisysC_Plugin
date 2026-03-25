@@ -21,30 +21,31 @@ import com.sonar.sslr.api.AstNodeType;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 
 @Rule(key = "S1439")
-public class LabelPlacementCheck extends FlexCheck {
+public class LabelPlacementCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.LABELED_STATEMENT);
+    return Collections.singletonList(CGrammar.LABELED_STATEMENT);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
-    if (!isIterationStatement(astNode.getFirstChild(FlexGrammar.SUB_STATEMENT))) {
-      addIssue(MessageFormat.format("Remove this ''{0}'' label.", astNode.getFirstChild(FlexGrammar.IDENTIFIER).getTokenValue()), astNode);
+    if (!isIterationStatement(astNode.getFirstChild(CGrammar.SUB_STATEMENT))) {
+      addIssue(MessageFormat.format("Remove this ''{0}'' label.", astNode.getFirstChild(CGrammar.IDENTIFIER).getTokenValue()), astNode);
     }
 
   }
 
   private static boolean isIterationStatement(AstNode subStatement) {
     AstNode astNode = subStatement.getFirstChild();
-    return astNode.is(FlexGrammar.STATEMENT)
-      && astNode.getFirstChild().is(FlexGrammar.WHILE_STATEMENT, FlexGrammar.DO_STATEMENT, FlexGrammar.FOR_STATEMENT);
+    return astNode.is(CGrammar.STATEMENT)
+      && astNode.getFirstChild().is(CGrammar.WHILE_STATEMENT, CGrammar.DO_STATEMENT, CGrammar.FOR_STATEMENT);
   }
 
 }

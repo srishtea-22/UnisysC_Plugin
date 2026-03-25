@@ -23,10 +23,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexVisitorContext;
-import org.sonar.flex.Issue;
-import org.sonar.flex.parser.FlexParser;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CVisitorContext;
+import org.sonar.c.Issue;
+import org.sonar.c.parser.CParser;
 import org.sonar.sslr.parser.LexerlessGrammar;
 import org.sonarsource.analyzer.commons.checks.verifier.CommentParser;
 import org.sonarsource.analyzer.commons.checks.verifier.SingleFileVerifier;
@@ -35,29 +36,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FlexVerifier {
 
-  public static void verify(File file, FlexCheck check) {
+  public static void verify(File file, CCheck check) {
     createVerifier(file, check, true).assertOneOrMoreIssues();
   }
 
-  public static void verifyNoIssue(File file, FlexCheck check) {
+  public static void verifyNoIssue(File file, CCheck check) {
     createVerifier(file, check, true).assertNoIssues();
   }
 
-  public static void verifyNoIssueIgnoringExpected(File file, FlexCheck check) {
+  public static void verifyNoIssueIgnoringExpected(File file, CCheck check) {
     createVerifier(file, check, false).assertNoIssues();
   }
 
-  public static void verifySingleIssueOnFile(File file, FlexCheck check, String expectedIssueMessage) {
+  public static void verifySingleIssueOnFile(File file, CCheck check, String expectedIssueMessage) {
     List<Issue> issues = check.scanFileForIssues(createContext(file));
     assertThat(issues).hasSize(1);
     assertThat(issues.get(0).line()).isNull();
     assertThat(issues.get(0).message()).isEqualTo(expectedIssueMessage);
   }
 
-  private static SingleFileVerifier createVerifier(File file, FlexCheck check, boolean addCommentsAsExpectedIssues) {
+  private static SingleFileVerifier createVerifier(File file, CCheck check, boolean addCommentsAsExpectedIssues) {
     SingleFileVerifier verifier = SingleFileVerifier.create(file.toPath(), StandardCharsets.UTF_8);
 
-    FlexVisitorContext context = createContext(file);
+    CVisitorContext context = createContext(file);
 
     for (Issue issue : check.scanFileForIssues(context)) {
       SingleFileVerifier.IssueBuilder issueBuilder = verifier.reportIssue(issue.message());
@@ -79,19 +80,19 @@ public class FlexVerifier {
     return verifier;
   }
 
-  private static FlexVisitorContext createContext(File file) {
-    Parser<LexerlessGrammar> parser = FlexParser.create(StandardCharsets.UTF_8);
+  private static CVisitorContext createContext(File file) {
+    Parser<LexerlessGrammar> parser = CParser.create(StandardCharsets.UTF_8);
     String fileContent;
     try {
       fileContent = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
     } catch (IOException e) {
       throw new IllegalStateException("Cannot read " + file, e);
     }
-    FlexVisitorContext context;
+    CVisitorContext context;
     try {
-      context = new FlexVisitorContext(fileContent, parser.parse(file));
+      context = new CVisitorContext(fileContent, parser.parse(file));
     } catch (RecognitionException e) {
-      context = new FlexVisitorContext(fileContent, e);
+      context = new CVisitorContext(fileContent, e);
     }
     return context;
   }

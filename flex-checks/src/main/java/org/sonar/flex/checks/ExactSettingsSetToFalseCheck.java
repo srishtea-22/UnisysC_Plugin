@@ -22,12 +22,13 @@ import com.sonar.sslr.api.Token;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.api.CKeyword;
 
 @Rule(key = "S1466")
-public class ExactSettingsSetToFalseCheck extends FlexCheck {
+public class ExactSettingsSetToFalseCheck extends CCheck {
 
   private enum State {
     EXPECTING_SECURITY,

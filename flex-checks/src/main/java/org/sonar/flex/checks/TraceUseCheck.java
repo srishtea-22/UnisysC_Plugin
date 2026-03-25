@@ -20,16 +20,17 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 
 @Rule(key = "S1951")
-public class TraceUseCheck extends FlexCheck {
+public class TraceUseCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.POSTFIX_EXPR);
+    return Collections.singletonList(CGrammar.POSTFIX_EXPR);
   }
 
   @Override
@@ -40,7 +41,7 @@ public class TraceUseCheck extends FlexCheck {
   }
 
   private static boolean isFunctionCall(AstNode postfixExpr) {
-    return postfixExpr.getFirstChild().is(FlexGrammar.PRIMARY_EXPR) && postfixExpr.getLastChild().is(FlexGrammar.ARGUMENTS);
+    return postfixExpr.getFirstChild().is(CGrammar.PRIMARY_EXPR) && postfixExpr.getLastChild().is(CGrammar.ARGUMENTS);
   }
 
 }

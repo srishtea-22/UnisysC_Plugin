@@ -23,16 +23,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 import org.sonar.flex.checks.utils.Clazz;
 import org.sonar.flex.checks.utils.Variable;
 
 
 @Rule(key = "S116")
-public class FieldNameCheck extends FlexCheck {
+public class FieldNameCheck extends CCheck {
 
   private static final String DEFAULT = "^[_a-z][a-zA-Z0-9]*$";
   private Pattern pattern = null;
@@ -46,7 +47,7 @@ public class FieldNameCheck extends FlexCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override
@@ -62,8 +63,8 @@ public class FieldNameCheck extends FlexCheck {
 
       if (Variable.isVariable(directive)) {
         AstNode variableDeclStatement = directive
-          .getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE)
-          .getFirstChild(FlexGrammar.VARIABLE_DECLARATION_STATEMENT);
+          .getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE)
+          .getFirstChild(CGrammar.VARIABLE_DECLARATION_STATEMENT);
 
         visitVariableDeclStatement(variableDeclStatement);
       }

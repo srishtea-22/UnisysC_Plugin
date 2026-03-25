@@ -22,12 +22,13 @@ import com.sonar.sslr.api.Token;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 
 @Rule(key = "S4507")
-public class DebugFeaturesCheck extends FlexCheck {
+public class DebugFeaturesCheck extends CCheck {
 
   private enum State {
     EXPECTING_ALERT,
@@ -61,7 +62,7 @@ public class DebugFeaturesCheck extends FlexCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.POSTFIX_EXPR);
+    return Collections.singletonList(CGrammar.POSTFIX_EXPR);
   }
 
   @Override
@@ -87,7 +88,7 @@ public class DebugFeaturesCheck extends FlexCheck {
   }
 
   private static boolean isFunctionCall(AstNode postfixExpr) {
-    return postfixExpr.getFirstChild().is(FlexGrammar.PRIMARY_EXPR) && postfixExpr.getLastChild().is(FlexGrammar.ARGUMENTS);
+    return postfixExpr.getFirstChild().is(CGrammar.PRIMARY_EXPR) && postfixExpr.getLastChild().is(CGrammar.ARGUMENTS);
   }
 
   private static Symbol getSymbol(String value) {

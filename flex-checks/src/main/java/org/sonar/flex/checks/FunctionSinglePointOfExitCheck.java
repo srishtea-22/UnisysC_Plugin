@@ -20,45 +20,46 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Arrays;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 
 @Rule(key = "FunctionSinglePointOfExit")
-public class FunctionSinglePointOfExitCheck extends FlexCheck {
+public class FunctionSinglePointOfExitCheck extends CCheck {
 
   private int returnStatements;
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Arrays.asList(FlexGrammar.FUNCTION_DEF, FlexGrammar.RETURN_STATEMENT);
+    return Arrays.asList(CGrammar.FUNCTION_DEF, CGrammar.RETURN_STATEMENT);
   }
 
   @Override
   public void visitNode(AstNode node) {
-    if (node.is(FlexGrammar.FUNCTION_DEF)) {
+    if (node.is(CGrammar.FUNCTION_DEF)) {
       returnStatements = 0;
-    } else if (node.is(FlexGrammar.RETURN_STATEMENT)) {
+    } else if (node.is(CGrammar.RETURN_STATEMENT)) {
       returnStatements++;
     }
   }
 
   @Override
   public void leaveNode(AstNode node) {
-    if (node.is(FlexGrammar.FUNCTION_DEF) && (returnStatements != 0) && (returnStatements > 1 || !hasReturnAtEnd(node))) {
+    if (node.is(CGrammar.FUNCTION_DEF) && (returnStatements != 0) && (returnStatements > 1 || !hasReturnAtEnd(node))) {
       addIssue("A function shall have a single point of exit at the end of the function.", node);
     }
   }
 
   private static boolean hasReturnAtEnd(AstNode functionDefinitionNode) {
     AstNode lastDirectiveNode = functionDefinitionNode
-      .getFirstChild(FlexGrammar.FUNCTION_COMMON)
-      .getFirstChild(FlexGrammar.BLOCK)
-      .getFirstChild(FlexGrammar.DIRECTIVES)
+      .getFirstChild(CGrammar.FUNCTION_COMMON)
+      .getFirstChild(CGrammar.BLOCK)
+      .getFirstChild(CGrammar.DIRECTIVES)
       .getLastChild();
     if (lastDirectiveNode != null) {
-      AstNode statementNode = lastDirectiveNode.getFirstChild(FlexGrammar.STATEMENT);
-      if (statementNode != null && statementNode.getFirstChild().is(FlexGrammar.RETURN_STATEMENT)) {
+      AstNode statementNode = lastDirectiveNode.getFirstChild(CGrammar.STATEMENT);
+      if (statementNode != null && statementNode.getFirstChild().is(CGrammar.RETURN_STATEMENT)) {
         return true;
       }
     }

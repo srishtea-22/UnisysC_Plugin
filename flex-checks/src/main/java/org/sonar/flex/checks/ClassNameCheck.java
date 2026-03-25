@@ -23,14 +23,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 import org.sonar.flex.checks.utils.Clazz;
 
 @Rule(key = "S101")
-public class ClassNameCheck extends FlexCheck {
+public class ClassNameCheck extends CCheck {
 
   private static final String DEFAULT = "^[A-Z][a-zA-Z0-9]*$";
   private Pattern pattern = null;
@@ -43,7 +44,7 @@ public class ClassNameCheck extends FlexCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override

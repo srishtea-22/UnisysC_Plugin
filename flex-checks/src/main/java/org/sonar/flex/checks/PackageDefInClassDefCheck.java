@@ -20,21 +20,22 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 
 @Rule(key = "S1455")
-public class PackageDefInClassDefCheck extends FlexCheck {
+public class PackageDefInClassDefCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
-    if (astNode.getFirstChild(FlexGrammar.CLASS_NAME).getFirstChild(FlexGrammar.CLASS_IDENTIFIERS).getChildren().size() > 1) {
+    if (astNode.getFirstChild(CGrammar.CLASS_NAME).getFirstChild(CGrammar.CLASS_IDENTIFIERS).getChildren().size() > 1) {
       addIssue("Make the Package definition nest the Class definition", astNode);
     }
 

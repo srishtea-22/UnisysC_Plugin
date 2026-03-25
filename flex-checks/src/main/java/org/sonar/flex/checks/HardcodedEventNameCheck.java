@@ -24,14 +24,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 
 @Rule(key = "S1462")
-public class HardcodedEventNameCheck extends FlexCheck {
+public class HardcodedEventNameCheck extends CCheck {
 
-  private static final Pattern STRING_PATTERN = Pattern.compile(FlexGrammar.STRING_REGEXP);
+  private static final Pattern STRING_PATTERN = Pattern.compile(CGrammar.STRING_REGEXP);
 
   private enum State {
     EXPECTING_ADD_EVENT,

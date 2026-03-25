@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.sonar.flex.FlexGrammar;
+
+import org.sonar.c.CGrammar;
 
 public final class MetadataTag {
 
@@ -29,11 +30,11 @@ public final class MetadataTag {
   }
 
   public static boolean isTag(AstNode metadata, String tagName) {
-    Preconditions.checkState(metadata.is(FlexGrammar.METADATA_STATEMENT));
+    Preconditions.checkState(metadata.is(CGrammar.METADATA_STATEMENT));
     if (isNotEmpty(metadata)) {
       AstNode postfixExpr = metadata
-        .getFirstChild(FlexGrammar.ASSIGNMENT_EXPR)
-        .getFirstChild(FlexGrammar.POSTFIX_EXPR);
+        .getFirstChild(CGrammar.ASSIGNMENT_EXPR)
+        .getFirstChild(CGrammar.POSTFIX_EXPR);
 
       return postfixExpr != null && tagName.equals(postfixExpr.getTokenValue());
     }
@@ -44,21 +45,21 @@ public final class MetadataTag {
   // or
   // [Metadata(tag="property, in, one, string")] --> [property, in, one, string]
   public static List<String> getSinglePropertyAsList(AstNode metadata) {
-    Preconditions.checkState(metadata.is(FlexGrammar.METADATA_STATEMENT));
+    Preconditions.checkState(metadata.is(CGrammar.METADATA_STATEMENT));
     List<String> propertyList = new ArrayList<>();
 
     if (isNotEmpty(metadata) && hasProperty(metadata)) {
       AstNode properties = metadata
-        .getFirstChild(FlexGrammar.ASSIGNMENT_EXPR)
-        .getFirstChild(FlexGrammar.POSTFIX_EXPR)
-        .getFirstChild(FlexGrammar.ARGUMENTS)
-        .getFirstChild(FlexGrammar.LIST_EXPRESSION);
+        .getFirstChild(CGrammar.ASSIGNMENT_EXPR)
+        .getFirstChild(CGrammar.POSTFIX_EXPR)
+        .getFirstChild(CGrammar.ARGUMENTS)
+        .getFirstChild(CGrammar.LIST_EXPRESSION);
 
       if (properties.getNumberOfChildren() == 1) {
-        AstNode assignmentExpr = properties.getFirstChild(FlexGrammar.ASSIGNMENT_EXPR);
+        AstNode assignmentExpr = properties.getFirstChild(CGrammar.ASSIGNMENT_EXPR);
         if (assignmentExpr.getNumberOfChildren() > 1) {
           // Case where assignment expr contains an assignment operation
-          assignmentExpr = assignmentExpr.getFirstChild(FlexGrammar.ASSIGNMENT_EXPR);
+          assignmentExpr = assignmentExpr.getFirstChild(CGrammar.ASSIGNMENT_EXPR);
         }
         String singleProperty = assignmentExpr.getTokenValue();
         for (String property : singleProperty.substring(1, singleProperty.length() - 1).split(",")) {
@@ -70,20 +71,20 @@ public final class MetadataTag {
   }
 
   public static Map<String, String> getTagPropertiesMap(AstNode metadata) {
-    Preconditions.checkState(metadata.is(FlexGrammar.METADATA_STATEMENT));
+    Preconditions.checkState(metadata.is(CGrammar.METADATA_STATEMENT));
     if (isNotEmpty(metadata) && hasProperty(metadata)) {
 
       Map<String, String> properties = new HashMap<>();
       AstNode listExpr = metadata
-        .getFirstChild(FlexGrammar.ASSIGNMENT_EXPR)
-        .getFirstChild(FlexGrammar.POSTFIX_EXPR)
-        .getFirstChild(FlexGrammar.ARGUMENTS)
-        .getFirstChild(FlexGrammar.LIST_EXPRESSION);
+        .getFirstChild(CGrammar.ASSIGNMENT_EXPR)
+        .getFirstChild(CGrammar.POSTFIX_EXPR)
+        .getFirstChild(CGrammar.ARGUMENTS)
+        .getFirstChild(CGrammar.LIST_EXPRESSION);
 
-      for (AstNode assignmentExpr : listExpr.getChildren(FlexGrammar.ASSIGNMENT_EXPR)) {
-        if (assignmentExpr.getFirstChild(FlexGrammar.ASSIGNMENT_OPERATOR) != null) {
-          properties.put(assignmentExpr.getFirstChild(FlexGrammar.ASSIGNMENT_OPERATOR).getPreviousSibling().getTokenValue(),
-            assignmentExpr.getFirstChild(FlexGrammar.ASSIGNMENT_OPERATOR).getNextSibling().getTokenValue());
+      for (AstNode assignmentExpr : listExpr.getChildren(CGrammar.ASSIGNMENT_EXPR)) {
+        if (assignmentExpr.getFirstChild(CGrammar.ASSIGNMENT_OPERATOR) != null) {
+          properties.put(assignmentExpr.getFirstChild(CGrammar.ASSIGNMENT_OPERATOR).getPreviousSibling().getTokenValue(),
+            assignmentExpr.getFirstChild(CGrammar.ASSIGNMENT_OPERATOR).getNextSibling().getTokenValue());
         }
       }
       return properties;
@@ -92,22 +93,22 @@ public final class MetadataTag {
   }
 
   public static boolean isNotEmpty(AstNode metadata) {
-    return metadata.getFirstChild(FlexGrammar.ASSIGNMENT_EXPR) != null
-      && metadata.getFirstChild(FlexGrammar.ASSIGNMENT_EXPR).getFirstChild(FlexGrammar.POSTFIX_EXPR) != null;
+    return metadata.getFirstChild(CGrammar.ASSIGNMENT_EXPR) != null
+      && metadata.getFirstChild(CGrammar.ASSIGNMENT_EXPR).getFirstChild(CGrammar.POSTFIX_EXPR) != null;
   }
 
   public static boolean hasProperty(AstNode metadata) {
-    Preconditions.checkState(metadata.is(FlexGrammar.METADATA_STATEMENT));
+    Preconditions.checkState(metadata.is(CGrammar.METADATA_STATEMENT));
     AstNode arguments = metadata
-      .getFirstChild(FlexGrammar.ASSIGNMENT_EXPR)
-      .getFirstChild(FlexGrammar.POSTFIX_EXPR)
-      .getFirstChild(FlexGrammar.ARGUMENTS);
-    return arguments != null && arguments.getFirstChild(FlexGrammar.LIST_EXPRESSION) != null;
+      .getFirstChild(CGrammar.ASSIGNMENT_EXPR)
+      .getFirstChild(CGrammar.POSTFIX_EXPR)
+      .getFirstChild(CGrammar.ARGUMENTS);
+    return arguments != null && arguments.getFirstChild(CGrammar.LIST_EXPRESSION) != null;
   }
 
   public static boolean isMetadataTag(AstNode directive) {
-    return directive.getFirstChild().is(FlexGrammar.STATEMENT)
-      && directive.getFirstChild().getFirstChild().is(FlexGrammar.METADATA_STATEMENT);
+    return directive.getFirstChild().is(CGrammar.STATEMENT)
+      && directive.getFirstChild().getFirstChild().is(CGrammar.METADATA_STATEMENT);
   }
 
 }

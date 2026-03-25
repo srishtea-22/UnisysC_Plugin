@@ -21,16 +21,17 @@ import com.sonar.sslr.api.AstNodeType;
 import com.sonar.sslr.api.Trivia;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 import org.sonar.flex.checks.asdoc.ASDocClassCheck;
 import org.sonar.flex.checks.asdoc.ASDocMemberCheck;
 import org.sonar.flex.checks.utils.Clazz;
 
 @Rule(key = "S1176")
-public class ASDocCheck extends FlexCheck {
+public class ASDocCheck extends CCheck {
 
   public static final String INHERIT_TAG = "@inheritDoc";
   public static final String PRIVATE_TAG = "@private";
@@ -81,7 +82,7 @@ public class ASDocCheck extends FlexCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override

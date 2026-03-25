@@ -23,31 +23,32 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 
 @Rule(key = "ActionScript2")
-public class ActionScript2Check extends FlexCheck {
+public class ActionScript2Check extends CCheck {
 
   private final Set<String> deprecatedOperators = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("or", "and", "ne", "eq", "ge", "gt", "le", "lt", "add", "<>")));
 
   @Override
   public List<AstNodeType> subscribedTo() {
     return Arrays.asList(
-      FlexGrammar.UNARY_EXPR,
-      FlexGrammar.LOGICAL_OR_OPERATOR,
-      FlexGrammar.LOGICAL_AND_OPERATOR,
-      FlexGrammar.EQUALITY_OPERATOR,
-      FlexGrammar.RELATIONAL_OPERATOR,
-      FlexGrammar.RELATIONAL_OPERATOR_NO_IN,
-      FlexGrammar.ADDITIVE_OPERATOR
+      CGrammar.UNARY_EXPR,
+      CGrammar.LOGICAL_OR_OPERATOR,
+      CGrammar.LOGICAL_AND_OPERATOR,
+      CGrammar.EQUALITY_OPERATOR,
+      CGrammar.RELATIONAL_OPERATOR,
+      CGrammar.RELATIONAL_OPERATOR_NO_IN,
+      CGrammar.ADDITIVE_OPERATOR
     );
   }
 
   @Override
   public void visitNode(AstNode astNode) {
-    if (astNode.is(FlexGrammar.UNARY_EXPR) && "not".equals(astNode.getFirstChild().getTokenValue())) {
+    if (astNode.is(CGrammar.UNARY_EXPR) && "not".equals(astNode.getFirstChild().getTokenValue())) {
       addIssue("Operator 'not' not available in ActionScript 3.0", astNode.getFirstChild());
     } else {
       String operator = getValue(astNode);

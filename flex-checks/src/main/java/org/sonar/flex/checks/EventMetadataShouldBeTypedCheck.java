@@ -22,17 +22,18 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 import org.sonar.flex.checks.utils.MetadataTag;
 
 @Rule(key = "S1463")
-public class EventMetadataShouldBeTypedCheck extends FlexCheck {
+public class EventMetadataShouldBeTypedCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.METADATA_STATEMENT);
+    return Collections.singletonList(CGrammar.METADATA_STATEMENT);
   }
 
   @Override

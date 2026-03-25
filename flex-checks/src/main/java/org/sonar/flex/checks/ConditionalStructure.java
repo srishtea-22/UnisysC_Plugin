@@ -22,8 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
+
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 
 import static java.util.Collections.singletonList;
 
@@ -99,8 +100,8 @@ class ConditionalStructure {
   static boolean isOnelinerSubStatement(AstNode node) {
     AstNode child;
     AstNode grandchild;
-    if ((child = node.getFirstChild(FlexGrammar.STATEMENT)) != null && (grandchild = child.getFirstChild(FlexGrammar.BLOCK)) != null) {
-      return isOnelinerDirectives(grandchild.getFirstChild(FlexGrammar.DIRECTIVES).getChildren(FlexGrammar.DIRECTIVE));
+    if ((child = node.getFirstChild(CGrammar.STATEMENT)) != null && (grandchild = child.getFirstChild(CGrammar.BLOCK)) != null) {
+      return isOnelinerDirectives(grandchild.getFirstChild(CGrammar.DIRECTIVES).getChildren(CGrammar.DIRECTIVE));
     }
     return isOnelinerNonBlock(node);
   }
@@ -118,19 +119,19 @@ class ConditionalStructure {
     List<BranchAndContent> branches = new ArrayList<>();
     boolean allBranchesArePresent = false;
 
-    branches.add(branchAndContentIf(node, node.getFirstChild(FlexGrammar.SUB_STATEMENT)));
+    branches.add(branchAndContentIf(node, node.getFirstChild(CGrammar.SUB_STATEMENT)));
     AstNode currentIfStatement = node;
 
     while (currentIfStatement.hasDirectChildren(CKeyword.ELSE)) {
-      AstNode elseStatement = currentIfStatement.getLastChild(FlexGrammar.SUB_STATEMENT).getFirstChild(FlexGrammar.STATEMENT);
-      if (elseStatement != null && elseStatement.hasDirectChildren(FlexGrammar.IF_STATEMENT)) {
-        currentIfStatement = elseStatement.getFirstChild(FlexGrammar.IF_STATEMENT);
+      AstNode elseStatement = currentIfStatement.getLastChild(CGrammar.SUB_STATEMENT).getFirstChild(CGrammar.STATEMENT);
+      if (elseStatement != null && elseStatement.hasDirectChildren(CGrammar.IF_STATEMENT)) {
+        currentIfStatement = elseStatement.getFirstChild(CGrammar.IF_STATEMENT);
         visitedIfStatements.add(currentIfStatement);
-        branches.add(branchAndContentIf(currentIfStatement, currentIfStatement.getFirstChild(FlexGrammar.SUB_STATEMENT)));
+        branches.add(branchAndContentIf(currentIfStatement, currentIfStatement.getFirstChild(CGrammar.SUB_STATEMENT)));
       } else {
         AstNode theElse = currentIfStatement.getFirstChild(CKeyword.ELSE);
         if (theElse != null) {
-          branches.add(branchAndContentIf(theElse, currentIfStatement.getLastChild(FlexGrammar.SUB_STATEMENT)));
+          branches.add(branchAndContentIf(theElse, currentIfStatement.getLastChild(CGrammar.SUB_STATEMENT)));
         }
         allBranchesArePresent = true;
         break;
@@ -144,13 +145,13 @@ class ConditionalStructure {
     List<BranchAndContent> branches = new ArrayList<>();
     boolean allBranchesArePresent = false;
 
-    for (AstNode caseElement : node.getChildren(FlexGrammar.CASE_ELEMENT)) {
-      List<AstNode> directives = caseElement.getChildren(FlexGrammar.DIRECTIVE);
+    for (AstNode caseElement : node.getChildren(CGrammar.CASE_ELEMENT)) {
+      List<AstNode> directives = caseElement.getChildren(CGrammar.DIRECTIVE);
       if (!directives.isEmpty() && isBreakStatement(directives.get(directives.size() - 1).getFirstChild())) {
         directives = directives.subList(0, directives.size() - 1);
       }
       branches.add(branchAndContentSwitch(caseElement, directives));
-      for (AstNode caseLabelNode : caseElement.getChildren(FlexGrammar.CASE_LABEL)) {
+      for (AstNode caseLabelNode : caseElement.getChildren(CGrammar.CASE_LABEL)) {
         if (caseLabelNode.hasDirectChildren(CKeyword.DEFAULT)) {
           allBranchesArePresent = true;
         }
@@ -161,7 +162,7 @@ class ConditionalStructure {
   }
 
   private static boolean isBreakStatement(AstNode node) {
-    return node.is(FlexGrammar.STATEMENT) && node.hasDirectChildren(FlexGrammar.BREAK_STATEMENT);
+    return node.is(CGrammar.STATEMENT) && node.hasDirectChildren(CGrammar.BREAK_STATEMENT);
   }
 
   AstNode getNode() {

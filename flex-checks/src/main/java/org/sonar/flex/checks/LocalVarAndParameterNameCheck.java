@@ -23,15 +23,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 import org.sonar.flex.checks.utils.Function;
 import org.sonar.flex.checks.utils.Variable;
 
 @Rule(key = "S117")
-public class LocalVarAndParameterNameCheck extends FlexCheck {
+public class LocalVarAndParameterNameCheck extends CCheck {
 
 
   private static final String DEFAULT = "^[_a-z][a-zA-Z0-9]*$";
@@ -47,7 +48,7 @@ public class LocalVarAndParameterNameCheck extends FlexCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.FUNCTION_DEF);
+    return Collections.singletonList(CGrammar.FUNCTION_DEF);
   }
 
   @Override
@@ -61,11 +62,11 @@ public class LocalVarAndParameterNameCheck extends FlexCheck {
   public void visitNode(AstNode astNode) {
     checkFunctionParametersName(astNode);
 
-    if (astNode.getFirstChild(FlexGrammar.FUNCTION_COMMON).getFirstChild(FlexGrammar.BLOCK) != null) {
-      checkLocalVariableName(astNode.getFirstChild(FlexGrammar.FUNCTION_COMMON)
-        .getFirstChild(FlexGrammar.BLOCK)
-        .getFirstChild(FlexGrammar.DIRECTIVES)
-        .getChildren(FlexGrammar.DIRECTIVE));
+    if (astNode.getFirstChild(CGrammar.FUNCTION_COMMON).getFirstChild(CGrammar.BLOCK) != null) {
+      checkLocalVariableName(astNode.getFirstChild(CGrammar.FUNCTION_COMMON)
+        .getFirstChild(CGrammar.BLOCK)
+        .getFirstChild(CGrammar.DIRECTIVES)
+        .getChildren(CGrammar.DIRECTIVE));
     }
   }
 
@@ -74,8 +75,8 @@ public class LocalVarAndParameterNameCheck extends FlexCheck {
 
       if (Variable.isVariable(directive)) {
         AstNode variableDeclStatement = directive
-          .getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE)
-          .getFirstChild(FlexGrammar.VARIABLE_DECLARATION_STATEMENT);
+          .getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE)
+          .getFirstChild(CGrammar.VARIABLE_DECLARATION_STATEMENT);
 
         checkVariableDeclStatement(variableDeclStatement);
       }

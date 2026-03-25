@@ -20,24 +20,25 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 
 @Rule(key = "SwitchWithoutDefault")
-public class SwitchWithoutDefaultCheck extends FlexCheck {
+public class SwitchWithoutDefaultCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.SWITCH_STATEMENT);
+    return Collections.singletonList(CGrammar.SWITCH_STATEMENT);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
     AstNode defaultCaseElement = null;
-    for (AstNode caseElementNode : astNode.getChildren(FlexGrammar.CASE_ELEMENT)) {
-      for (AstNode caseLabelNode : caseElementNode.getChildren(FlexGrammar.CASE_LABEL)) {
+    for (AstNode caseElementNode : astNode.getChildren(CGrammar.CASE_ELEMENT)) {
+      for (AstNode caseLabelNode : caseElementNode.getChildren(CGrammar.CASE_LABEL)) {
         if (caseLabelNode.getFirstChild().is(CKeyword.DEFAULT)) {
           defaultCaseElement = caseElementNode;
           break;

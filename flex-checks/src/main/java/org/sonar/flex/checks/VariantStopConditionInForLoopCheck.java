@@ -25,14 +25,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CPunctuator;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CPunctuator;
 import org.sonar.flex.checks.utils.Expression;
 
 @Rule(key = "S127")
-public class VariantStopConditionInForLoopCheck extends FlexCheck {
+public class VariantStopConditionInForLoopCheck extends CCheck {
 
   Set<String> counters = new HashSet<>();
   Set<String> pendingCounters = new HashSet<>();
@@ -40,10 +41,10 @@ public class VariantStopConditionInForLoopCheck extends FlexCheck {
   @Override
   public List<AstNodeType> subscribedTo() {
     return Arrays.asList(
-      FlexGrammar.FOR_STATEMENT,
-      FlexGrammar.SUB_STATEMENT,
+      CGrammar.FOR_STATEMENT,
+      CGrammar.SUB_STATEMENT,
 
-      FlexGrammar.ASSIGNMENT_EXPR,
+      CGrammar.ASSIGNMENT_EXPR,
       CPunctuator.DOUBLE_PLUS,
       CPunctuator.DOUBLE_MINUS);
   }
@@ -56,15 +57,15 @@ public class VariantStopConditionInForLoopCheck extends FlexCheck {
 
   @Override
   public void visitNode(AstNode astNode) {
-    if (astNode.is(FlexGrammar.FOR_STATEMENT)) {
+    if (astNode.is(CGrammar.FOR_STATEMENT)) {
       pendingCounters.addAll(getLoopsCounters(astNode));
       checkLoopsCondition(astNode);
 
-    } else if (astNode.is(FlexGrammar.SUB_STATEMENT) && !pendingCounters.isEmpty()) {
+    } else if (astNode.is(CGrammar.SUB_STATEMENT) && !pendingCounters.isEmpty()) {
       counters.addAll(pendingCounters);
       pendingCounters.clear();
 
-    } else if (!counters.isEmpty() && astNode.is(FlexGrammar.ASSIGNMENT_EXPR, CPunctuator.DOUBLE_PLUS, CPunctuator.DOUBLE_MINUS)) {
+    } else if (!counters.isEmpty() && astNode.is(CGrammar.ASSIGNMENT_EXPR, CPunctuator.DOUBLE_PLUS, CPunctuator.DOUBLE_MINUS)) {
       checkIfModifyingCounter(astNode);
     }
   }
@@ -75,7 +76,7 @@ public class VariantStopConditionInForLoopCheck extends FlexCheck {
       return;
     }
 
-    for (AstNode assignmentExpr : stopConditionExpr.getChildren(FlexGrammar.ASSIGNMENT_EXPR)) {
+    for (AstNode assignmentExpr : stopConditionExpr.getChildren(CGrammar.ASSIGNMENT_EXPR)) {
       for (Token t : assignmentExpr.getTokens()) {
 
         String tokenValue = t.getValue();
@@ -96,18 +97,18 @@ public class VariantStopConditionInForLoopCheck extends FlexCheck {
 
     if (semicolonNode != null) {
       AstNode stopConditionExpr = semicolonNode.getNextAstNode();
-      return stopConditionExpr.is(FlexGrammar.LIST_EXPRESSION) ? stopConditionExpr : null;
+      return stopConditionExpr.is(CGrammar.LIST_EXPRESSION) ? stopConditionExpr : null;
     }
     return null;
   }
 
   private void checkIfModifyingCounter(AstNode expression) {
     AstNode varNode = null;
-    if (expression.is(FlexGrammar.ASSIGNMENT_EXPR) && expression.hasDirectChildren(FlexGrammar.ASSIGNMENT_OPERATOR)) {
+    if (expression.is(CGrammar.ASSIGNMENT_EXPR) && expression.hasDirectChildren(CGrammar.ASSIGNMENT_OPERATOR)) {
       varNode = expression.getFirstChild();
     } else if (expression.is(CPunctuator.DOUBLE_PLUS, CPunctuator.DOUBLE_MINUS)) {
       AstNode exprParent = expression.getParent();
-      varNode = exprParent.is(FlexGrammar.UNARY_EXPR) ? exprParent.getLastChild() : exprParent.getFirstChild();
+      varNode = exprParent.is(CGrammar.UNARY_EXPR) ? exprParent.getLastChild() : exprParent.getFirstChild();
     }
 
     if (varNode != null) {
@@ -120,19 +121,19 @@ public class VariantStopConditionInForLoopCheck extends FlexCheck {
 
   @Override
   public void leaveNode(AstNode astNode) {
-    if (astNode.is(FlexGrammar.FOR_STATEMENT)) {
+    if (astNode.is(CGrammar.FOR_STATEMENT)) {
       counters.removeAll(getLoopsCounters(astNode));
     }
   }
 
   private static Set<String> getLoopsCounters(AstNode forStatement) {
     Set<String> loopCounters = new HashSet<>();
-    AstNode initialiser = forStatement.getFirstChild(FlexGrammar.FOR_INITIALISER);
+    AstNode initialiser = forStatement.getFirstChild(CGrammar.FOR_INITIALISER);
 
     if (initialiser != null) {
       AstNode initialiserExpr = initialiser.getFirstChild();
 
-      if (initialiserExpr.is(FlexGrammar.VARIABLE_DEF_NO_IN)) {
+      if (initialiserExpr.is(CGrammar.VARIABLE_DEF_NO_IN)) {
         getCountersFromVariableDef(loopCounters, initialiserExpr);
 
       } else {
@@ -143,22 +144,22 @@ public class VariantStopConditionInForLoopCheck extends FlexCheck {
   }
 
   private static void getCountersFromListExpression(Set<String> counters, AstNode initialiserExpr) {
-    for (AstNode assignmentExpr : initialiserExpr.getChildren(FlexGrammar.ASSIGNMENT_EXPR_NO_IN)) {
+    for (AstNode assignmentExpr : initialiserExpr.getChildren(CGrammar.ASSIGNMENT_EXPR_NO_IN)) {
       AstNode exprFirstChild = assignmentExpr.getFirstChild();
 
-      if (assignmentExpr.hasDirectChildren(FlexGrammar.ASSIGNMENT_OPERATOR)) {
+      if (assignmentExpr.hasDirectChildren(CGrammar.ASSIGNMENT_OPERATOR)) {
         counters.add(Expression.exprToString(exprFirstChild));
-      } else if (exprFirstChild.is(FlexGrammar.UNARY_EXPR)) {
+      } else if (exprFirstChild.is(CGrammar.UNARY_EXPR)) {
         counters.add(Expression.exprToString(exprFirstChild.getLastChild()));
-      } else if (exprFirstChild.is(FlexGrammar.POSTFIX_EXPR)) {
+      } else if (exprFirstChild.is(CGrammar.POSTFIX_EXPR)) {
         counters.add(Expression.exprToString(exprFirstChild.getFirstChild()));
       }
     }
   }
 
   private static void getCountersFromVariableDef(Set<String> counters, AstNode initialiserExpr) {
-    for (AstNode variableBinding : initialiserExpr.getFirstChild(FlexGrammar.VARIABLE_BINDING_LIST_NO_IN).getChildren(FlexGrammar.VARIABLE_BINDING_NO_IN)) {
-      counters.add(Expression.exprToString(variableBinding.getFirstChild(FlexGrammar.TYPED_IDENTIFIER_NO_IN).getFirstChild(FlexGrammar.IDENTIFIER)));
+    for (AstNode variableBinding : initialiserExpr.getFirstChild(CGrammar.VARIABLE_BINDING_LIST_NO_IN).getChildren(CGrammar.VARIABLE_BINDING_NO_IN)) {
+      counters.add(Expression.exprToString(variableBinding.getFirstChild(CGrammar.TYPED_IDENTIFIER_NO_IN).getFirstChild(CGrammar.IDENTIFIER)));
     }
   }
 

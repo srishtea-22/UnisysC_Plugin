@@ -21,15 +21,16 @@ import com.sonar.sslr.api.AstNodeType;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 import org.sonar.flex.checks.utils.Clazz;
 import org.sonar.flex.checks.utils.Modifiers;
 
 @Rule(key = "S1448")
-public class ClassWithTooManyFunctionsCheck extends FlexCheck {
+public class ClassWithTooManyFunctionsCheck extends CCheck {
 
 
   private static final int DEFAULT_MAX = 20;
@@ -50,7 +51,7 @@ public class ClassWithTooManyFunctionsCheck extends FlexCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override

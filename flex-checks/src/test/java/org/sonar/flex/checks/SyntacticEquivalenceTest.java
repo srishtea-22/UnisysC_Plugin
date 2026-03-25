@@ -20,8 +20,8 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.impl.Parser;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.parser.FlexParser;
+import org.sonar.c.CGrammar;
+import org.sonar.c.parser.CParser;
 import org.sonar.sslr.parser.LexerlessGrammar;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +29,7 @@ import static org.sonar.flex.checks.SyntacticEquivalence.areEquivalent;
 
 public class SyntacticEquivalenceTest {
 
-  private static final Parser<LexerlessGrammar> PARSER = FlexParser.create(StandardCharsets.UTF_8);
+  private static final Parser<LexerlessGrammar> PARSER = CParser.create(StandardCharsets.UTF_8);
 
   @Test
   public void test_areEquivalent() {
@@ -43,7 +43,7 @@ public class SyntacticEquivalenceTest {
   }
 
   private AstNode expression(String code) {
-    return program(code).getFirstDescendant(FlexGrammar.EXPRESSION);
+    return program(code).getFirstDescendant(CGrammar.EXPRESSION);
   }
 
   private AstNode program(String code) {

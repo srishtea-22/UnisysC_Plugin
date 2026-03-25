@@ -20,24 +20,25 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CPunctuator;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CPunctuator;
 import org.sonar.flex.checks.utils.Clazz;
 
 @Rule(key = "S1186")
-public class EmptyMethodCheck extends FlexCheck {
+public class EmptyMethodCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
     for (AstNode function : Clazz.getFunctions(astNode)) {
-      AstNode block = function.getFirstChild(FlexGrammar.FUNCTION_COMMON).getFirstChild(FlexGrammar.BLOCK);
+      AstNode block = function.getFirstChild(CGrammar.FUNCTION_COMMON).getFirstChild(CGrammar.BLOCK);
 
       if (block != null && isEmptyBlock(block)) {
         addIssue(
@@ -49,7 +50,7 @@ public class EmptyMethodCheck extends FlexCheck {
 
   private static boolean isEmptyBlock(AstNode block) {
     AstNode rightCurlyBrace = block.getFirstChild(CPunctuator.RCURLYBRACE);
-    return !block.getFirstChild(FlexGrammar.DIRECTIVES).hasChildren() && !hasComment(rightCurlyBrace);
+    return !block.getFirstChild(CGrammar.DIRECTIVES).hasChildren() && !hasComment(rightCurlyBrace);
   }
 
   private static boolean hasComment(AstNode node) {

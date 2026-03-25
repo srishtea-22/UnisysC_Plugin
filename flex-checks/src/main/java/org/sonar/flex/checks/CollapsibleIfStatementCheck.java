@@ -20,24 +20,25 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 
 @Rule(key = "S1066")
-public class CollapsibleIfStatementCheck extends FlexCheck {
+public class CollapsibleIfStatementCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.IF_STATEMENT);
+    return Collections.singletonList(CGrammar.IF_STATEMENT);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
     if (!hasElseClause(astNode)) {
 
-      AstNode childtSatementNode = astNode.getFirstChild(FlexGrammar.SUB_STATEMENT).getFirstChild(FlexGrammar.STATEMENT);
+      AstNode childtSatementNode = astNode.getFirstChild(CGrammar.SUB_STATEMENT).getFirstChild(CGrammar.STATEMENT);
       if (childtSatementNode != null) {
 
         AstNode nestedCollapsibleIf = getNestedIfCollapsible(childtSatementNode.getFirstChild());
@@ -50,14 +51,14 @@ public class CollapsibleIfStatementCheck extends FlexCheck {
   }
 
   private static AstNode getNestedIfCollapsible(AstNode statementNode) {
-    if (statementNode.is(FlexGrammar.IF_STATEMENT)) {
+    if (statementNode.is(CGrammar.IF_STATEMENT)) {
       return statementNode;
     }
 
-    if (statementNode.is(FlexGrammar.BLOCK) && statementNode.getFirstChild(FlexGrammar.DIRECTIVES).getChildren().size() == 1) {
-      AstNode singleStatementChild = statementNode.getFirstChild(FlexGrammar.DIRECTIVES).getFirstChild(FlexGrammar.DIRECTIVE).getFirstChild();
+    if (statementNode.is(CGrammar.BLOCK) && statementNode.getFirstChild(CGrammar.DIRECTIVES).getChildren().size() == 1) {
+      AstNode singleStatementChild = statementNode.getFirstChild(CGrammar.DIRECTIVES).getFirstChild(CGrammar.DIRECTIVE).getFirstChild();
 
-      if (singleStatementChild.is(FlexGrammar.STATEMENT) && singleStatementChild.getFirstChild().is(FlexGrammar.IF_STATEMENT)) {
+      if (singleStatementChild.is(CGrammar.STATEMENT) && singleStatementChild.getFirstChild().is(CGrammar.IF_STATEMENT)) {
         AstNode ifNode = singleStatementChild.getFirstChild();
         return !hasElseClause(ifNode) ? ifNode : null;
       }

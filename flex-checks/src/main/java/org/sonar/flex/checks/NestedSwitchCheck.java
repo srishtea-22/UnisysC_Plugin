@@ -21,18 +21,19 @@ import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 
 @Rule(key = "S1821")
-public class NestedSwitchCheck extends FlexCheck {
+public class NestedSwitchCheck extends CCheck {
 
   private int switchLevel = 0;
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.SWITCH_STATEMENT);
+    return Collections.singletonList(CGrammar.SWITCH_STATEMENT);
   }
 
   @Override

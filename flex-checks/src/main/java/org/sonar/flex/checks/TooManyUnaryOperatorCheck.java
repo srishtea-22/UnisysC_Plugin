@@ -21,14 +21,15 @@ import com.sonar.sslr.api.AstNodeType;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CPunctuator;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CPunctuator;
 
 
 @Rule(key = "S1454")
-public class TooManyUnaryOperatorCheck extends FlexCheck {
+public class TooManyUnaryOperatorCheck extends CCheck {
 
   private boolean assignmentExpression;
   private int counter;
@@ -36,7 +37,7 @@ public class TooManyUnaryOperatorCheck extends FlexCheck {
   @Override
   public List<AstNodeType> subscribedTo() {
     return Arrays.asList(
-      FlexGrammar.ASSIGNMENT_EXPR,
+      CGrammar.ASSIGNMENT_EXPR,
       CPunctuator.DOUBLE_MINUS,
       CPunctuator.DOUBLE_PLUS);
   }
@@ -48,7 +49,7 @@ public class TooManyUnaryOperatorCheck extends FlexCheck {
 
   @Override
   public void visitNode(AstNode astNode) {
-    if (astNode.is(FlexGrammar.ASSIGNMENT_EXPR)) {
+    if (astNode.is(CGrammar.ASSIGNMENT_EXPR)) {
       assignmentExpression = true;
     } else if (assignmentExpression && (astNode.is(CPunctuator.DOUBLE_MINUS) || astNode.is(CPunctuator.DOUBLE_PLUS))) {
       counter++;
@@ -57,7 +58,7 @@ public class TooManyUnaryOperatorCheck extends FlexCheck {
 
   @Override
   public void leaveNode(AstNode astNode) {
-    if (astNode.is(FlexGrammar.ASSIGNMENT_EXPR)) {
+    if (astNode.is(CGrammar.ASSIGNMENT_EXPR)) {
       if (counter > 1) {
         addIssue("Split this expression into multiple expressions so that each one contains no more than a single \"++\" or \"--\" unary operator",
           astNode);

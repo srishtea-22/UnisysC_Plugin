@@ -22,35 +22,36 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 import org.sonar.flex.checks.utils.Function;
 import org.sonar.flex.checks.utils.Modifiers;
 
 @Rule(key = "S1784")
-public class MethodVisibilityCheck extends FlexCheck {
+public class MethodVisibilityCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
-    List<AstNode> directives = astNode.getFirstChild(FlexGrammar.BLOCK).getFirstChild(FlexGrammar.DIRECTIVES).getChildren();
+    List<AstNode> directives = astNode.getFirstChild(CGrammar.BLOCK).getFirstChild(CGrammar.DIRECTIVES).getChildren();
     if (directives == null) {
       return;
     }
 
     for (AstNode directive : directives) {
-      AstNode annotableDirective = directive.getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE);
+      AstNode annotableDirective = directive.getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE);
 
       if (annotableDirective != null) {
         AstNode annotableDirectiveChild = annotableDirective.getFirstChild();
 
-        if (annotableDirectiveChild.is(FlexGrammar.FUNCTION_DEF) && !hasVisibility(annotableDirectiveChild)) {
+        if (annotableDirectiveChild.is(CGrammar.FUNCTION_DEF) && !hasVisibility(annotableDirectiveChild)) {
           addIssue(
             MessageFormat.format("Explicitly declare the visibility of this method \"{0}\".", Function.getName(annotableDirectiveChild)),
             annotableDirectiveChild);

@@ -23,12 +23,13 @@ import java.util.Collections;
 import java.util.List;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
 
 @Rule(key = "XPath")
-public class XPathCheck extends FlexCheck {
+public class XPathCheck extends CCheck {
 
   private static final String DEFAULT_XPATH_QUERY = "";
   private static final String DEFAULT_MESSAGE = "The XPath expression matches this piece of code";

@@ -26,16 +26,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 import org.sonar.flex.checks.utils.Clazz;
 import org.sonar.flex.checks.utils.Modifiers;
 import org.sonar.flex.checks.utils.Variable;
 
 @Rule(key = "S1068")
-public class UnusedPrivateFieldCheck extends FlexCheck {
+public class UnusedPrivateFieldCheck extends CCheck {
 
   private static class PrivateField {
     final AstNode declaration;
@@ -81,8 +82,8 @@ public class UnusedPrivateFieldCheck extends FlexCheck {
   @Override
   public List<AstNodeType> subscribedTo() {
     return Arrays.asList(
-      FlexGrammar.CLASS_DEF,
-      FlexGrammar.QUALIFIED_IDENTIFIER);
+      CGrammar.CLASS_DEF,
+      CGrammar.QUALIFIED_IDENTIFIER);
   }
 
   @Override
@@ -92,16 +93,16 @@ public class UnusedPrivateFieldCheck extends FlexCheck {
 
   @Override
   public void visitNode(AstNode astNode) {
-    if (astNode.is(FlexGrammar.CLASS_DEF)) {
+    if (astNode.is(CGrammar.CLASS_DEF)) {
       classStack.push(new ClassState(astNode));
-    } else if (!classStack.isEmpty() && astNode.is(FlexGrammar.QUALIFIED_IDENTIFIER)) {
+    } else if (!classStack.isEmpty() && astNode.is(CGrammar.QUALIFIED_IDENTIFIER)) {
       classStack.peek().use(astNode);
     }
   }
 
   @Override
   public void leaveNode(AstNode astNode) {
-    if (astNode.is(FlexGrammar.CLASS_DEF)) {
+    if (astNode.is(CGrammar.CLASS_DEF)) {
       reportUnusedPrivateField();
     }
   }

@@ -22,11 +22,12 @@ import com.sonar.sslr.api.Token;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
 
 @Rule(key = "S1442")
-public class AlertShowUseCheck extends FlexCheck {
+public class AlertShowUseCheck extends CCheck {
 
   private enum State {
     EXPECTING_ALERT,

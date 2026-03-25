@@ -34,12 +34,12 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.cpd.NewCpdTokens;
 import org.sonar.api.batch.sensor.highlighting.NewHighlighting;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
-import org.sonar.flex.FlexVisitor;
-import org.sonar.flex.api.CKeyword;
-import org.sonar.flex.api.CPunctuator;
-import org.sonar.flex.api.CTokenType;
+import org.sonar.c.CVisitor;
+import org.sonar.c.api.CKeyword;
+import org.sonar.c.api.CPunctuator;
+import org.sonar.c.api.CTokenType;
 
-public class CTokensVisitor extends FlexVisitor {
+public class CTokensVisitor extends CVisitor {
 
   private static final String NORMALIZED_CHARACTER_LITERAL = "$CHARS";
   private static final String NORMALIZED_NUMERIC_LITERAL = "$NUMBER";

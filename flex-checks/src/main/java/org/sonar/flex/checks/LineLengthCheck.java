@@ -22,12 +22,13 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
 
 @Rule(key = "LineLength")
-public class LineLengthCheck extends FlexCheck {
+public class LineLengthCheck extends CCheck {
 
   private static final int DEFAULT_MAXIMUM_LINE_LENHGTH = 80;
 

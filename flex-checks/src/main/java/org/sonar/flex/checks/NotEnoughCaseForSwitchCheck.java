@@ -20,25 +20,26 @@ import com.sonar.sslr.api.AstNode;
 import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 
 @Rule(key = "S1301")
-public class NotEnoughCaseForSwitchCheck extends FlexCheck {
+public class NotEnoughCaseForSwitchCheck extends CCheck {
 
   private static final int MINIMUM_CASE = 3;
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.SWITCH_STATEMENT);
+    return Collections.singletonList(CGrammar.SWITCH_STATEMENT);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
     int nbCase = 0;
-    for (AstNode caseElement : astNode.getChildren(FlexGrammar.CASE_ELEMENT)) {
-      nbCase += caseElement.getChildren(FlexGrammar.CASE_LABEL).size();
+    for (AstNode caseElement : astNode.getChildren(CGrammar.CASE_ELEMENT)) {
+      nbCase += caseElement.getChildren(CGrammar.CASE_LABEL).size();
     }
 
     if (nbCase < MINIMUM_CASE) {

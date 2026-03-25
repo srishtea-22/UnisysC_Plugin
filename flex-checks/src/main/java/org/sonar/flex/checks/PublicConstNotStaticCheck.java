@@ -22,30 +22,31 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 import org.sonar.flex.checks.utils.Clazz;
 import org.sonar.flex.checks.utils.Modifiers;
 import org.sonar.flex.checks.utils.Variable;
 
 @Rule(key = "S1170")
-public class PublicConstNotStaticCheck extends FlexCheck {
+public class PublicConstNotStaticCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
     for (AstNode directive : Clazz.getDirectives(astNode)) {
       if (Variable.isConst(directive)) {
-        Set<AstNodeType> varModifiers = Modifiers.getModifiers(directive.getFirstChild(FlexGrammar.ATTRIBUTES));
+        Set<AstNodeType> varModifiers = Modifiers.getModifiers(directive.getFirstChild(CGrammar.ATTRIBUTES));
 
         if (varModifiers.contains(CKeyword.PUBLIC) && !varModifiers.contains(CKeyword.STATIC)) {
-          String name = Variable.getName(directive.getFirstChild(FlexGrammar.ANNOTABLE_DIRECTIVE).getFirstChild());
+          String name = Variable.getName(directive.getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE).getFirstChild());
           addIssue(MessageFormat.format("Make this const field \"{0}\" static too", name), directive);
         }
       }

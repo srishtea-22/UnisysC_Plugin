@@ -21,20 +21,21 @@ import com.sonar.sslr.api.AstNodeType;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 import org.sonar.flex.checks.utils.Clazz;
 import org.sonar.flex.checks.utils.Modifiers;
 import org.sonar.flex.checks.utils.Variable;
 
 @Rule(key = "S1444")
-public class PublicStaticFieldCheck extends FlexCheck {
+public class PublicStaticFieldCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.CLASS_DEF);
+    return Collections.singletonList(CGrammar.CLASS_DEF);
   }
 
   @Override
@@ -42,7 +43,7 @@ public class PublicStaticFieldCheck extends FlexCheck {
     for (AstNode directive : Clazz.getDirectives(astNode)) {
 
       if (Variable.isVariable(directive)) {
-        Set<AstNodeType> varModifiers = Modifiers.getModifiers(directive.getFirstChild(FlexGrammar.ATTRIBUTES));
+        Set<AstNodeType> varModifiers = Modifiers.getModifiers(directive.getFirstChild(CGrammar.ATTRIBUTES));
 
         if (varModifiers.contains(CKeyword.PUBLIC) && varModifiers.contains(CKeyword.STATIC)) {
           addIssue("Make this \"public static\" field const", directive);

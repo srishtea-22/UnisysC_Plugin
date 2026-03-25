@@ -21,14 +21,15 @@ import com.sonar.sslr.api.AstNodeType;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.metrics.FileLinesVisitor;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.metrics.FileLinesVisitor;
 
 @Rule(key = "S138")
-public class TooManyLinesInFunctionCheck extends FlexCheck {
+public class TooManyLinesInFunctionCheck extends CCheck {
 
   private static final int DEFAULT = 100;
 
@@ -41,8 +42,8 @@ public class TooManyLinesInFunctionCheck extends FlexCheck {
   @Override
   public List<AstNodeType> subscribedTo() {
     return Arrays.asList(
-      FlexGrammar.FUNCTION_DEF,
-      FlexGrammar.FUNCTION_EXPR);
+      CGrammar.FUNCTION_DEF,
+      CGrammar.FUNCTION_EXPR);
   }
 
   @Override

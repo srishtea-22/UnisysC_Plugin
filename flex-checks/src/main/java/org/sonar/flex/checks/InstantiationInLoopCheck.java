@@ -24,19 +24,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
 import org.sonar.check.Rule;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
 import org.sonar.sslr.grammar.GrammarRuleKey;
 
 @Rule(key = "S1952")
-public class InstantiationInLoopCheck extends FlexCheck {
+public class InstantiationInLoopCheck extends CCheck {
 
 
   private static final GrammarRuleKey[] ITERATION_NODES = {
-    FlexGrammar.DO_STATEMENT,
-    FlexGrammar.WHILE_STATEMENT,
-    FlexGrammar.FOR_STATEMENT};
+    CGrammar.DO_STATEMENT,
+    CGrammar.WHILE_STATEMENT,
+    CGrammar.FOR_STATEMENT};
 
   private int loopLevel = 0;
 
@@ -44,9 +45,9 @@ public class InstantiationInLoopCheck extends FlexCheck {
   public List<AstNodeType> subscribedTo() {
     List<AstNodeType> types = new ArrayList<>();
     Collections.addAll(types,
-      FlexGrammar.FULL_NEW_EXPR,
-      FlexGrammar.SHORT_NEW_EXPR,
-      FlexGrammar.OBJECT_INITIALISER);
+      CGrammar.FULL_NEW_EXPR,
+      CGrammar.SHORT_NEW_EXPR,
+      CGrammar.OBJECT_INITIALISER);
     Collections.addAll(types, ITERATION_NODES);
     return types;
   }
@@ -67,11 +68,11 @@ public class InstantiationInLoopCheck extends FlexCheck {
   }
 
   private static boolean isNestedNewExpression(AstNode newExpression) {
-    return newExpression.getParent().is(FlexGrammar.FULL_NEW_SUB_EXPR, FlexGrammar.SHORT_NEW_SUB_EXPR);
+    return newExpression.getParent().is(CGrammar.FULL_NEW_SUB_EXPR, CGrammar.SHORT_NEW_SUB_EXPR);
   }
 
   private static Object getClassName(AstNode astNode) {
-    if (astNode.is(FlexGrammar.OBJECT_INITIALISER)) {
+    if (astNode.is(CGrammar.OBJECT_INITIALISER)) {
       return "Object";
     }
 

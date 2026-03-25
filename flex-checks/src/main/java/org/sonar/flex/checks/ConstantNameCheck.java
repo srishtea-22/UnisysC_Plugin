@@ -22,16 +22,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
+
+import org.sonar.c.CCheck;
+import org.sonar.c.CGrammar;
+import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
-import org.sonar.flex.FlexCheck;
-import org.sonar.flex.FlexGrammar;
-import org.sonar.flex.api.CKeyword;
 import org.sonar.flex.checks.utils.Variable;
 
 
 @Rule(key = "S115")
-public class ConstantNameCheck extends FlexCheck {
+public class ConstantNameCheck extends CCheck {
 
   private static final String DEFAULT = "^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$";
   private Pattern pattern = null;
@@ -44,7 +45,7 @@ public class ConstantNameCheck extends FlexCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(FlexGrammar.VARIABLE_DECLARATION_STATEMENT);
+    return Collections.singletonList(CGrammar.VARIABLE_DECLARATION_STATEMENT);
   }
 
   @Override
@@ -56,7 +57,7 @@ public class ConstantNameCheck extends FlexCheck {
 
   @Override
   public void visitNode(AstNode astNode) {
-    if (astNode.getFirstChild(FlexGrammar.VARIABLE_DEF).getFirstChild(FlexGrammar.VARIABLE_DEF_KIND).getFirstChild(CKeyword.CONST) != null) {
+    if (astNode.getFirstChild(CGrammar.VARIABLE_DEF).getFirstChild(CGrammar.VARIABLE_DEF_KIND).getFirstChild(CKeyword.CONST) != null) {
 
       for (AstNode identifier : Variable.getDeclaredIdentifiers(astNode)) {
         String varName = identifier.getTokenValue();
