@@ -29,6 +29,7 @@ public enum CKeyword implements GrammarRuleKey {
    * "as" is not keyword in ActionScript 2, so we treat it as syntactic keyword
    */
   AS(true),
+  ASM,
   BREAK,
   CASE,
   CATCH,
@@ -85,7 +86,28 @@ public enum CKeyword implements GrammarRuleKey {
   NATIVE(true),
   OVERRIDE(true),
   STATIC(true),
-  XML(true);
+  XML(true),
+  AUTO,
+  REGISTER,
+  TYPEDEF,
+  EXTERN,
+  inline,
+  asm,
+  INT,
+  CHAR,
+  SHORT,
+  LONG,
+  DOUBLE,
+  FLOAT,
+  signed,
+  unsigned,
+  __FAR,
+  VOLATILE,
+  sizeof,
+  GOTO,
+  STRUCT,
+  UNION,
+  __NEAR;
 
   private final boolean syntactic;
 
