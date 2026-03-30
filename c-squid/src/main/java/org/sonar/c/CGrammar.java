@@ -740,13 +740,8 @@ public enum CGrammar implements GrammarRuleKey {
 
         b.rule(WHILE_STATEMENT).is(WHILE, PARENTHESIZED_LIST_EXPR, SUB_STATEMENT);
 
-        b.rule(FOR_STATEMENT).is(b.firstOf(
-                b.sequence(FOR, LPARENTHESIS, b.optional(FOR_INITIALISER), SEMICOLON, b.optional(LIST_EXPRESSION),
-                        SEMICOLON, b.optional(LIST_EXPRESSION), RPARENTHESIS, SUB_STATEMENT),
-                b.sequence(FOR, LPARENTHESIS, FOR_IN_BINDING, IN, LIST_EXPRESSION, RPARENTHESIS, SUB_STATEMENT),
-                b.sequence(FOR, b.sequence(/* No line break */ SPACING_NO_LB, NEXT_NOT_LB, EACH, LPARENTHESIS,
-                        FOR_IN_BINDING, IN, LIST_EXPRESSION, RPARENTHESIS, SUB_STATEMENT))));
-        b.rule(FOR_INITIALISER).is(b.firstOf(LIST_EXPRESSION_NO_IN, VARIABLE_DEF_NO_IN));
+        b.rule(FOR_STATEMENT).is(FOR, LPARENTHESIS, b.optional(FOR_INITIALISER), SEMICOLON, b.optional(LIST_EXPRESSION), SEMICOLON, b.optional(LIST_EXPRESSION), RPARENTHESIS, SUB_STATEMENT);
+        b.rule(FOR_INITIALISER).is(b.firstOf(LIST_EXPRESSION, VARIABLE_DEF_NO_IN));
         b.rule(FOR_IN_BINDING).is(b.firstOf(
                 b.sequence(VARIABLE_DEF_KIND, VARIABLE_BINDING_NO_IN),
                 POSTFIX_EXPR));
