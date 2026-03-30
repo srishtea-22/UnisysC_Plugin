@@ -807,7 +807,7 @@ public enum CGrammar implements GrammarRuleKey {
                 b.sequence(LBRAKET, ASSIGNMENT_EXPR, RBRAKET)));
         b.rule(ATTRIBUTE_EXPR).is(IDENTIFIER, b.zeroOrMore(PROPERTY_OPERATOR));
 
-        b.rule(IMPORT_DIRECTIVE).is(IMPORT, PACKAGE_NAME, b.optional(DOT, STAR));
+        b.rule(IMPORT_DIRECTIVE).is(IMPORT, LABEL, b.optional(DOT, STAR));
 
         b.rule(INCLUDE_DIRECTIVE).is(INCLUDE, /* No line break */ SPACING_NO_LB, NEXT_NOT_LB, STRING);
 
