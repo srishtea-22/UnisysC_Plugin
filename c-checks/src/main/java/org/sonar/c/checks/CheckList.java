@@ -54,7 +54,7 @@ public final class CheckList {
       CollapsibleIfStatementCheck.class,
       EqEqEqCheck.class,
       ClassNameCheck.class,
-      PackageNameCheck.class,
+      LabelNameCheck.class,
       TooManyLinesInCaseCheck.class,
       PackageDefInClassDefCheck.class,
       OctalValueCheck.class,

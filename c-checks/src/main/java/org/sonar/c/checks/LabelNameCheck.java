@@ -31,20 +31,20 @@ import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 
 @Rule(key = "S120")
-public class PackageNameCheck extends CCheck {
+public class LabelNameCheck extends CCheck {
 
-  private static final String DEFAULT = "^[a-z]+(\\.[a-z][a-z0-9]*)*$";
+  private static final String DEFAULT = "^[a-z][a-z0-9_]*$";
   private Pattern pattern = null;
 
   @RuleProperty(
     key = "format",
-    description = "Regular expression used to check the package names against",
+    description = "Regular expression used to check the label names against",
     defaultValue = DEFAULT)
   String format = DEFAULT;
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Collections.singletonList(CGrammar.PACKAGE_DEF);
+    return Collections.singletonList(CGrammar.LABEL);
   }
 
   @Override
@@ -56,20 +56,12 @@ public class PackageNameCheck extends CCheck {
 
   @Override
   public void visitNode(AstNode astNode) {
-    AstNode nameNode = astNode.getFirstChild(CGrammar.PACKAGE_NAME);
+    AstNode nameNode = astNode.getFirstChild(CGrammar.LABEL_NAME);
     if (nameNode != null) {
-      String packageIdentifier = concatenate(nameNode);
-      if (!pattern.matcher(packageIdentifier).matches()) {
-        addIssue(MessageFormat.format("Rename this package name to match the regular expression {0}", format), astNode);
+      String labelIdentifier = nameNode.getTokenValue();
+      if (!pattern.matcher(labelIdentifier).matches()) {
+        addIssue(MessageFormat.format("Rename this label name to match the regular expression {0}", format), astNode);
       }
     }
-  }
-
-  private static String concatenate(AstNode astNode) {
-    StringBuilder sb = new StringBuilder();
-    for (Token token : astNode.getTokens()) {
-      sb.append(token.getValue());
-    }
-    return sb.toString();
   }
 }

@@ -135,6 +135,9 @@ import static org.sonar.c.api.CPunctuator.XOR_EQU;
 import java.util.List;
 
 public enum CGrammar implements GrammarRuleKey {
+    // for C - 
+    LABEL,
+    LABEL_NAME,
 
     WHITESPACE,
     SPACING,
@@ -883,8 +886,8 @@ public enum CGrammar implements GrammarRuleKey {
         b.rule(INTERFACE_DEF).is(INTERFACE, CLASS_NAME, b.optional(EXTENDS_LIST), BLOCK);
         b.rule(EXTENDS_LIST).is(EXTENDS, TYPE_EXPRESSION_LIST);
 
-        b.rule(PACKAGE_DEF).is(PACKAGE, b.optional(PACKAGE_NAME), BLOCK);
-        b.rule(PACKAGE_NAME).is(IDENTIFIER, b.zeroOrMore(DOT, IDENTIFIER));
+        b.rule(LABEL).is(LABEL_NAME, COLON, STATEMENT);
+        b.rule(LABEL_NAME).is(IDENTIFIER);
 
         b.rule(NAMESPACE_DEF).is(NAMESPACE, NAMESPACE_BINDING, EOS);
         b.rule(NAMESPACE_BINDING).is(IDENTIFIER, b.optional(NAMESPACE_INITIALISATION));

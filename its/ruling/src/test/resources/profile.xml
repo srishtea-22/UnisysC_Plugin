@@ -145,7 +145,7 @@
     </rule>
     <rule>
       <repositoryKey>flex</repositoryKey>
-      <key>S120</key> <!-- package name -->
+      <key>S120</key> <!-- label name -->
       <priority>INFO</priority>
     </rule>
     <rule>
