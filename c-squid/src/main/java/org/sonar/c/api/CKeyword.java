@@ -93,6 +93,7 @@ public enum CKeyword implements GrammarRuleKey {
   inline,
   asm,
   INT,
+  INLINE,
   CHAR,
   SHORT,
   LONG,
