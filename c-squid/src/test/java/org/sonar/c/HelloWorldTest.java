@@ -17,7 +17,6 @@
 package org.sonar.c;
 
 import org.junit.jupiter.api.Test;
-import org.sonar.c.CGrammar;
 import org.sonar.sslr.parser.LexerlessGrammar;
 import org.sonar.sslr.tests.Assertions;
 
@@ -26,20 +25,25 @@ public class HelloWorldTest {
   private final LexerlessGrammar g = CGrammar.createGrammar();
 
   @Test
-  public void helloWorld() {
+  public void testUnisysCProgram() {
     Assertions.assertThat(g.rule(CGrammar.PROGRAM))
-      .matches("package{ "
-            + "   import flash.display.Sprite;\n"
-            + "\n /* comment *()(*\n"
-            + "    * blabla"
-            + "    */"
-            + "   public class FilledCircle extends Sprite {\n"
-            + "\n // comment"
-            + "\n       function HelloWorld():void {\n"
+      .matches("#include <stdio.h>\n"
+            + "#include \"unisys_lib.h\"\n"
             + "\n"
-            + "         trace(\"Hello World!\");\n"
-            + "       }"
-            + "    }"
-            + " }");
+            + "void hello() {\n"
+            + "    printf(\"Hello Unisys C\");\n"
+            + "}\n"
+            + "\n"
+            + "int main() {\n"
+            + "    hello();\n"
+            + "    return 0;\n"
+            + "}\n"
+            + " ");
+  }
+
+  @Test
+  public void testEmptyProgram() {
+    Assertions.assertThat(g.rule(CGrammar.PROGRAM))
+      .matches("   "); 
   }
 }
