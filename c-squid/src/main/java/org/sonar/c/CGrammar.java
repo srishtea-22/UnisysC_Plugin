@@ -569,17 +569,6 @@ public enum CGrammar implements GrammarRuleKey {
                 b.sequence(QUALIFIER, DOUBLE_COLON, BRACKETS),
                 PROPERTY_IDENTIFIER));
 
-        b.rule(GENERIC_SELECTION).is(
-                word(b, "_Generic"),
-                LPARENTHESIS,
-                ASSIGNMENT_EXPR,
-                COMMA,
-                GENERIC_ASSOC_LIST,
-                RPARENTHESIS);
-        b.rule(GENERIC_ASSOC_LIST).is(GENERIC_ASSOCIATION, b.zeroOrMore(COMMA, GENERIC_ASSOCIATION));
-        b.rule(GENERIC_ASSOCIATION).is(b.firstOf(
-                b.sequence(TYPE_NAME, COLON, ASSIGNMENT_EXPR),
-                b.sequence(DEFAULT, COLON, ASSIGNMENT_EXPR)));
 
         b.rule(EXPR_QUALIFIED_IDENTIFIER).is(b.firstOf(
                 b.sequence(PARENTHESIZED_EXPR, DOUBLE_COLON, PROPERTY_IDENTIFIER),
@@ -706,7 +695,6 @@ public enum CGrammar implements GrammarRuleKey {
 
         // Call expresions
         b.rule(ARGUMENTS).is(LPARENTHESIS, b.optional(LIST_EXPRESSION), RPARENTHESIS);
-        b.rule(ARGUMENT_EXPRESSION_LIST).is(ASSIGNMENT_EXPR, b.zeroOrMore(COMMA, ASSIGNMENT_EXPR));
 
         // Unary expression
         // b.rule(UNARY_EXPR).is(b.firstOf(
@@ -1148,7 +1136,6 @@ public enum CGrammar implements GrammarRuleKey {
 
         b.rule(POINTER).is(b.oneOrMore(b.sequence(STAR, b.optional(TYPE_QUALIFIER_LIST))));
 
-        b.rule(TYPE_QUALIFIER_LIST).is(b.oneOrMore(TYPE_QUALIFIER));
 
         b.rule(DIRECT_DECLARATOR).is(
                 b.firstOf(IDENTIFIER, b.sequence(LPARENTHESIS, DECLARATOR, RPARENTHESIS)),
