@@ -36,6 +36,7 @@ import static org.sonar.c.CKeyword.DO;
 import static org.sonar.c.CKeyword.DYNAMIC;
 import static org.sonar.c.CKeyword.EACH;
 import static org.sonar.c.CKeyword.ELSE;
+import static org.sonar.c.CKeyword.ENUM;
 import static org.sonar.c.CKeyword.EXTENDS;
 import static org.sonar.c.CKeyword.FALSE;
 import static org.sonar.c.CKeyword.FINALLY;
@@ -64,6 +65,7 @@ import static org.sonar.c.CKeyword.REGISTER;
 import static org.sonar.c.CKeyword.RETURN;
 import static org.sonar.c.CKeyword.SET;
 import static org.sonar.c.CKeyword.STATIC;
+import static org.sonar.c.CKeyword.STRUCT;
 import static org.sonar.c.CKeyword.SUPER;
 import static org.sonar.c.CKeyword.SWITCH;
 import static org.sonar.c.CKeyword.THIS;
@@ -72,6 +74,7 @@ import static org.sonar.c.CKeyword.TRUE;
 import static org.sonar.c.CKeyword.TRY;
 import static org.sonar.c.CKeyword.TYPEDEF;
 import static org.sonar.c.CKeyword.TYPEOF;
+import static org.sonar.c.CKeyword.UNION;
 import static org.sonar.c.CKeyword.USE;
 import static org.sonar.c.CKeyword.VAR;
 import static org.sonar.c.CKeyword.VOID;
@@ -95,6 +98,7 @@ import static org.sonar.c.CPunctuator.AND;
 import static org.sonar.c.CPunctuator.ANDAND;
 import static org.sonar.c.CPunctuator.ANDAND_EQU;
 import static org.sonar.c.CPunctuator.AND_EQU;
+import static org.sonar.c.CPunctuator.ARROW;
 import static org.sonar.c.CPunctuator.AT_SIGN;
 import static org.sonar.c.CPunctuator.COLON;
 import static org.sonar.c.CPunctuator.COMMA;
@@ -166,6 +170,9 @@ public enum CGrammar implements GrammarRuleKey {
     DECLARATION_LIST,
     DECLARATION_SPECIFIERS,
     DIRECT_DECLARATOR,
+    ENUM_SPECIFIER,
+    ENUMERATION_LIST,
+    ENUMERATOR,
     FUNCTION_ABSTRACT_SUFFIX,
     FCT_SPECIFIER,
     IDENTIFIER_LIST,
@@ -178,13 +185,18 @@ public enum CGrammar implements GrammarRuleKey {
     CONTROL_STATEMENT,
     STATEMENT_LIST,
     STORAGE_CLASS_SPECIFIER,
+    STRUCT_DECLARATOR,
+    STRUCT_DECLARATOR_LIST,
+    STRUCT_DECLARATION,
+    STRUCT_DECLARATION_LIST,
+    STRUCT_OR_UNION,
+    STRUCT_OR_UNION_SPECIFIER,
     POINTER,
     PARAMETER_DECLARATION,
     PARAMETER_LIST,
     PARAMETER_TYPE_LIST,
+    TYPEDEF_NAME,
     TYPE_NAME,
-    // TODO - remove type_qualifier
-    TYPE_QUALIFIER,
     TYPE_SPECIFIER,
     TYPE_SPECIFIER_LIST,
     UNARY_OPERATOR,
@@ -212,7 +224,7 @@ public enum CGrammar implements GrammarRuleKey {
      * EXPRESSIONS
      */
     // <editor-fold defaultstate="collapsed" desc="Expression">
-    PRIMARY_EXPR,
+    PRIMARY_EXPRESSION,
     RESERVED_NAMESPACE,
     PARENTHESIZED_EXPR,
     PARENTHESIZED_LIST_EXPR,
@@ -225,7 +237,7 @@ public enum CGrammar implements GrammarRuleKey {
     LITERAL_ELEMENT,
     CONDITIONAL_EXPR,
     CONDITIONAL_EXPR_NO_IN,
-    POSTFIX_EXPR,
+    POSTFIX_EXPRESSION,
     COMPOUND_ASSIGNMENT,
     LOGICAL_ASSIGNMENT,
     SUPER_EXPR,
@@ -252,31 +264,32 @@ public enum CGrammar implements GrammarRuleKey {
     // Unary expression
     UNARY_EXPR,
     // Binary expression
-    MULTIPLICATIVE_EXPR,
-    ADDITIVE_EXPR,
+    MULTIPLICATIVE_EXPRESSION,
+    ADDITIVE_EXPRESSION,
     ADDITIVE_OPERATOR,
-    SHIFT_EXPR,
-    RELATIONAL_EXPR,
+    AND_EXPRESSION,
+    SHIFT_EXPRESSION,
+    RELATIONAL_EXPRESSION,
     RELATIONAL_EXPR_NO_IN,
     RELATIONAL_OPERATOR,
     RELATIONAL_OPERATOR_NO_IN,
-    EQUALITY_EXPR,
+    EQUALITY_EXPRESSION,
     EQUALITY_EXPR_NO_IN,
     EQUALITY_OPERATOR,
-    BITEWISE_AND_EXPR,
     BITEWISE_AND_EXPR_NO_IN,
-    BITEWISE_XOR_EXPR,
+    EXCLUSIVE_OR_EXPRESSION,
     BITEWISE_XOR_EXPR_NO_IN,
     BITEWISE_OR_EXPR,
     BITEWISE_OR_EXPR_NO_IN,
-    LOGICAL_AND_EXPR,
+    INCLUSIVE_OR_EXPRESSION,
+    LOGICAL_AND_EXPRESSION,
     LOGICAL_AND_EXPR_NO_IN,
     LOGICAL_AND_OPERATOR,
-    LOGICAL_OR_EXPR,
+    LOGICAL_OR_EXPRESSION,
     LOGICAL_OR_EXPR_NO_IN,
     LOGICAL_OR_OPERATOR,
     // Assignment expression
-    ASSIGNMENT_EXPR,
+    ASSIGNMENT_EXPRESSION,
     ASSIGNMENT_EXPR_NO_IN,
     ASSIGNMENT_OPERATOR,
     // List expression
@@ -569,28 +582,16 @@ public enum CGrammar implements GrammarRuleKey {
                 b.sequence(AT_SIGN, NON_ATTRIBUTE_QUALIFIED_IDENTIFIER),
                 NON_ATTRIBUTE_QUALIFIED_IDENTIFIER));
 
-        b.rule(PRIMARY_EXPR).is(b.firstOf(
-                NULL,
-                TRUE,
-                FALSE,
-                HEXADECIMAL,
-                NUMBER,
-                STRING,
-                THIS,
-                REGULAR_EXPRESSION,
-                XML_INITIALISER,
-                STDIO_FUNCTION_NAME,
-                MATH_FUNCTION_NAME,
-                QUALIFIED_IDENTIFIER,
-                RESERVED_NAMESPACE,
-                PARENTHESIZED_EXPR,
-                ARRAY_INITIALISER,
-                OBJECT_INITIALISER,
-                FUNCTION_EXPR));
+        b.rule(PRIMARY_EXPRESSION).is(b.firstOf(
+                CONSTANT,
+                IDENTIFIER,
+                //STRING_LITERAL,
+                b.sequence(LPARENTHESIS, EXPRESSION, RPARENTHESIS)
+        ));
 
         b.rule(RESERVED_NAMESPACE).is(b.firstOf(PUBLIC, PRIVATE, PROTECTED, INTERNAL));
 
-        b.rule(PARENTHESIZED_EXPR).is(LPARENTHESIS, ASSIGNMENT_EXPR, RPARENTHESIS);
+        b.rule(PARENTHESIZED_EXPR).is(LPARENTHESIS, ASSIGNMENT_EXPRESSION, RPARENTHESIS);
         b.rule(PARENTHESIZED_LIST_EXPR).is(LPARENTHESIS, LIST_EXPRESSION, RPARENTHESIS);
 
         b.rule(FUNCTION_EXPR).is(b.firstOf(
@@ -599,7 +600,7 @@ public enum CGrammar implements GrammarRuleKey {
 
         b.rule(OBJECT_INITIALISER).is(LCURLYBRACE, b.optional(LITERAL_FIELD, b.zeroOrMore(COMMA, LITERAL_FIELD)),
                 RCURLYBRACE);
-        b.rule(LITERAL_FIELD).is(FIELD_NAME, COLON, ASSIGNMENT_EXPR);
+        b.rule(LITERAL_FIELD).is(FIELD_NAME, COLON, ASSIGNMENT_EXPRESSION);
         b.rule(FIELD_NAME).is(b.firstOf(
                 NON_ATTRIBUTE_QUALIFIED_IDENTIFIER,
                 STRING,
@@ -609,14 +610,14 @@ public enum CGrammar implements GrammarRuleKey {
         b.rule(ARRAY_INITIALISER).is(LBRAKET, b.optional(ELEMENT_LIST), RBRAKET);
         b.rule(ELEMENT_LIST).is(b.optional(COMMA), LITERAL_ELEMENT, b.zeroOrMore(COMMA, LITERAL_ELEMENT),
                 b.optional(COMMA));
-        b.rule(LITERAL_ELEMENT).is(ASSIGNMENT_EXPR);
+        b.rule(LITERAL_ELEMENT).is(ASSIGNMENT_EXPRESSION);
 
         // Assignement expressions
-        b.rule(ASSIGNMENT_EXPR).is(b.firstOf(
-                b.sequence(UNARY_EXPR, ASSIGNMENT_OPERATOR, ASSIGNMENT_EXPR),
+        b.rule(ASSIGNMENT_EXPRESSION).is(b.firstOf(
+                b.sequence(UNARY_EXPR, ASSIGNMENT_OPERATOR, ASSIGNMENT_EXPRESSION),
                 CONDITIONAL_EXPR));
         b.rule(ASSIGNMENT_EXPR_NO_IN).is(b.firstOf(
-                b.sequence(POSTFIX_EXPR, ASSIGNMENT_OPERATOR, ASSIGNMENT_EXPR_NO_IN),
+                b.sequence(POSTFIX_EXPRESSION, ASSIGNMENT_OPERATOR, ASSIGNMENT_EXPR_NO_IN),
                 CONDITIONAL_EXPR));
         b.rule(ASSIGNMENT_OPERATOR).is(
                 b.firstOf(
@@ -641,21 +642,19 @@ public enum CGrammar implements GrammarRuleKey {
                 b.sequence(SUPER, ARGUMENTS),
                 SUPER));
 
-        b.rule(POSTFIX_EXPR).is(
+        b.rule(POSTFIX_EXPRESSION).is(PRIMARY_EXPRESSION, b.zeroOrMore(
                 b.firstOf(
-                        b.sequence(LPARENTHESIS, TYPE_NAME, RPARENTHESIS, LCURLYBRACE, INITIALIZER_LIST, COMMA, RCURLYBRACE),
-                        b.sequence(LPARENTHESIS, TYPE_NAME, RPARENTHESIS, LCURLYBRACE, INITIALIZER_LIST, RCURLYBRACE),
-                        PRIMARY_EXPR),b.zeroOrMore(b.firstOf(
-                                b.sequence(LBRAKET, LIST_EXPRESSION, RBRAKET),
-                                ARGUMENTS,
-                                b.sequence(DOT, IDENTIFIER),
-                                b.sequence(SPACING_NO_LB, NEXT_NOT_LB, DOUBLE_PLUS),
-                                b.sequence(SPACING_NO_LB, NEXT_NOT_LB, DOUBLE_MINUS))));
+                        b.sequence(LBRAKET, EXPRESSION, RBRAKET),
+                        b.sequence(LPARENTHESIS, b.optional(ARGUMENT_EXPRESSION_LIST), RPARENTHESIS),
+                        b.sequence(DOT, IDENTIFIER),
+                        b.sequence(ARROW, IDENTIFIER),
+                        DOUBLE_PLUS,
+                        DOUBLE_MINUS))).skipIfOneChild(); 
 
         // New expressions
         b.rule(FULL_NEW_EXPR).is(NEW, b.firstOf(FULL_NEW_SUB_EXPR, VECTOR_LITERAL_EXPRESSION), ARGUMENTS);
         b.rule(FULL_NEW_SUB_EXPR).is(b.firstOf(
-                PRIMARY_EXPR,
+                PRIMARY_EXPRESSION,
                 b.sequence(FULL_NEW_EXPR, PROPERTY_OPERATOR),
                 FULL_NEW_EXPR,
                 b.sequence(SUPER_EXPR, PROPERTY_OPERATOR)));
@@ -681,22 +680,15 @@ public enum CGrammar implements GrammarRuleKey {
         // Call expresions
         b.rule(ARGUMENTS).is(LPARENTHESIS, b.optional(LIST_EXPRESSION), RPARENTHESIS);
 
-        // Unary expression
-        // b.rule(UNARY_EXPR).is(b.firstOf(
-        //         b.sequence(PLUS, UNARY_EXPR),
-        //         b.sequence(MINUS, UNARY_EXPR),
-        //         b.sequence(UNARY_OPERATOR, CAST_EXPRESSION),
-        //         b.sequence(SIZEOF, UNARY_EXPR),
-        //         b.sequence(SIZEOF, LPARENTHESIS, TYPE_NAME, RPARENTHESIS),
-        //         POSTFIX_EXPR)).skipIfOneChild();
+        b.rule(ARGUMENT_EXPRESSION_LIST).is(b.sequence(ASSIGNMENT_EXPRESSION, b.zeroOrMore(b.sequence(COMMA, ASSIGNMENT_EXPRESSION)))).skipIfOneChild();
+
         b.rule(UNARY_EXPR).is(b.firstOf(
                 b.sequence(DOUBLE_PLUS, UNARY_EXPR),
                 b.sequence(DOUBLE_MINUS, UNARY_EXPR),
                 b.sequence(UNARY_OPERATOR, CAST_EXPRESSION),
                 b.sequence(SIZEOF, UNARY_EXPR),
                 b.sequence(SIZEOF, LPARENTHESIS, TYPE_NAME, RPARENTHESIS),
-                b.sequence(word(b, "_Alignof"), LPARENTHESIS, TYPE_NAME, RPARENTHESIS),
-                POSTFIX_EXPR)).skipIfOneChild();
+                POSTFIX_EXPRESSION)).skipIfOneChild();
 
         b.rule(UNARY_OPERATOR).is(
                 b.firstOf(
@@ -742,37 +734,36 @@ public enum CGrammar implements GrammarRuleKey {
         b.rule(CONSTANT_EXPRESSION).is(CONDITIONAL_EXPR);
 
         // Binary expressions
-        b.rule(MULTIPLICATIVE_EXPR).is(CAST_EXPRESSION, b.zeroOrMore(b.firstOf(
+        b.rule(MULTIPLICATIVE_EXPRESSION).is(CAST_EXPRESSION, b.zeroOrMore(b.firstOf(
                 b.sequence(STAR, CAST_EXPRESSION),
                 b.sequence(DIV, CAST_EXPRESSION),
                 b.sequence(MOD, CAST_EXPRESSION)))).skipIfOneChild();
 
-        b.rule(ADDITIVE_EXPR).is(MULTIPLICATIVE_EXPR, b.zeroOrMore(b.firstOf(
-                b.sequence(PLUS, MULTIPLICATIVE_EXPR),
-                b.sequence(MINUS, MULTIPLICATIVE_EXPR)))).skipIfOneChild();
+        b.rule(ADDITIVE_EXPRESSION).is(MULTIPLICATIVE_EXPRESSION, b.zeroOrMore(b.firstOf(
+                b.sequence(PLUS, MULTIPLICATIVE_EXPRESSION),
+                b.sequence(MINUS, MULTIPLICATIVE_EXPRESSION)))).skipIfOneChild();
 
         b.rule(ADDITIVE_OPERATOR).is(b.firstOf(PLUS, MINUS, /* Action Script 2: */ word(b, "add")));
-        b.rule(SHIFT_EXPR).is(ADDITIVE_EXPR, b.zeroOrMore(b.firstOf(
-                b.sequence(SL, ADDITIVE_EXPR),
-                b.sequence(SR, ADDITIVE_EXPR),
-                b.sequence(SR2, ADDITIVE_EXPR)))).skipIfOneChild();
+        b.rule(SHIFT_EXPRESSION).is(ADDITIVE_EXPRESSION, b.zeroOrMore(b.firstOf(
+                b.sequence(SL, ADDITIVE_EXPRESSION),
+                b.sequence(SR, ADDITIVE_EXPRESSION)))).skipIfOneChild();
 
-        b.rule(RELATIONAL_EXPR).is(SHIFT_EXPR, b.zeroOrMore(b.firstOf(
-                b.sequence(LT, SHIFT_EXPR),
-                b.sequence(GT, SHIFT_EXPR),
-                b.sequence(LE, SHIFT_EXPR),
-                b.sequence(GE, SHIFT_EXPR)))).skipIfOneChild();
+        b.rule(RELATIONAL_EXPRESSION).is(SHIFT_EXPRESSION, b.zeroOrMore(b.firstOf(
+                b.sequence(LT, SHIFT_EXPRESSION),
+                b.sequence(GT, SHIFT_EXPRESSION),
+                b.sequence(LE, SHIFT_EXPRESSION),
+                b.sequence(GE, SHIFT_EXPRESSION)))).skipIfOneChild();
 
-        b.rule(RELATIONAL_EXPR_NO_IN).is(SHIFT_EXPR, b.zeroOrMore(RELATIONAL_OPERATOR_NO_IN, SHIFT_EXPR))
+        b.rule(RELATIONAL_EXPR_NO_IN).is(SHIFT_EXPRESSION, b.zeroOrMore(RELATIONAL_OPERATOR_NO_IN, SHIFT_EXPRESSION))
                 .skipIfOneChild();
         b.rule(RELATIONAL_OPERATOR).is(b.firstOf(LE, GE, LT, GT, IN, INSTANCEOF, IS, AS,
                 /* Action Script 2: */ word(b, "le"), word(b, "ge"), word(b, "lt"), word(b, "gt")));
         b.rule(RELATIONAL_OPERATOR_NO_IN).is(b.firstOf(LE, GE, LT, GT, INSTANCEOF, IS, AS,
                 /* Action Script 2: */ word(b, "le"), word(b, "ge"), word(b, "lt"), word(b, "gt")));
 
-        b.rule(EQUALITY_EXPR).is(RELATIONAL_EXPR, b.zeroOrMore(b.firstOf(
-                b.sequence(EQUAL2, RELATIONAL_EXPR),
-                b.sequence(NOTEQUAL1, RELATIONAL_EXPR)))).skipIfOneChild();
+        b.rule(EQUALITY_EXPRESSION).is(RELATIONAL_EXPRESSION, b.zeroOrMore(b.firstOf(
+                b.sequence(EQUAL2, RELATIONAL_EXPRESSION),
+                b.sequence(NOTEQUAL1, RELATIONAL_EXPRESSION)))).skipIfOneChild();
         
         b.rule(EQUALITY_EXPR_NO_IN).is(RELATIONAL_EXPR_NO_IN, b.zeroOrMore(EQUALITY_OPERATOR, RELATIONAL_EXPR_NO_IN))
                 .skipIfOneChild();
@@ -786,19 +777,20 @@ public enum CGrammar implements GrammarRuleKey {
                 word(b, "eq"),
                 word(b, "ne")));
 
-        b.rule(BITEWISE_AND_EXPR).is(EQUALITY_EXPR, b.zeroOrMore(AND, EQUALITY_EXPR)).skipIfOneChild();
+        b.rule(AND_EXPRESSION).is(EQUALITY_EXPRESSION, b.zeroOrMore(b.sequence(AND, EQUALITY_EXPRESSION))).skipIfOneChild();
         b.rule(BITEWISE_AND_EXPR_NO_IN).is(EQUALITY_EXPR_NO_IN, b.zeroOrMore(AND, EQUALITY_EXPR_NO_IN))
                 .skipIfOneChild();
 
-        b.rule(BITEWISE_XOR_EXPR).is(BITEWISE_AND_EXPR, b.zeroOrMore(XOR, BITEWISE_AND_EXPR)).skipIfOneChild();
+        b.rule(EXCLUSIVE_OR_EXPRESSION).is(AND_EXPRESSION, b.zeroOrMore(b.sequence(XOR, AND_EXPRESSION))).skipIfOneChild();
+        b.rule(INCLUSIVE_OR_EXPRESSION).is(EXCLUSIVE_OR_EXPRESSION, b.zeroOrMore(OR, EXCLUSIVE_OR_EXPRESSION));
         b.rule(BITEWISE_XOR_EXPR_NO_IN).is(BITEWISE_AND_EXPR_NO_IN, b.zeroOrMore(XOR, BITEWISE_AND_EXPR_NO_IN))
                 .skipIfOneChild();
 
-        b.rule(BITEWISE_OR_EXPR).is(BITEWISE_XOR_EXPR, b.zeroOrMore(OR, BITEWISE_XOR_EXPR)).skipIfOneChild();
+        b.rule(BITEWISE_OR_EXPR).is(EXCLUSIVE_OR_EXPRESSION, b.zeroOrMore(OR, EXCLUSIVE_OR_EXPRESSION)).skipIfOneChild();
         b.rule(BITEWISE_OR_EXPR_NO_IN).is(BITEWISE_XOR_EXPR_NO_IN, b.zeroOrMore(OR, BITEWISE_XOR_EXPR_NO_IN))
                 .skipIfOneChild();
 
-        b.rule(LOGICAL_AND_EXPR).is(BITEWISE_OR_EXPR, b.zeroOrMore(LOGICAL_AND_OPERATOR, BITEWISE_OR_EXPR)).skipIfOneChild();
+        b.rule(LOGICAL_AND_EXPRESSION).is(INCLUSIVE_OR_EXPRESSION, b.zeroOrMore(b.sequence(ANDAND, INCLUSIVE_OR_EXPRESSION))).skipIfOneChild();
        
         b.rule(LOGICAL_AND_EXPR_NO_IN)
                 .is(BITEWISE_OR_EXPR_NO_IN, b.zeroOrMore(LOGICAL_AND_OPERATOR, BITEWISE_XOR_EXPR_NO_IN))
@@ -809,7 +801,7 @@ public enum CGrammar implements GrammarRuleKey {
                 /* ActionScript 2: */
                 b.sequence(SPACING, "and", b.nextNot(IDENTIFIER_PART))));
 
-        b.rule(LOGICAL_OR_EXPR).is(LOGICAL_AND_EXPR, b.zeroOrMore(LOGICAL_OR_OPERATOR, LOGICAL_AND_EXPR))
+        b.rule(LOGICAL_OR_EXPRESSION).is(LOGICAL_AND_EXPRESSION, b.zeroOrMore(b.sequence(OROR, LOGICAL_AND_EXPRESSION)))
                 .skipIfOneChild();
         b.rule(LOGICAL_OR_EXPR_NO_IN)
                 .is(LOGICAL_AND_EXPR_NO_IN, b.zeroOrMore(LOGICAL_OR_OPERATOR, LOGICAL_AND_EXPR_NO_IN)).skipIfOneChild();
@@ -819,7 +811,7 @@ public enum CGrammar implements GrammarRuleKey {
                 b.sequence(SPACING, "or", b.nextNot(IDENTIFIER_PART))));
 
         // Conditional expression
-        b.rule(CONDITIONAL_EXPR).is(LOGICAL_OR_EXPR, b.optional(QUERY, EXPRESSION, COLON, CONDITIONAL_EXPR))
+        b.rule(CONDITIONAL_EXPR).is(LOGICAL_OR_EXPRESSION, b.optional(QUERY, EXPRESSION, COLON, CONDITIONAL_EXPR))
                 .skipIfOneChild();
         b.rule(CONDITIONAL_EXPR_NO_IN)
                 .is(LOGICAL_OR_EXPR_NO_IN, b.optional(QUERY, ASSIGNMENT_EXPR_NO_IN, COLON, ASSIGNMENT_EXPR_NO_IN))
@@ -827,14 +819,14 @@ public enum CGrammar implements GrammarRuleKey {
 
         // Non assignment expression
         b.rule(NON_ASSIGNMENT_EXPR)
-                .is(LOGICAL_OR_EXPR, b.optional(QUERY, NON_ASSIGNMENT_EXPR, COLON, NON_ASSIGNMENT_EXPR))
+                .is(LOGICAL_OR_EXPRESSION, b.optional(QUERY, NON_ASSIGNMENT_EXPR, COLON, NON_ASSIGNMENT_EXPR))
                 .skipIfOneChild();
         b.rule(NON_ASSIGNMENT_EXPR_NO_IN)
                 .is(LOGICAL_OR_EXPR_NO_IN,
                         b.optional(QUERY, NON_ASSIGNMENT_EXPR_NO_IN, COLON, NON_ASSIGNMENT_EXPR_NO_IN))
                 .skipIfOneChild();
 
-        b.rule(LIST_EXPRESSION).is(ASSIGNMENT_EXPR, b.zeroOrMore(b.sequence(COMMA, ASSIGNMENT_EXPR)));
+        b.rule(LIST_EXPRESSION).is(ASSIGNMENT_EXPRESSION, b.zeroOrMore(b.sequence(COMMA, ASSIGNMENT_EXPRESSION)));
         b.rule(LIST_EXPRESSION_NO_IN).is(ASSIGNMENT_EXPR_NO_IN, b.zeroOrMore(b.sequence(COMMA, ASSIGNMENT_EXPR_NO_IN)));
 
         b.rule(TYPE_EXPR).is(b.firstOf(
@@ -975,7 +967,7 @@ public enum CGrammar implements GrammarRuleKey {
         b.rule(EXPRESSION_STATEMENT).is(b.firstOf(SEMICOLON, b.sequence(EXPRESSION, SEMICOLON)));
 
         // Not in spec:
-        b.rule(METADATA_STATEMENT).is(LBRAKET, ASSIGNMENT_EXPR, RBRAKET);
+        b.rule(METADATA_STATEMENT).is(LBRAKET, ASSIGNMENT_EXPRESSION, RBRAKET);
 
         b.rule(VARIABLE_DECLARATION_STATEMENT).is(VARIABLE_DEF, EOS);
 
@@ -1006,7 +998,7 @@ public enum CGrammar implements GrammarRuleKey {
         b.rule(FOR_INITIALISER).is(b.firstOf(LIST_EXPRESSION, VARIABLE_DEF_NO_IN));
         b.rule(FOR_IN_BINDING).is(b.firstOf(
                 b.sequence(VARIABLE_DEF_KIND, VARIABLE_BINDING_NO_IN),
-                POSTFIX_EXPR));
+                POSTFIX_EXPRESSION));
 
         b.rule(CONTINUE_STATEMENT).is(CONTINUE, b.firstOf(
                 b.sequence(/* No line break */ SPACING_NO_LB, NEXT_NOT_LB, IDENTIFIER, EOS),
@@ -1032,7 +1024,7 @@ public enum CGrammar implements GrammarRuleKey {
         b.rule(CATCH_CLAUSES).is(CATCH_CLAUSE, b.zeroOrMore(CATCH_CLAUSE));
         b.rule(CATCH_CLAUSE).is(CATCH, LPARENTHESIS, PARAMETER, RPARENTHESIS, BLOCK);
 
-        b.rule(EXPRESSION).is(ASSIGNMENT_EXPR, b.zeroOrMore(COMMA, ASSIGNMENT_EXPR));
+        b.rule(EXPRESSION).is(ASSIGNMENT_EXPRESSION, b.zeroOrMore(COMMA, ASSIGNMENT_EXPRESSION));
     }
 
     private static void directives(LexerlessGrammarBuilder b) {
@@ -1063,7 +1055,7 @@ public enum CGrammar implements GrammarRuleKey {
         b.rule(ATTRIBUTE).is(b.firstOf(
                 b.sequence(/* hack: */b.nextNot(NAMESPACE), ATTRIBUTE_EXPR),
                 RESERVED_NAMESPACE,
-                b.sequence(LBRAKET, ASSIGNMENT_EXPR, RBRAKET)));
+                b.sequence(LBRAKET, ASSIGNMENT_EXPRESSION, RBRAKET)));
         b.rule(ATTRIBUTE_EXPR).is(IDENTIFIER, b.zeroOrMore(PROPERTY_OPERATOR));
 
         b.rule(IMPORT_DIRECTIVE).is(IMPORT, LABEL, b.optional(DOT, STAR));
@@ -1079,7 +1071,6 @@ public enum CGrammar implements GrammarRuleKey {
     private static void definitions(LexerlessGrammarBuilder b) {
         // for C -
         b.rule(DECLARATION).is(b.sequence(DECLARATION_SPECIFIERS, b.optional(INIT_DECLARATOR_LIST), SEMICOLON));
-        // STATIC_ASSERT_DECLARATION may or may not be added to above rule
 
         b.rule(DECLARATION_SPECIFIERS).is(b.oneOrMore(
                 b.firstOf(STORAGE_CLASS_SPECIFIER, TYPE_SPECIFIER, FCT_SPECIFIER)));
@@ -1094,7 +1085,7 @@ public enum CGrammar implements GrammarRuleKey {
 
         b.rule(INITIALIZER).is(b.firstOf(
                 b.sequence(LCURLYBRACE, INITIALIZER_LIST, b.optional(COMMA), RCURLYBRACE),
-                ASSIGNMENT_EXPR));
+                ASSIGNMENT_EXPRESSION));
 
         b.rule(INITIALIZER_LIST).is(INITIALIZER, b.zeroOrMore(COMMA, INITIALIZER));
 
@@ -1112,7 +1103,7 @@ public enum CGrammar implements GrammarRuleKey {
         b.rule(IDENTIFIER_LIST).is(IDENTIFIER, b.zeroOrMore(b.sequence(COMMA, IDENTIFIER)));
 
         // existing in flex - 
-        b.rule(VARIABLE_DEF).is(b.optional(TYPE_QUALIFIER), TYPE_SPECIFIER, VARIABLE_BINDING_LIST, EOS);
+        b.rule(VARIABLE_DEF).is(TYPE_SPECIFIER, VARIABLE_BINDING_LIST, EOS);
         b.rule(VARIABLE_DEF_NO_IN).is(VARIABLE_DEF_KIND, VARIABLE_BINDING_LIST_NO_IN);
 
         b.rule(VARIABLE_DEF_KIND).is(b.firstOf(VAR, CONST));
@@ -1127,7 +1118,7 @@ public enum CGrammar implements GrammarRuleKey {
         b.rule(VARIABLE_INITIALISATION_NO_IN).is(EQUAL1, VARIABLE_INITIALISER_NO_IN);
 
         b.rule(VARIABLE_INITIALISER).is(b.firstOf(
-                ASSIGNMENT_EXPR,
+                ASSIGNMENT_EXPRESSION,
                 ATTRIBUTE_COMBINATION));
         b.rule(VARIABLE_INITIALISER_NO_IN).is(b.firstOf(
                 ASSIGNMENT_EXPR_NO_IN,
@@ -1149,7 +1140,7 @@ public enum CGrammar implements GrammarRuleKey {
                 CHAR,
                 CONST,
                 DOUBLE,
-                //ENUM_SPECIFIER,
+                ENUM_SPECIFIER,
                 __FAR,
                 FLOAT,
                 INT,
@@ -1157,14 +1148,39 @@ public enum CGrammar implements GrammarRuleKey {
                 __NEAR,
                 SHORT,
                 SIGNED,
-                //STRUCT_OR_UNION_SPECIFIER,
-                //TYPEDEF_NAME,
+                STRUCT_OR_UNION_SPECIFIER,
+                TYPEDEF_NAME,
                 UNSIGNED,
                 VOID,
                 VOLATILE
         ));
+
+        b.rule(ENUM_SPECIFIER).is(b.firstOf(
+                b.sequence(ENUM, b.optional(IDENTIFIER), LCURLYBRACE, ENUMERATION_LIST, RCURLYBRACE),
+                b.sequence(ENUM, IDENTIFIER)
+        ));
+        b.rule(ENUMERATION_LIST).is(b.sequence(ENUMERATOR, b.zeroOrMore(COMMA, ENUMERATOR)));
+        b.rule(ENUMERATOR).is(b.firstOf(
+                b.sequence(ENUMERATION_CONSTANT, EQUAL1, CONSTANT_EXPRESSION),
+                ENUMERATION_CONSTANT
+        ));
+
+        b.rule(STRUCT_OR_UNION_SPECIFIER).is(b.firstOf(
+                b.sequence(STRUCT_OR_UNION, b.optional(IDENTIFIER), LCURLYBRACE, STRUCT_DECLARATION_LIST, RCURLYBRACE),
+                b.sequence(STRUCT_OR_UNION, IDENTIFIER)
+        ));
+        b.rule(STRUCT_OR_UNION).is(b.firstOf(STRUCT, UNION));
+        b.rule(STRUCT_DECLARATION_LIST).is(b.oneOrMore(STRUCT_DECLARATION));
+        b.rule(STRUCT_DECLARATION).is(b.sequence(TYPE_SPECIFIER_LIST, STRUCT_DECLARATOR_LIST, SEMICOLON));
+        b.rule(STRUCT_DECLARATOR_LIST).is(b.sequence(STRUCT_DECLARATOR, b.zeroOrMore(b.sequence(COMMA, STRUCT_DECLARATOR))));
+        b.rule(STRUCT_DECLARATOR).is(b.firstOf(
+                b.sequence(b.optional(DECLARATOR), COLON, CONSTANT_EXPRESSION),
+                DECLARATOR
+        ));
+
+        b.rule(TYPEDEF_NAME).is(IDENTIFIER);
+
         b.rule(FUNCTION_NAME).is(IDENTIFIER);
-        b.rule(TYPE_QUALIFIER).is(CONST, VOLATILE);
 
         b.rule(FUNCTION_COMMON).is(b.firstOf(
                 b.sequence(FUNCTION_SIGNATURE, BLOCK),
@@ -1178,7 +1194,7 @@ public enum CGrammar implements GrammarRuleKey {
                 REST_PARAMETERS));
 
         b.rule(PARAMETER).is(b.firstOf(
-                b.sequence(TYPED_IDENTIFIER, EQUAL1, ASSIGNMENT_EXPR),
+                b.sequence(TYPED_IDENTIFIER, EQUAL1, ASSIGNMENT_EXPRESSION),
                 TYPED_IDENTIFIER));
 
         b.rule(REST_PARAMETERS).is(b.firstOf(
@@ -1205,7 +1221,7 @@ public enum CGrammar implements GrammarRuleKey {
 
         b.rule(NAMESPACE_DEF).is(NAMESPACE, NAMESPACE_BINDING, EOS);
         b.rule(NAMESPACE_BINDING).is(IDENTIFIER, b.optional(NAMESPACE_INITIALISATION));
-        b.rule(NAMESPACE_INITIALISATION).is(EQUAL1, ASSIGNMENT_EXPR);
+        b.rule(NAMESPACE_INITIALISATION).is(EQUAL1, ASSIGNMENT_EXPRESSION);
 
         /*
          * b.rule(PROGRAM).is(
