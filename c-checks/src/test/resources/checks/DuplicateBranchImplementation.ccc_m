@@ -1,4 +1,4 @@
-void test_function() {
+void testfunction() {
   switch(i) {
     case 1:
       doSomething(1);

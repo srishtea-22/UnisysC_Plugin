@@ -36,6 +36,7 @@ import static org.sonar.c.CKeyword.DO;
 import static org.sonar.c.CKeyword.DYNAMIC;
 import static org.sonar.c.CKeyword.EACH;
 import static org.sonar.c.CKeyword.ELSE;
+import static org.sonar.c.CKeyword.ENUM;
 import static org.sonar.c.CKeyword.EXTENDS;
 import static org.sonar.c.CKeyword.FALSE;
 import static org.sonar.c.CKeyword.FINALLY;
@@ -64,6 +65,7 @@ import static org.sonar.c.CKeyword.REGISTER;
 import static org.sonar.c.CKeyword.RETURN;
 import static org.sonar.c.CKeyword.SET;
 import static org.sonar.c.CKeyword.STATIC;
+import static org.sonar.c.CKeyword.STRUCT;
 import static org.sonar.c.CKeyword.SUPER;
 import static org.sonar.c.CKeyword.SWITCH;
 import static org.sonar.c.CKeyword.THIS;
@@ -72,6 +74,7 @@ import static org.sonar.c.CKeyword.TRUE;
 import static org.sonar.c.CKeyword.TRY;
 import static org.sonar.c.CKeyword.TYPEDEF;
 import static org.sonar.c.CKeyword.TYPEOF;
+import static org.sonar.c.CKeyword.UNION;
 import static org.sonar.c.CKeyword.USE;
 import static org.sonar.c.CKeyword.VAR;
 import static org.sonar.c.CKeyword.VOID;
@@ -166,6 +169,9 @@ public enum CGrammar implements GrammarRuleKey {
     DECLARATION_LIST,
     DECLARATION_SPECIFIERS,
     DIRECT_DECLARATOR,
+    ENUM_SPECIFIER,
+    ENUMERATION_LIST,
+    ENUMERATOR,
     FUNCTION_ABSTRACT_SUFFIX,
     FCT_SPECIFIER,
     IDENTIFIER_LIST,
@@ -178,13 +184,18 @@ public enum CGrammar implements GrammarRuleKey {
     CONTROL_STATEMENT,
     STATEMENT_LIST,
     STORAGE_CLASS_SPECIFIER,
+    STRUCT_DECLARATOR,
+    STRUCT_DECLARATOR_LIST,
+    STRUCT_DECLARATION,
+    STRUCT_DECLARATION_LIST,
+    STRUCT_OR_UNION,
+    STRUCT_OR_UNION_SPECIFIER,
     POINTER,
     PARAMETER_DECLARATION,
     PARAMETER_LIST,
     PARAMETER_TYPE_LIST,
+    TYPEDEF_NAME,
     TYPE_NAME,
-    // TODO - remove type_qualifier
-    TYPE_QUALIFIER,
     TYPE_SPECIFIER,
     TYPE_SPECIFIER_LIST,
     UNARY_OPERATOR,
@@ -538,7 +549,7 @@ public enum CGrammar implements GrammarRuleKey {
         b.rule(IDENTIFIER).is(b.sequence(
                 SPACING,
                 b.nextNot(KEYWORDS),
-                b.regexp("[a-zA-Z_]" + "[a-zA-Z0-9_]*+")));
+                b.regexp("[a-zA-Z]" + "[a-zA-Z0-9]*+")));
 
         b.rule(IDENTIFIER_PART).is(b.regexp(IDENTIFIER_PART_REGEXP));
 
@@ -681,21 +692,12 @@ public enum CGrammar implements GrammarRuleKey {
         // Call expresions
         b.rule(ARGUMENTS).is(LPARENTHESIS, b.optional(LIST_EXPRESSION), RPARENTHESIS);
 
-        // Unary expression
-        // b.rule(UNARY_EXPR).is(b.firstOf(
-        //         b.sequence(PLUS, UNARY_EXPR),
-        //         b.sequence(MINUS, UNARY_EXPR),
-        //         b.sequence(UNARY_OPERATOR, CAST_EXPRESSION),
-        //         b.sequence(SIZEOF, UNARY_EXPR),
-        //         b.sequence(SIZEOF, LPARENTHESIS, TYPE_NAME, RPARENTHESIS),
-        //         POSTFIX_EXPR)).skipIfOneChild();
         b.rule(UNARY_EXPR).is(b.firstOf(
                 b.sequence(DOUBLE_PLUS, UNARY_EXPR),
                 b.sequence(DOUBLE_MINUS, UNARY_EXPR),
                 b.sequence(UNARY_OPERATOR, CAST_EXPRESSION),
                 b.sequence(SIZEOF, UNARY_EXPR),
                 b.sequence(SIZEOF, LPARENTHESIS, TYPE_NAME, RPARENTHESIS),
-                b.sequence(word(b, "_Alignof"), LPARENTHESIS, TYPE_NAME, RPARENTHESIS),
                 POSTFIX_EXPR)).skipIfOneChild();
 
         b.rule(UNARY_OPERATOR).is(
@@ -1079,7 +1081,6 @@ public enum CGrammar implements GrammarRuleKey {
     private static void definitions(LexerlessGrammarBuilder b) {
         // for C -
         b.rule(DECLARATION).is(b.sequence(DECLARATION_SPECIFIERS, b.optional(INIT_DECLARATOR_LIST), SEMICOLON));
-        // STATIC_ASSERT_DECLARATION may or may not be added to above rule
 
         b.rule(DECLARATION_SPECIFIERS).is(b.oneOrMore(
                 b.firstOf(STORAGE_CLASS_SPECIFIER, TYPE_SPECIFIER, FCT_SPECIFIER)));
@@ -1112,7 +1113,7 @@ public enum CGrammar implements GrammarRuleKey {
         b.rule(IDENTIFIER_LIST).is(IDENTIFIER, b.zeroOrMore(b.sequence(COMMA, IDENTIFIER)));
 
         // existing in flex - 
-        b.rule(VARIABLE_DEF).is(b.optional(TYPE_QUALIFIER), TYPE_SPECIFIER, VARIABLE_BINDING_LIST, EOS);
+        b.rule(VARIABLE_DEF).is(TYPE_SPECIFIER, VARIABLE_BINDING_LIST, EOS);
         b.rule(VARIABLE_DEF_NO_IN).is(VARIABLE_DEF_KIND, VARIABLE_BINDING_LIST_NO_IN);
 
         b.rule(VARIABLE_DEF_KIND).is(b.firstOf(VAR, CONST));
@@ -1149,7 +1150,7 @@ public enum CGrammar implements GrammarRuleKey {
                 CHAR,
                 CONST,
                 DOUBLE,
-                //ENUM_SPECIFIER,
+                ENUM_SPECIFIER,
                 __FAR,
                 FLOAT,
                 INT,
@@ -1157,14 +1158,39 @@ public enum CGrammar implements GrammarRuleKey {
                 __NEAR,
                 SHORT,
                 SIGNED,
-                //STRUCT_OR_UNION_SPECIFIER,
-                //TYPEDEF_NAME,
+                STRUCT_OR_UNION_SPECIFIER,
+                TYPEDEF_NAME,
                 UNSIGNED,
                 VOID,
                 VOLATILE
         ));
+
+        b.rule(ENUM_SPECIFIER).is(b.firstOf(
+                b.sequence(ENUM, b.optional(IDENTIFIER), LCURLYBRACE, ENUMERATION_LIST, RCURLYBRACE),
+                b.sequence(ENUM, IDENTIFIER)
+        ));
+        b.rule(ENUMERATION_LIST).is(b.sequence(ENUMERATOR, b.zeroOrMore(COMMA, ENUMERATOR)));
+        b.rule(ENUMERATOR).is(b.firstOf(
+                b.sequence(ENUMERATION_CONSTANT, EQUAL1, CONSTANT_EXPRESSION),
+                ENUMERATION_CONSTANT
+        ));
+
+        b.rule(STRUCT_OR_UNION_SPECIFIER).is(b.firstOf(
+                b.sequence(STRUCT_OR_UNION, b.optional(IDENTIFIER), LCURLYBRACE, STRUCT_DECLARATION_LIST, RCURLYBRACE),
+                b.sequence(STRUCT_OR_UNION, IDENTIFIER)
+        ));
+        b.rule(STRUCT_OR_UNION).is(b.firstOf(STRUCT, UNION));
+        b.rule(STRUCT_DECLARATION_LIST).is(b.oneOrMore(STRUCT_DECLARATION));
+        b.rule(STRUCT_DECLARATION).is(b.sequence(TYPE_SPECIFIER_LIST, STRUCT_DECLARATOR_LIST, SEMICOLON));
+        b.rule(STRUCT_DECLARATOR_LIST).is(b.sequence(STRUCT_DECLARATOR, b.zeroOrMore(b.sequence(COMMA, STRUCT_DECLARATOR))));
+        b.rule(STRUCT_DECLARATOR).is(b.firstOf(
+                b.sequence(b.optional(DECLARATOR), COLON, CONSTANT_EXPRESSION),
+                DECLARATOR
+        ));
+
+        b.rule(TYPEDEF_NAME).is(IDENTIFIER);
+
         b.rule(FUNCTION_NAME).is(IDENTIFIER);
-        b.rule(TYPE_QUALIFIER).is(CONST, VOLATILE);
 
         b.rule(FUNCTION_COMMON).is(b.firstOf(
                 b.sequence(FUNCTION_SIGNATURE, BLOCK),

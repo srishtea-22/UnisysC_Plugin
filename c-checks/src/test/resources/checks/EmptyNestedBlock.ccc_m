@@ -1,4 +1,4 @@
-void test_function{
+void testfunction{
   int i;
   for (i = 0; i < 42; i++) {}     // Noncompliant
 
