@@ -39,7 +39,6 @@ public final class CheckList {
       OneStatementPerLineCheck.class,
       CommentedCodeCheck.class,
       SwitchWithoutDefaultCheck.class,
-      WithStatementCheck.class,
       NonEmptyCaseWithoutBreakCheck.class,
       FunctionSinglePointOfExitCheck.class,
       ActionScript2Check.class,

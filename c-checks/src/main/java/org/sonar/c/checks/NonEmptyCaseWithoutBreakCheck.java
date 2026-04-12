@@ -28,7 +28,7 @@ import org.sonar.check.Rule;
 @Rule(key = "S128")
 public class NonEmptyCaseWithoutBreakCheck extends CCheck {
 
-  private static final AstNodeType[] JUMP_NODES = {CGrammar.BREAK_STATEMENT, CGrammar.RETURN_STATEMENT, CGrammar.THROW_STATEMENT, CGrammar.CONTINUE_STATEMENT};
+  private static final AstNodeType[] JUMP_NODES = {CGrammar.RETURN_STATEMENT, CGrammar.JUMP_STATEMENT};
 
   @Override
   public List<AstNodeType> subscribedTo() {

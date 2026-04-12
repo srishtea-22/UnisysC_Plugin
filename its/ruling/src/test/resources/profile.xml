@@ -84,11 +84,6 @@
     </rule>
     <rule>
       <repositoryKey>flex</repositoryKey>
-      <key>WithStatement</key>
-      <priority>INFO</priority>
-    </rule>
-    <rule>
-      <repositoryKey>flex</repositoryKey>
       <key>S107</key> <!-- function with too many parameters -->
       <priority>INFO</priority>
     </rule>

@@ -150,7 +150,7 @@ public class UnusedFunctionParametersCheck extends CCheck {
       .getFirstChild(CGrammar.DIRECTIVES);
 
     return isExcludedFunctionDeclaration(functionDec) || isEmpty(directives)
-      || containsOnlyThrowStmt(directives) || isInClassImplementingInterface();
+       || isInClassImplementingInterface();
   }
 
   private static Boolean implementsAnInterface(AstNode classDef) {
@@ -160,16 +160,6 @@ public class UnusedFunctionParametersCheck extends CCheck {
 
   private boolean isInClassImplementingInterface() {
     return !classes.isEmpty() && classes.peek();
-  }
-
-  private static boolean containsOnlyThrowStmt(AstNode directives) {
-    List<AstNode> directiveList = directives.getChildren();
-
-    if (directiveList.size() == 1) {
-      AstNode directiveKind = directiveList.get(0).getFirstChild().getFirstChild();
-      return directiveKind.is(CGrammar.THROW_STATEMENT);
-    }
-    return false;
   }
 
   private static boolean isEmpty(AstNode directives) {

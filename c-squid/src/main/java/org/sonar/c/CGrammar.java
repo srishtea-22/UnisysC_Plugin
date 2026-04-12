@@ -31,18 +31,13 @@ import static org.sonar.c.CKeyword.CLASS;
 import static org.sonar.c.CKeyword.CONST;
 import static org.sonar.c.CKeyword.CONTINUE;
 import static org.sonar.c.CKeyword.DEFAULT;
-import static org.sonar.c.CKeyword.DELETE;
 import static org.sonar.c.CKeyword.DO;
-import static org.sonar.c.CKeyword.DYNAMIC;
-import static org.sonar.c.CKeyword.EACH;
 import static org.sonar.c.CKeyword.ELSE;
 import static org.sonar.c.CKeyword.ENUM;
 import static org.sonar.c.CKeyword.EXTENDS;
-import static org.sonar.c.CKeyword.FALSE;
 import static org.sonar.c.CKeyword.FINALLY;
 import static org.sonar.c.CKeyword.FOR;
 import static org.sonar.c.CKeyword.FUNCTION;
-import static org.sonar.c.CKeyword.GET;
 import static org.sonar.c.CKeyword.GOTO;
 import static org.sonar.c.CKeyword.IF;
 import static org.sonar.c.CKeyword.IMPLEMENTS;
@@ -56,24 +51,18 @@ import static org.sonar.c.CKeyword.INTERNAL;
 import static org.sonar.c.CKeyword.IS;
 import static org.sonar.c.CKeyword.NAMESPACE;
 import static org.sonar.c.CKeyword.NEW;
-import static org.sonar.c.CKeyword.NULL;
-import static org.sonar.c.CKeyword.PACKAGE;
 import static org.sonar.c.CKeyword.PRIVATE;
 import static org.sonar.c.CKeyword.PROTECTED;
 import static org.sonar.c.CKeyword.PUBLIC;
 import static org.sonar.c.CKeyword.REGISTER;
 import static org.sonar.c.CKeyword.RETURN;
-import static org.sonar.c.CKeyword.SET;
 import static org.sonar.c.CKeyword.STATIC;
 import static org.sonar.c.CKeyword.STRUCT;
 import static org.sonar.c.CKeyword.SUPER;
 import static org.sonar.c.CKeyword.SWITCH;
-import static org.sonar.c.CKeyword.THIS;
 import static org.sonar.c.CKeyword.THROW;
-import static org.sonar.c.CKeyword.TRUE;
 import static org.sonar.c.CKeyword.TRY;
 import static org.sonar.c.CKeyword.TYPEDEF;
-import static org.sonar.c.CKeyword.TYPEOF;
 import static org.sonar.c.CKeyword.UNION;
 import static org.sonar.c.CKeyword.USE;
 import static org.sonar.c.CKeyword.VAR;
@@ -141,7 +130,6 @@ import static org.sonar.c.CPunctuator.SEMICOLON;
 import static org.sonar.c.CPunctuator.SL;
 import static org.sonar.c.CPunctuator.SL_EQU;
 import static org.sonar.c.CPunctuator.SR;
-import static org.sonar.c.CPunctuator.SR2;
 import static org.sonar.c.CPunctuator.SR_EQU;
 import static org.sonar.c.CPunctuator.SR_EQU2;
 import static org.sonar.c.CPunctuator.STAR;
@@ -378,18 +366,12 @@ public enum CGrammar implements GrammarRuleKey {
      */
     // <editor-fold defaultstate="collapsed" desc="Statements">
     STATEMENT,
-    SUPER_STATEMENT,
     SWITCH_STATEMENT,
     IF_STATEMENT,
     DO_STATEMENT,
     WHILE_STATEMENT,
     FOR_STATEMENT,
-    WITH_STATEMENT,
-    CONTINUE_STATEMENT,
-    BREAK_STATEMENT,
     RETURN_STATEMENT,
-    THROW_STATEMENT,
-    TRY_STATEMENT,
     EXPRESSION_STATEMENT,
     EXPRESSION,
     LABELED_STATEMENT,
@@ -402,9 +384,6 @@ public enum CGrammar implements GrammarRuleKey {
     CASE_ELEMENT,
     CASE_LABEL,
     FOR_INITIALISER,
-    FOR_IN_BINDING,
-    CATCH_CLAUSE,
-    CATCH_CLAUSES,
     DECIMAL_DIGITS,
     EXPONENT_PART,
     DECIMAL_INTEGER,
@@ -423,6 +402,7 @@ public enum CGrammar implements GrammarRuleKey {
     INCLUDE_DIRECTIVE,
     ATTRIBUTES,
     ATTRIBUTE,
+    // this one
     ATTRIBUTE_COMBINATION,
     ATTRIBUTE_EXPR;
     // </editor-fold>
@@ -973,8 +953,6 @@ public enum CGrammar implements GrammarRuleKey {
 
         b.rule(EMPTY_STATEMENT).is(SEMICOLON);
 
-        b.rule(SUPER_STATEMENT).is(SUPER, ARGUMENTS, EOS);
-
         b.rule(BLOCK).is(LCURLYBRACE, DIRECTIVES, RCURLYBRACE);
 
         b.rule(LABELED_STATEMENT).is(b.firstOf(
@@ -996,33 +974,10 @@ public enum CGrammar implements GrammarRuleKey {
 
         b.rule(FOR_STATEMENT).is(FOR, LPARENTHESIS, b.optional(FOR_INITIALISER), SEMICOLON, b.optional(LIST_EXPRESSION), SEMICOLON, b.optional(LIST_EXPRESSION), RPARENTHESIS, SUB_STATEMENT);
         b.rule(FOR_INITIALISER).is(b.firstOf(LIST_EXPRESSION, VARIABLE_DEF_NO_IN));
-        b.rule(FOR_IN_BINDING).is(b.firstOf(
-                b.sequence(VARIABLE_DEF_KIND, VARIABLE_BINDING_NO_IN),
-                POSTFIX_EXPRESSION));
-
-        b.rule(CONTINUE_STATEMENT).is(CONTINUE, b.firstOf(
-                b.sequence(/* No line break */ SPACING_NO_LB, NEXT_NOT_LB, IDENTIFIER, EOS),
-                EOS_NO_LB));
-
-        b.rule(BREAK_STATEMENT).is(BREAK, b.firstOf(
-                b.sequence(/* No line break */ SPACING_NO_LB, NEXT_NOT_LB, IDENTIFIER, EOS),
-                EOS_NO_LB));
-
-        b.rule(WITH_STATEMENT).is(WITH, PARENTHESIZED_LIST_EXPR, SUB_STATEMENT);
 
         b.rule(RETURN_STATEMENT).is(RETURN, b.firstOf(
                 b.sequence(/* No line break */ SPACING_NO_LB, NEXT_NOT_LB, LIST_EXPRESSION, EOS),
                 EOS_NO_LB));
-
-        b.rule(THROW_STATEMENT).is(THROW, b.firstOf(
-                b.sequence(/* No line break */ SPACING_NO_LB, NEXT_NOT_LB, LIST_EXPRESSION, EOS),
-                EOS_NO_LB));
-
-        b.rule(TRY_STATEMENT).is(TRY, BLOCK, b.firstOf(
-                b.sequence(CATCH_CLAUSES, b.optional(FINALLY, BLOCK)),
-                b.sequence(FINALLY, BLOCK)));
-        b.rule(CATCH_CLAUSES).is(CATCH_CLAUSE, b.zeroOrMore(CATCH_CLAUSE));
-        b.rule(CATCH_CLAUSE).is(CATCH, LPARENTHESIS, PARAMETER, RPARENTHESIS, BLOCK);
 
         b.rule(EXPRESSION).is(ASSIGNMENT_EXPRESSION, b.zeroOrMore(COMMA, ASSIGNMENT_EXPRESSION));
     }

@@ -64,11 +64,6 @@
     </rule>
     <rule>
       <repositoryKey>flex</repositoryKey>
-      <key>WithStatement</key>
-      <priority>MAJOR</priority>
-    </rule>
-    <rule>
-      <repositoryKey>flex</repositoryKey>
       <key>NonEmptyCaseWithoutBreak</key>
       <priority>MAJOR</priority>
     </rule>
