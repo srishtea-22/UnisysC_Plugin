@@ -27,7 +27,7 @@ public class LineLengthCheckTest {
     LineLengthCheck check = new LineLengthCheck();
     check.maximumLineLength = 100;
 
-    CVerifier.verify(new File("src/test/resources/checks/LineLength.as"), check);
+    CVerifier.verify(new File("src/test/resources/checks/LineLength.ccc_m"), check);
   }
 
 }

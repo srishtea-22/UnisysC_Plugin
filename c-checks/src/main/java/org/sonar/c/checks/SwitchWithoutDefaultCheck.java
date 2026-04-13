@@ -26,7 +26,7 @@ import org.sonar.c.CGrammar;
 import org.sonar.c.CKeyword;
 import org.sonar.check.Rule;
 
-@Rule(key = "SwitchWithoutDefault")
+@Rule(key = "S131")
 public class SwitchWithoutDefaultCheck extends CCheck {
 
   @Override
