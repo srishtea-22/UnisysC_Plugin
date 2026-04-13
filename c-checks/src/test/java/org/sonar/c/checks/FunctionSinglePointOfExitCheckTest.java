@@ -26,7 +26,7 @@ public class FunctionSinglePointOfExitCheckTest {
 
   @Test
   public void test() {
-    CVerifier.verify(new File("src/test/resources/checks/FunctionSinglePointOfExit.c"), check);
+    CVerifier.verify(new File("src/test/resources/checks/FunctionSinglePointOfExit.ccc_m"), check);
   }
 
 }
