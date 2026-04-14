@@ -25,7 +25,7 @@ public class NonEmptyCaseWithoutBreakCheckTest {
   public void test() {
     NonEmptyCaseWithoutBreakCheck check = new NonEmptyCaseWithoutBreakCheck();
 
-    CVerifier.verify(new File("src/test/resources/checks/NonEmptyCaseWithoutBreak.c"), check);
+    CVerifier.verify(new File("src/test/resources/checks/NonEmptyCaseWithoutBreak.ccc_m"), check);
   }
 
 }
