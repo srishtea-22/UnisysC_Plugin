@@ -1,0 +1,24 @@
+<h2>Why is this an issue?</h2>
+<p>Each level of pointer indirection (each <code>*</code>) adds a layer of complexity and mental overhead for the developer. High levels of indirection make code significantly harder to read, track, and debug.</p>
+
+<p>Following the "Two Levels of Indirection" rule ensures that data structures remain manageable. Code like <code>***ptr</code> requires three separate memory lookups to access the underlying value, which can also impact performance due to cache misses.</p>
+
+<pre>
+int ***data;  // Noncompliant
+</pre>
+
+<h3>How to fix it</h3>
+<p>If you require more than two levels of indirection, consider refactoring your data using <code>struct</code> to encapsulate intermediate layers. This provides meaningful names to the levels of data you are accessing.</p>
+
+<pre>
+/* Recommended Refactoring */
+struct Row {
+  int *cells;
+};
+
+struct Matrix {
+  struct Row *rows;
+};
+
+struct Matrix *myMatrix; // Only one level of indirection to access the Matrix structure.
+</pre>

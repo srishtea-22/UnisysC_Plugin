@@ -3,9 +3,9 @@
   "type": "CODE_SMELL",
   "code": {
     "impacts": {
-      "MAINTAINABILITY": "MEDIUM"
+      "MAINTAINABILITY": "LOW"
     },
-    "attribute": "CLEAR"
+    "attribute": "EFFICIENCY"
   },
   "status": "ready",
   "remediation": {
@@ -13,10 +13,10 @@
     "constantCost": "5min"
   },
   "tags": [
-    "suspicious"
+    "performance"
   ],
   "defaultSeverity": "Major",
-  "ruleSpecification": "RSPEC-108",
+  "ruleSpecification": "RSPEC-3687",
   "sqKey": "S3687",
   "scope": "All",
   "quickfix": "unknown"

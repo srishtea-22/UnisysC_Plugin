@@ -1,0 +1,23 @@
+{
+  "title": "The declaration of an object should contain no more than two levels of pointer indirection",
+  "type": "CODE_SMELL",
+  "code": {
+    "impacts": {
+      "MAINTAINABILITY": "HIGH"
+    },
+    "attribute": "UNDERSTANDABILITY"
+  },
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "30min"
+  },
+  "tags": [
+    "brain-overload"
+  ],
+  "defaultSeverity": "Critical",
+  "ruleSpecification": "RSPEC-23_083",
+  "sqKey": "M23_083",
+  "scope": "All",
+  "quickfix": "unknown"
+}

@@ -1,0 +1,13 @@
+void checkPointers() {
+  int a;                // OK
+  int *b;               // OK
+  int **c;              // OK
+  int ***d;             // Noncompliant
+  int ****e;            // Noncompliant
+
+  int ***ptr;           // Noncompliant 
+  int **validPtr = (int **)ptr;    // OK
+  int ***invalidPtr = (int ***)ptr; // Noncompliant
+}
+
+void process(int ***data) {} // Noncompliant

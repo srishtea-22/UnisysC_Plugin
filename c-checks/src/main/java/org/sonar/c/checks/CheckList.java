@@ -105,7 +105,9 @@ public final class CheckList {
         DefaultCasePositionCheck.class,
         AllBranchesIdenticalCheck.class,
         ParsingErrorCheck.class,
-        VolatileLocalVariableCheck.class));
+        VolatileLocalVariableCheck.class,
+        PointerIndirectionLevelCheck.class
+      ));
   }
 
 }
