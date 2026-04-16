@@ -1,0 +1,22 @@
+{
+  "title": "All 'if ... else if' constructs shall be terminated with an 'else' statement",
+  "type": "CODE_SMELL",
+  "code": {
+    "impacts": {
+      "MAINTAINABILITY": "LOW"
+    },
+    "attribute": "READABILITY"
+  },
+  "status": "ready",
+  "remediation": {
+    "func": "Constant/Issue",
+    "constantCost": "5min"
+  },
+  "tags": [
+    "bad-practice"
+  ],
+  "defaultSeverity": "Minor",
+  "ruleSpecification": "RSPEC-23_112",
+  "sqKey": "M23_112",
+  "scope": "All"
+}

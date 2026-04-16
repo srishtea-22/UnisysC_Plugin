@@ -1,0 +1,19 @@
+void test(int x) {
+  if (x == 1) {        // OK
+    do1();
+  }
+
+  if (x == 1) {        // OK
+    do1();
+  } else if (x == 2) {
+    do2();
+  } else {
+    do3();
+  }
+
+  if (x == 1) {        
+    do1();
+  } else if (x == 2) {       // Noncompliant
+    do2();
+  }
+}

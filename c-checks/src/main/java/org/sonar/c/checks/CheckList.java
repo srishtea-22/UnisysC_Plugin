@@ -107,7 +107,8 @@ public final class CheckList {
         ParsingErrorCheck.class,
         VolatileLocalVariableCheck.class,
         PointerIndirectionLevelCheck.class,
-        MultipleVariableDeclarationCheck.class
+        MultipleVariableDeclarationCheck.class,
+        IfElseIfHasElseCheck.class
       ));
   }
 
