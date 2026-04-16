@@ -28,7 +28,7 @@ import org.sonar.c.metrics.FileLinesVisitor;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 
-@Rule(key = "S138")
+@Rule(key = "S104")
 public class TooManyLinesInFunctionCheck extends CCheck {
 
   private static final int DEFAULT = 100;
@@ -39,8 +39,7 @@ public class TooManyLinesInFunctionCheck extends CCheck {
   @Override
   public List<AstNodeType> subscribedTo() {
     return Arrays.asList(
-        CGrammar.FUNCTION_DEF,
-        CGrammar.FUNCTION_EXPR);
+        CGrammar.FUNCTION_DEF);
   }
 
   @Override

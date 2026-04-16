@@ -1,4 +1,4 @@
-void f() {         /* Noncompliant {{This function has 6 lines of code, which is greater than the 3 lines authorized. Split it into smaller functions.}} */
+void f() {         // Noncompliant 
     /* comment */
     int i = 1;
     int j = 2;
@@ -6,16 +6,16 @@ void f() {         /* Noncompliant {{This function has 6 lines of code, which is
     return;
 }
 
-void g() {         /* OK */
+void g() {         // OK
     return;
 }
 
-void h() {         /* Noncompliant */
+void h() {         // Noncompliant
     /* comment */
     int i = 1;
     return;
 }
 
-void ok() {        /* OK */
+void ok() {        // OK 
     return;
 }

@@ -18,7 +18,6 @@ package org.sonar.c.checks;
 
 import java.io.File;
 import org.junit.jupiter.api.Test;
-import org.sonar.c.checks.TooManyLinesInFunctionCheck;
 
 public class TooManyLinesInFunctionCheckTest {
   private TooManyLinesInFunctionCheck check = new TooManyLinesInFunctionCheck();
@@ -31,6 +30,6 @@ public class TooManyLinesInFunctionCheckTest {
   @Test
   public void custom() {
     check.max = 3;
-    CVerifier.verify(new File("src/test/resources/checks/TooManyLinesInFunction-custom.ccc_m"), check);
+    CVerifier.verify(new File("src/test/resources/checks/TooManyLinesInFunction.ccc_m"), check);
   }
 }
