@@ -1138,6 +1138,11 @@ private static void keywords(LexerlessGrammarBuilder b) {
 
     private static void punctuators(LexerlessGrammarBuilder b) {
         for (CPunctuator p : CPunctuator.values()) {
+                if (p == AND) {
+                        // Prevent '&' from consuming the first char of '&&' or '&='.
+                        b.rule(p).is(SPACING, "&", b.nextNot(b.regexp("[&=]")));
+                        continue;
+                }
                 b.rule(p).is(SPACING, p.getValue());
         }
     }
