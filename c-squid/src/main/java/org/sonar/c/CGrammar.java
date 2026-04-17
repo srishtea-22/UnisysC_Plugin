@@ -78,10 +78,6 @@ import static org.sonar.c.CKeyword.UNSIGNED;
 import static org.sonar.c.CKeyword.LONG;
 import static org.sonar.c.CKeyword.SHORT;
 import static org.sonar.c.CKeyword.EXTERN;
-import static org.sonar.c.CKeyword.FALSE;
-import static org.sonar.c.CKeyword.NULL;
-import static org.sonar.c.CKeyword.THIS;
-import static org.sonar.c.CKeyword.TRUE;
 import static org.sonar.c.CPunctuator.AND;
 import static org.sonar.c.CPunctuator.ANDAND;
 import static org.sonar.c.CPunctuator.ANDAND_EQU;
@@ -906,18 +902,11 @@ public enum CGrammar implements GrammarRuleKey {
                                                 b.optional(b.sequence(ELSE, STATEMENT))),
                                 b.sequence(SWITCH, LPARENTHESIS, EXPRESSION, RPARENTHESIS, STATEMENT)));
 
-                b.rule(ITERATION_STATEMENT).is(
-                                b.firstOf(
-                                                b.sequence(WHILE, LPARENTHESIS, EXPRESSION, RPARENTHESIS, STATEMENT),
-                                                b.sequence(DO, STATEMENT, WHILE, LPARENTHESIS, EXPRESSION, RPARENTHESIS,
-                                                                SEMICOLON),
-                                                b.sequence(
-                                                                FOR,
-                                                                LPARENTHESIS,
-                                                                b.optional(EXPRESSION), SEMICOLON,
-                                                                b.optional(EXPRESSION), SEMICOLON,
-                                                                b.optional(EXPRESSION),
-                                                                RPARENTHESIS, STATEMENT)));
+                b.rule(ITERATION_STATEMENT).is(b.firstOf(
+                                b.sequence(WHILE, LPARENTHESIS, EXPRESSION, RPARENTHESIS, STATEMENT),
+                                b.sequence(DO, STATEMENT, WHILE, LPARENTHESIS, EXPRESSION, RPARENTHESIS, SEMICOLON),
+                                b.sequence(FOR, LPARENTHESIS, b.optional(EXPRESSION), SEMICOLON, b.optional(EXPRESSION),
+                                                SEMICOLON, b.optional(EXPRESSION), RPARENTHESIS, STATEMENT)));
 
                 b.rule(JUMP_STATEMENT).is(b.firstOf(
                                 b.sequence(GOTO, IDENTIFIER, SEMICOLON),
