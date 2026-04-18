@@ -112,7 +112,8 @@ public final class CheckList {
         AllVariablesInitializedCheck.class,
         CognitiveComplexityCheck.class,
         CyclomaticComplexityCheck.class,
-        CastAwayQualifiersCheck.class
+        CastAwayQualifiersCheck.class,
+        GotoStatementCheck.class
       ));
   }
 
