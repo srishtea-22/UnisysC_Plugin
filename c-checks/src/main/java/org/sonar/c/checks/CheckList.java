@@ -111,7 +111,8 @@ public final class CheckList {
         IfElseIfHasElseCheck.class,
         AllVariablesInitializedCheck.class,
         CognitiveComplexityCheck.class,
-        CyclomaticComplexityCheck.class
+        CyclomaticComplexityCheck.class,
+        CastAwayQualifiersCheck.class
       ));
   }
 

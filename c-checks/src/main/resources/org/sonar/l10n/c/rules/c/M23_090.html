@@ -1,0 +1,8 @@
+<h2>Why is this an issue?</h2>
+<p>
+    Removing <code>const</code> or <code>volatile</code> via a cast is a violation of type safety. 
+    If a variable is declared as <code>const</code>, the compiler may place it in a read-only 
+    section of memory. Attempting to write to that memory by "casting away" the const-ness 
+    will result in <strong>undefined behavior</strong>, often causing a segmentation fault 
+    or memory corruption.
+</p>

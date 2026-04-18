@@ -1,0 +1,12 @@
+void test() {
+   const int *constPtr;
+   int *normalPtr;
+   const int *newConstPtr;
+   volatile int *vPtr;
+   int *nonVPtr;
+
+   normalPtr = (int *)constPtr; // Noncompliant
+   newConstPtr = (const int *)constPtr; // OK
+   
+   nonVPtr = (int *)vPtr; // Noncompliant
+}

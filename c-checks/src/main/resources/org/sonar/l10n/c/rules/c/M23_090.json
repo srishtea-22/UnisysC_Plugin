@@ -1,0 +1,22 @@
+{
+  "title": "A cast shall not remove any 'const' or 'volatile' qualification from the type accessed via a pointer or by reference",
+  "type": "CODE_SMELL",
+  "code": {
+    "impacts": {
+      "MAINTAINABILITY": "HIGH"
+    },
+    "attribute": "CORRECTNESS"
+  },
+  "status": "ready",
+  "remediation": {
+    "func": "Constant/Issue",
+    "constantCost": "10min"
+  },
+  "tags": [
+    "bad-practice"
+  ],
+  "defaultSeverity": "Critical",
+  "ruleSpecification": "RSPEC-23_090",
+  "sqKey": "M23_090",
+  "scope": "All"
+}
