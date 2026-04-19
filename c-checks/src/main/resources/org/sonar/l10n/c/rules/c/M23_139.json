@@ -1,0 +1,23 @@
+{
+  "title": "The 'asm' declaration shall not be used.",
+  "type": "CODE_SMELL",
+  "code": {
+    "impacts": {
+      "MAINTAINABILITY": "HIGH"
+    },
+    "attribute": "CONVENTIONAL"
+  },
+  "status": "ready",
+  "remediation": {
+    "func": "Constant/Issue",
+    "constantCost": "30min"
+  },
+  "tags": [
+    "bad-practice"
+  ],
+  "defaultSeverity": "Major",
+  "ruleSpecification": "RSPEC-23_139",
+  "sqKey": "M23_139",
+  "scope": "All",
+  "quickfix": "unknown"
+}
