@@ -1,4 +1,5 @@
-int foo() {         // Noncompliant 
+int foo() {         // Noncompliant
+  if (condition1) {
     return 1;
   } else {
     if (condition2) {
@@ -20,7 +21,7 @@ int myFunction() {        // OK
 }
 
 void nested_test() {     // OK
- 
+
   int nested() {
     return 1;
   }

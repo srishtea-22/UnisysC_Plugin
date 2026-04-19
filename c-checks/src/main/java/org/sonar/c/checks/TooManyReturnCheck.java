@@ -27,7 +27,6 @@ import javax.annotation.Nullable;
 
 import org.sonar.c.CCheck;
 import org.sonar.c.CGrammar;
-import org.sonar.c.api.CKeyword;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 
@@ -83,8 +82,8 @@ public class TooManyReturnCheck extends CCheck {
   }
 
   private boolean isReturnStatement(AstNode jumpNode) {
-    // In your JUMP_STATEMENT rule, return is one of the firstOf options
-    return jumpNode.hasDirectChildren(CKeyword.RETURN);
+    // Check the first token value directly — avoids relying on SSLR AstNodeType matching
+    return "return".equals(jumpNode.getTokenValue());
   }
 
   private int getReturnStatementCounter() {
