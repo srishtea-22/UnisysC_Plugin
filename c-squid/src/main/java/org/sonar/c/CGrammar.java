@@ -521,7 +521,7 @@ public enum CGrammar implements GrammarRuleKey {
                 b.rule(IDENTIFIER).is(b.sequence(
                                 SPACING,
                                 b.nextNot(KEYWORDS),
-                                b.regexp("[a-zA-Z_]" + "[a-zA-Z0-9_]*+")));
+                                b.regexp("[a-zA-Z]" + "[a-zA-Z0-9]*+")));
 
                 b.rule(IDENTIFIER_PART).is(b.regexp(IDENTIFIER_PART_REGEXP));
 
@@ -886,7 +886,6 @@ public enum CGrammar implements GrammarRuleKey {
                                 LCURLYBRACE,
                                 b.optional(DECLARATION_LIST),
                                 b.optional(STATEMENT_LIST),
-                                b.zeroOrMore(b.firstOf(FUNCTION_DEF, STATEMENT)),
                                 RCURLYBRACE);
 
                 // existing rules in flex -

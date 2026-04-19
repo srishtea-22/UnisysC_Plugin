@@ -42,8 +42,6 @@ public class TooManyReturnCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    // In your CGrammar, FUNCTION_DEF is the rule for function definitions
-    // JUMP_STATEMENT contains the return keyword
     return Arrays.asList(CGrammar.FUNCTION_DEF, CGrammar.JUMP_STATEMENT);
   }
 
@@ -55,10 +53,9 @@ public class TooManyReturnCheck extends CCheck {
   @Override
   public void visitNode(AstNode astNode) {
     if (astNode.is(CGrammar.FUNCTION_DEF)) {
-      // Start counting for a new function context
+
       returnStatementCounter.push(0);
     } else if (astNode.is(CGrammar.JUMP_STATEMENT) && isReturnStatement(astNode)) {
-      // Only increment if we are currently inside a function
       if (!returnStatementCounter.isEmpty()) {
         setReturnStatementCounter(getReturnStatementCounter() + 1);
       }
@@ -82,7 +79,6 @@ public class TooManyReturnCheck extends CCheck {
   }
 
   private boolean isReturnStatement(AstNode jumpNode) {
-    // Check the first token value directly — avoids relying on SSLR AstNodeType matching
     return "return".equals(jumpNode.getTokenValue());
   }
 
