@@ -39,10 +39,13 @@ public class ObjectTypeUseCheck extends CCheck {
 
   @Override
   public void visitNode(AstNode astNode) {
-    for (AstNode varBinding : astNode.getFirstChild(CGrammar.VARIABLE_BINDING_LIST).getChildren(CGrammar.VARIABLE_BINDING)) {
-      if (isDeclareAsObject(varBinding) || isInitialisedAsObject(varBinding.getFirstChild(CGrammar.VARIABLE_INITIALISATION))) {
+    for (AstNode varBinding : astNode.getFirstChild(CGrammar.VARIABLE_BINDING_LIST)
+        .getChildren(CGrammar.VARIABLE_BINDING)) {
+      if (isDeclareAsObject(varBinding)
+          || isInitialisedAsObject(varBinding.getFirstChild(CGrammar.VARIABLE_INITIALISATION))) {
 
-        String variableName = varBinding.getFirstChild(CGrammar.TYPED_IDENTIFIER).getFirstChild(CGrammar.IDENTIFIER).getTokenValue();
+        String variableName = varBinding.getFirstChild(CGrammar.TYPED_IDENTIFIER).getFirstChild(CGrammar.IDENTIFIER)
+            .getTokenValue();
         addIssue(MessageFormat.format("Clearly define the type of this ''{0}'' variable", variableName), astNode);
       }
     }
@@ -55,19 +58,16 @@ public class ObjectTypeUseCheck extends CCheck {
 
   private static boolean isInitialisedAsObject(@Nullable AstNode varInitialisation) {
     if (varInitialisation != null) {
-      AstNode assignmentExpr = varInitialisation.getFirstChild(CGrammar.VARIABLE_INITIALISER).getFirstChild(CGrammar.ASSIGNMENT_EXPRESSION);
+      AstNode assignmentExpr = varInitialisation.getFirstChild(CGrammar.VARIABLE_INITIALISER)
+          .getFirstChild(CGrammar.ASSIGNMENT_EXPRESSION);
 
-      if (assignmentExpr != null && assignmentExpr.getNumberOfChildren() == 1 && assignmentExpr.getFirstChild().is(CGrammar.POSTFIX_EXPRESSION)) {
+      if (assignmentExpr != null && assignmentExpr.getNumberOfChildren() == 1
+          && assignmentExpr.getFirstChild().is(CGrammar.POSTFIX_EXPRESSION)) {
         AstNode postfixExprChild = assignmentExpr.getFirstChild(CGrammar.POSTFIX_EXPRESSION).getFirstChild();
 
         // Check for object initialiser, e.g {attr1:Type, attr2:Type}
         if (postfixExprChild.is(CGrammar.PRIMARY_EXPRESSION)) {
           return postfixExprChild.getFirstChild().is(CGrammar.OBJECT_INITIALISER);
-
-          // Check for instantiation of Object, e.g new Object()
-        } else if (postfixExprChild.is(CGrammar.FULL_NEW_EXPR, CGrammar.SHORT_NEW_EXPR)) {
-          AstNode subExpr = postfixExprChild.getFirstChild(CGrammar.FULL_NEW_SUB_EXPR, CGrammar.SHORT_NEW_SUB_EXPR);
-          return subExpr != null && OBJECT_TYPE.equals(subExpr.getTokenValue());
         }
       }
     }

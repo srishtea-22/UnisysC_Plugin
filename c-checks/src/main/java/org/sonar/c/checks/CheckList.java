@@ -40,7 +40,6 @@ public final class CheckList {
         SwitchWithoutDefaultCheck.class,
         NonEmptyCaseWithoutBreakCheck.class,
         FunctionSinglePointOfExitCheck.class,
-        ActionScript2Check.class,
         FunctionWithTooManyParametersCheck.class,
         ConstantNameCheck.class,
         FieldNameCheck.class,
@@ -64,13 +63,11 @@ public final class CheckList {
         EmptyNestedBlockCheck.class,
         AlertShowUseCheck.class,
         DebugFeaturesCheck.class,
-        FunctionOnlyCallsSuperCheck.class,
         HardcodedEventNameCheck.class,
         PublicConstNotStaticCheck.class,
         EventMetadataShouldBeTypedCheck.class,
         ArrayFieldElementTypeCheck.class,
         StarUseForDomainCheck.class,
-        OverrideEventCloneFunctionCheck.class,
         StarUseForLocalConnectionCheck.class,
         ExactSettingsSetToFalseCheck.class,
         PrivateStaticConstLoggerCheck.class,
@@ -79,9 +76,7 @@ public final class CheckList {
         ObjectTypeUseCheck.class,
         ManagedEventTagWithEventCheck.class,
         ConstructorCallsDispatchEventCheck.class,
-        UnusedPrivateFunctionCheck.class,
         LocalVarShadowsFieldCheck.class,
-        UnusedPrivateFieldCheck.class,
         UnusedLocalVariableCheck.class,
         TooManyUnaryOperatorCheck.class,
         TooManyLinesInFunctionCheck.class,
@@ -109,8 +104,7 @@ public final class CheckList {
         CyclomaticComplexityCheck.class,
         CastAwayQualifiersCheck.class,
         GotoStatementCheck.class,
-        AsmDeclarationCheck.class
-      ));
+        AsmDeclarationCheck.class));
   }
 
 }

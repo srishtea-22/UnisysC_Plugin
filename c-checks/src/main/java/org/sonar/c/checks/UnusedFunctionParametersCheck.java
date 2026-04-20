@@ -32,7 +32,6 @@ import javax.annotation.Nullable;
 
 import org.sonar.c.CCheck;
 import org.sonar.c.CGrammar;
-import org.sonar.c.CKeyword;
 import org.sonar.c.checks.utils.Function;
 import org.sonar.c.checks.utils.Preconditions;
 import org.sonar.check.Rule;
@@ -73,7 +72,7 @@ public class UnusedFunctionParametersCheck extends CCheck {
     }
   }
 
-  private static final AstNodeType[] FUNCTION_NODES = {CGrammar.FUNCTION_DEF, CGrammar.FUNCTION_EXPR};
+  private static final AstNodeType[] FUNCTION_NODES = { CGrammar.FUNCTION_DEF };
   private Scope currentScope;
 
   @Override
@@ -95,18 +94,20 @@ public class UnusedFunctionParametersCheck extends CCheck {
   @Override
   public void visitNode(AstNode astNode) {
     if (astNode.is(CGrammar.CLASS_DEF)) {
-      classes.push(implementsAnInterface(astNode));
+
     } else if (astNode.is(FUNCTION_NODES)) {
       // enter new scope
       currentScope = new Scope(currentScope, astNode);
 
-    } else if (currentScope != null && astNode.is(CGrammar.PARAMETERS) && astNode.getParent().is(CGrammar.FUNCTION_SIGNATURE)) {
+    } else if (currentScope != null && astNode.is(CGrammar.PARAMETERS)
+        && astNode.getParent().is(CGrammar.FUNCTION_SIGNATURE)) {
       declareInCurrentScope(Function.getParametersIdentifiers(currentScope.functionDec));
 
     } else if (currentScope != null && astNode.is(CGrammar.POSTFIX_EXPRESSION)) {
       AstNode postfixExprChild = astNode.getFirstChild();
       // check if it is not a call to function with same name than the parameter
-      if (postfixExprChild.is(CGrammar.PRIMARY_EXPRESSION) && postfixExprChild.getNextAstNode().isNot(CGrammar.ARGUMENTS)) {
+      if (postfixExprChild.is(CGrammar.PRIMARY_EXPRESSION)
+          && postfixExprChild.getNextAstNode().isNot(CGrammar.ARGUMENTS)) {
         currentScope.use(getPrimaryExpressionStringValue(postfixExprChild));
       }
     }
@@ -145,17 +146,12 @@ public class UnusedFunctionParametersCheck extends CCheck {
 
   private boolean isExcluded(AstNode functionDec) {
     AstNode directives = functionDec
-      .getFirstChild(CGrammar.FUNCTION_COMMON)
-      .getFirstChild(CGrammar.BLOCK)
-      .getFirstChild(CGrammar.DIRECTIVES);
+        .getFirstChild(CGrammar.FUNCTION_COMMON)
+        .getFirstChild(CGrammar.BLOCK)
+        .getFirstChild(CGrammar.DIRECTIVES);
 
     return isExcludedFunctionDeclaration(functionDec) || isEmpty(directives)
-       || isInClassImplementingInterface();
-  }
-
-  private static Boolean implementsAnInterface(AstNode classDef) {
-    AstNode inheritenceNode = classDef.getFirstChild(CGrammar.INHERITENCE);
-    return inheritenceNode != null && inheritenceNode.getFirstChild().is(CKeyword.IMPLEMENTS);
+        || isInClassImplementingInterface();
   }
 
   private boolean isInClassImplementingInterface() {
@@ -181,17 +177,17 @@ public class UnusedFunctionParametersCheck extends CCheck {
 
     if (functionName.toLowerCase(Locale.ENGLISH).contains("handle") || startsWithOnPreposition(functionName)) {
       AstNode parameters = functionDec
-        .getFirstChild(CGrammar.FUNCTION_COMMON)
-        .getFirstChild(CGrammar.FUNCTION_SIGNATURE)
-        .getFirstChild(CGrammar.PARAMETERS);
+          .getFirstChild(CGrammar.FUNCTION_COMMON)
+          .getFirstChild(CGrammar.FUNCTION_SIGNATURE)
+          .getFirstChild(CGrammar.PARAMETERS);
 
       if (parameters != null) {
         AstNode firstParameter = parameters.getFirstChild(CGrammar.PARAMETER);
 
         if (firstParameter != null && firstParameter.getFirstChild(CGrammar.TYPED_IDENTIFIER) != null) {
           AstNode firstParameterType = firstParameter
-            .getFirstChild(CGrammar.TYPED_IDENTIFIER)
-            .getFirstChild(CGrammar.TYPE_EXPR);
+              .getFirstChild(CGrammar.TYPED_IDENTIFIER)
+              .getFirstChild(CGrammar.TYPE_EXPR);
           return firstParameterType != null && firstParameterType.getLastToken().getValue().endsWith("Event");
         }
       }

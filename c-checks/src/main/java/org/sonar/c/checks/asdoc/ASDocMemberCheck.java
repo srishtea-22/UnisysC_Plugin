@@ -22,12 +22,10 @@ import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.sonar.c.CGrammar;
 import org.sonar.c.CKeyword;
 import org.sonar.c.checks.ASDocCheck;
 import org.sonar.c.checks.utils.Function;
-import org.sonar.c.checks.utils.Modifiers;
 
 public class ASDocMemberCheck {
 
@@ -53,7 +51,7 @@ public class ASDocMemberCheck {
     for (AstNode directive : classDirectives) {
       AstNode annotableDirective = directive.getFirstChild(CGrammar.ANNOTABLE_DIRECTIVE);
 
-      if (annotableDirective != null && Modifiers.isPublic(annotableDirective.getPreviousAstNode())) {
+      if (annotableDirective != null) {
         AstNode annotableDirChild = annotableDirective.getFirstChild();
 
         // Fields
@@ -67,7 +65,6 @@ public class ASDocMemberCheck {
       }
     }
   }
-
 
   /**
    * Returns class member trivia.
@@ -103,10 +100,11 @@ public class ASDocMemberCheck {
   }
 
   /**
-   * <ul> Verifies:
-   * <li> presence of ASDoc above the method declaration
-   * <li> presence of @return tag in ASDoc
-   * <li> presence of @param tag in ASDoc
+   * <ul>
+   * Verifies:
+   * <li>presence of ASDoc above the method declaration
+   * <li>presence of @return tag in ASDoc
+   * <li>presence of @param tag in ASDoc
    * </ul>
    */
   private static void checkMethod(ASDocCheck check, List<Trivia> trivia, AstNode functionDef) {
@@ -130,7 +128,8 @@ public class ASDocMemberCheck {
   }
 
   /**
-   * Report an issue if the method as a non-void return type and "@return" tag is not present in the ASDoc
+   * Report an issue if the method as a non-void return type and "@return" tag is
+   * not present in the ASDoc
    */
   private static void checkForReturnASDoc(ASDocCheck check, MethodASDoc methodASDoc, AstNode functionDef) {
     if (!returnsVoid(functionDef) && !methodASDoc.hasReturn) {
@@ -139,7 +138,8 @@ public class ASDocMemberCheck {
   }
 
   /**
-   * Verifies that for every method's parameter a "@param" tag followed by the parameter's name
+   * Verifies that for every method's parameter a "@param" tag followed by the
+   * parameter's name
    * is present in the ASDoc.
    */
   private static void checkForParametersASDoc(ASDocCheck check, MethodASDoc methodASDoc, AstNode functionDef) {
@@ -184,12 +184,11 @@ public class ASDocMemberCheck {
     }
   }
 
-
   private static boolean returnsVoid(AstNode functionDef) {
     AstNode returnType = functionDef
-      .getFirstChild(CGrammar.FUNCTION_COMMON)
-      .getFirstChild(CGrammar.FUNCTION_SIGNATURE)
-      .getFirstChild(CGrammar.RESULT_TYPE);
+        .getFirstChild(CGrammar.FUNCTION_COMMON)
+        .getFirstChild(CGrammar.FUNCTION_SIGNATURE)
+        .getFirstChild(CGrammar.RESULT_TYPE);
 
     if (returnType == null) {
       return true;
