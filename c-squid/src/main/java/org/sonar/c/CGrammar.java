@@ -83,19 +83,15 @@ import static org.sonar.c.CPunctuator.ANDAND;
 import static org.sonar.c.CPunctuator.ANDAND_EQU;
 import static org.sonar.c.CPunctuator.AND_EQU;
 import static org.sonar.c.CPunctuator.ARROW;
-import static org.sonar.c.CPunctuator.AT_SIGN;
 import static org.sonar.c.CPunctuator.COLON;
 import static org.sonar.c.CPunctuator.COMMA;
 import static org.sonar.c.CPunctuator.DIV;
 import static org.sonar.c.CPunctuator.DIV_EQU;
 import static org.sonar.c.CPunctuator.DOT;
-import static org.sonar.c.CPunctuator.DOUBLE_COLON;
-import static org.sonar.c.CPunctuator.DOUBLE_DOT;
 import static org.sonar.c.CPunctuator.DOUBLE_MINUS;
 import static org.sonar.c.CPunctuator.DOUBLE_PLUS;
 import static org.sonar.c.CPunctuator.EQUAL1;
 import static org.sonar.c.CPunctuator.EQUAL2;
-import static org.sonar.c.CPunctuator.EQUAL3;
 import static org.sonar.c.CPunctuator.GE;
 import static org.sonar.c.CPunctuator.GT;
 import static org.sonar.c.CPunctuator.HASH;
@@ -110,7 +106,6 @@ import static org.sonar.c.CPunctuator.MOD;
 import static org.sonar.c.CPunctuator.MOD_EQU;
 import static org.sonar.c.CPunctuator.NOT;
 import static org.sonar.c.CPunctuator.NOTEQUAL1;
-import static org.sonar.c.CPunctuator.NOTEQUAL2;
 import static org.sonar.c.CPunctuator.OR;
 import static org.sonar.c.CPunctuator.OROR;
 import static org.sonar.c.CPunctuator.OROR_EQU;
@@ -126,7 +121,6 @@ import static org.sonar.c.CPunctuator.SL;
 import static org.sonar.c.CPunctuator.SL_EQU;
 import static org.sonar.c.CPunctuator.SR;
 import static org.sonar.c.CPunctuator.SR_EQU;
-import static org.sonar.c.CPunctuator.SR_EQU2;
 import static org.sonar.c.CPunctuator.STAR;
 import static org.sonar.c.CPunctuator.STAR_EQU;
 import static org.sonar.c.CPunctuator.TILD;
@@ -391,7 +385,6 @@ public enum CGrammar implements GrammarRuleKey {
         // <editor-fold defaultstate="collapsed" desc="Directives">
         DIRECTIVES,
         DIRECTIVE,
-        CONFIG_CONDITION,
         ANNOTABLE_DIRECTIVE,
         USE_DIRECTIVE,
         IMPORT_DIRECTIVE,
@@ -529,23 +522,14 @@ public enum CGrammar implements GrammarRuleKey {
 
                 b.rule(QUALIFIER).is(b.firstOf(PROPERTY_IDENTIFIER, RESERVED_NAMESPACE));
 
-                b.rule(SIMPLE_QUALIFIED_IDENTIFIER).is(b.firstOf(
-                                b.sequence(QUALIFIER, DOUBLE_COLON, PROPERTY_IDENTIFIER),
-                                b.sequence(QUALIFIER, DOUBLE_COLON, BRACKETS),
-                                PROPERTY_IDENTIFIER));
+                b.rule(SIMPLE_QUALIFIED_IDENTIFIER).is(PROPERTY_IDENTIFIER);
 
-                b.rule(EXPR_QUALIFIED_IDENTIFIER).is(b.firstOf(
-                                b.sequence(PARENTHESIZED_EXPR, DOUBLE_COLON, PROPERTY_IDENTIFIER),
-                                b.sequence(PARENTHESIZED_EXPR, BRACKETS)));
-
+                b.rule(EXPR_QUALIFIED_IDENTIFIER).is(PARENTHESIZED_EXPR, BRACKETS);
                 b.rule(NON_ATTRIBUTE_QUALIFIED_IDENTIFIER).is(b.firstOf(
                                 SIMPLE_QUALIFIED_IDENTIFIER,
                                 EXPR_QUALIFIED_IDENTIFIER));
 
-                b.rule(QUALIFIED_IDENTIFIER).is(b.firstOf(
-                                b.sequence(AT_SIGN, BRACKETS),
-                                b.sequence(AT_SIGN, NON_ATTRIBUTE_QUALIFIED_IDENTIFIER),
-                                NON_ATTRIBUTE_QUALIFIED_IDENTIFIER));
+                b.rule(QUALIFIED_IDENTIFIER).is(NON_ATTRIBUTE_QUALIFIED_IDENTIFIER);
 
                 b.rule(PRIMARY_EXPRESSION).is(b.firstOf(
                                 CONSTANT,
@@ -592,7 +576,7 @@ public enum CGrammar implements GrammarRuleKey {
                                 XOR_EQU,
                                 OR_EQU));
                 b.rule(COMPOUND_ASSIGNMENT).is(b.firstOf(STAR_EQU, DIV_EQU, MOD_EQU, PLUS_EQU, MINUS_EQU, SL_EQU,
-                                SR_EQU, SR_EQU2, AND_EQU, XOR_EQU, OR_EQU));
+                                SR_EQU, AND_EQU, XOR_EQU, OR_EQU));
                 b.rule(LOGICAL_ASSIGNMENT).is(b.firstOf(ANDAND_EQU, XORXOR_EQU, OROR_EQU));
 
                 // Super expression
@@ -627,9 +611,7 @@ public enum CGrammar implements GrammarRuleKey {
                 b.rule(BRACKETS).is(LBRAKET, LIST_EXPRESSION, RBRAKET);
 
                 // Query operators
-                b.rule(QUERY_OPERATOR).is(b.firstOf(
-                                b.sequence(DOUBLE_DOT, QUALIFIED_IDENTIFIER),
-                                b.sequence(DOT, LPARENTHESIS, LIST_EXPRESSION, RPARENTHESIS)));
+                b.rule(QUERY_OPERATOR).is(DOT, LPARENTHESIS, LIST_EXPRESSION, RPARENTHESIS);
 
                 // Call expresions
                 b.rule(ARGUMENTS).is(LPARENTHESIS, b.optional(LIST_EXPRESSION), RPARENTHESIS);
@@ -723,8 +705,6 @@ public enum CGrammar implements GrammarRuleKey {
                                 .is(RELATIONAL_EXPR_NO_IN, b.zeroOrMore(EQUALITY_OPERATOR, RELATIONAL_EXPR_NO_IN))
                                 .skipIfOneChild();
                 b.rule(EQUALITY_OPERATOR).is(b.firstOf(
-                                NOTEQUAL2,
-                                EQUAL3,
                                 EQUAL2,
                                 NOTEQUAL1,
                                 /* ActionScript 2: */
@@ -959,7 +939,6 @@ public enum CGrammar implements GrammarRuleKey {
 
         private static void directives(LexerlessGrammarBuilder b) {
                 b.rule(DIRECTIVE).is(b.firstOf(
-                                CONFIG_CONDITION,
                                 EMPTY_STATEMENT,
                                 ANNOTABLE_DIRECTIVE,
                                 STATEMENT,
@@ -969,8 +948,6 @@ public enum CGrammar implements GrammarRuleKey {
                                 b.sequence(INCLUDE_DIRECTIVE, /* No line break */ EOS_NO_LB),
                                 b.sequence(IMPORT_DIRECTIVE, /* No line break */ EOS_NO_LB),
                                 b.sequence(USE_DIRECTIVE, /* No line break */ EOS_NO_LB)));
-
-                b.rule(CONFIG_CONDITION).is(IDENTIFIER, DOUBLE_COLON, IDENTIFIER, LCURLYBRACE, DIRECTIVES, RCURLYBRACE);
 
                 b.rule(ANNOTABLE_DIRECTIVE).is(b.firstOf(
                                 VARIABLE_DECLARATION_STATEMENT,
