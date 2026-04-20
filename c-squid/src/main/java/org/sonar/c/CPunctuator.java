@@ -20,12 +20,9 @@ import org.sonar.sslr.grammar.GrammarRuleKey;
 
 public enum CPunctuator implements GrammarRuleKey {
 
-  AT_SIGN("@"),
   COMMA(","),
   COLON(":"),
-  DOUBLE_COLON("::"),
   DOT("."),
-  DOUBLE_DOT(".."),
   LCURLYBRACE("{"),
   RCURLYBRACE("}"),
   LBRAKET("["),
@@ -43,12 +40,10 @@ public enum CPunctuator implements GrammarRuleKey {
   NOT("!"),
   EQUAL1("="),
   EQUAL2("=="),
-  EQUAL3("==="),
   NOTEQUAL1("!="),
   NOTEQUAL2("!=="),
   SL("<<"),
   SR(">>"),
-  SR2(">>>"),
   STAR_EQU("*="),
   DIV_EQU("/="),
   MOD_EQU("%="),
