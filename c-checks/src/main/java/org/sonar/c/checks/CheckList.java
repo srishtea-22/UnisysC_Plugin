@@ -108,7 +108,8 @@ public final class CheckList {
         CognitiveComplexityCheck.class,
         CyclomaticComplexityCheck.class,
         CastAwayQualifiersCheck.class,
-        GotoStatementCheck.class
+        GotoStatementCheck.class,
+        AsmDeclarationCheck.class
       ));
   }
 

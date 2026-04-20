@@ -1,0 +1,6 @@
+void test() {
+  auto int x = 0;    // OK
+  static int y = 1;  // OK
+  
+  asm int myFunc();   // Noncompliant
+}
