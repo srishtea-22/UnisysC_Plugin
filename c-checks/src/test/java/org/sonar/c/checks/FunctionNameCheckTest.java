@@ -26,12 +26,13 @@ public class FunctionNameCheckTest {
 
   @Test
   public void defaultFormat() {
-    CVerifier.verify(new File("src/test/resources/checks/FunctionName.ccc_m"), check);;
+    CVerifier.verify(new File("src/test/resources/checks/FunctionName.ccc_m"), check);
+    ;
   }
 
   @Test
   public void custom() {
-    check.format = "^[A-Z][a-zA-Z0-9]*$";
+    check.format = "^[a-z][a-zA-Z0-9]*+";
     CVerifier.verify(new File("src/test/resources/checks/FunctionName-custom.ccc_m"), check);
   }
 }

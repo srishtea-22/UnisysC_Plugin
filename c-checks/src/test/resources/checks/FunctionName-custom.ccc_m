@@ -1,0 +1,8 @@
+void AnotherInvalidName(){        // Noncompliant
+}
+void doSomething(){   // OK
+}
+void functionOne(){   // OK
+}
+void test123(){       // OK
+}

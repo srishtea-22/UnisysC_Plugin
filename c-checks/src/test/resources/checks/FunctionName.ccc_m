@@ -1,0 +1,7 @@
+void DoSomething(){      // Noncompliant
+}
+void doSomething(){      // OK
+}
+void Foo() {         // Noncompliant
+}
+    

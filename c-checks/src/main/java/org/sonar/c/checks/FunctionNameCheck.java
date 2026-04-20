@@ -25,65 +25,63 @@ import java.util.Deque;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
-
 import org.sonar.c.CCheck;
 import org.sonar.c.CGrammar;
-import org.sonar.c.checks.utils.Clazz;
-import org.sonar.c.checks.utils.Function;
 import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 
 @Rule(key = "S100")
 public class FunctionNameCheck extends CCheck {
 
-
-  private static final String DEFAULT = "^[a-z][a-zA-Z0-9]*$";
+  private static final String DEFAULT = "^[a-z]" + "[a-zA-Z0-9]*+";
   private Pattern pattern = null;
-  private Deque<String> classes = new ArrayDeque<>();
 
-  @RuleProperty(
-    key = "format",
-    description = "Regular expression used to check the function names against",
-    defaultValue = DEFAULT)
+  @RuleProperty(key = "format", description = "Regular expression used to check the function names against", defaultValue = DEFAULT)
   String format = DEFAULT;
-
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    return Arrays.asList(
-      CGrammar.FUNCTION_DEF,
-      CGrammar.CLASS_DEF);
+    return Arrays.asList(CGrammar.FUNCTION_DEF);
   }
 
   @Override
   public void visitFile(@Nullable AstNode astNode) {
-    if (pattern == null) {
-      pattern = Pattern.compile(format);
-    }
-    classes.clear();
+    pattern = Pattern.compile(format);
   }
 
   @Override
   public void visitNode(AstNode astNode) {
-    if (astNode.is(CGrammar.CLASS_DEF)) {
-      classes.push(Clazz.getName(astNode));
-    } else {
-      String functionName = Function.getName(astNode);
+    handleFunction(astNode);
+  }
 
-      if (!isConstructor(astNode) && !pattern.matcher(functionName).matches()) {
-        addIssue(MessageFormat.format("Rename this \"{0}\" function to match the regular expression {1}", functionName, format), astNode);
+  private void handleFunction(AstNode astNode) {
+    AstNode identifier = findIdentifier(astNode);
+
+    if (identifier != null) {
+      String name = identifier.getTokenValue();
+
+      if (pattern == null) {
+        pattern = Pattern.compile(format);
+      }
+
+      if (!pattern.matcher(name).matches()) {
+        addIssue(MessageFormat.format(
+            "Rename this \"{0}\" function to match the regular expression {1}",
+            name, format), identifier);
       }
     }
   }
 
-  @Override
-  public void leaveNode(AstNode astNode) {
-    if (astNode.is(CGrammar.CLASS_DEF)) {
-      classes.pop();
+  private AstNode findIdentifier(AstNode functionDef) {
+    AstNode declarator = functionDef.getFirstChild(CGrammar.DECLARATOR);
+    if (declarator != null) {
+      AstNode directDeclarator = declarator.getFirstChild(CGrammar.DIRECT_DECLARATOR);
+      if (directDeclarator != null) {
+        // The IDENTIFIER is the leaf node containing the name string
+        return directDeclarator.getFirstChild(CGrammar.IDENTIFIER);
+      }
     }
+    return null;
   }
 
-  private boolean isConstructor(AstNode functionNode) {
-    return !classes.isEmpty() && Function.isConstructor(functionNode, classes.peek());
-  }
 }
