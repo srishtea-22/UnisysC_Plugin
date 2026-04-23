@@ -86,7 +86,8 @@ public final class CheckList {
         NoGlobalVariablesCheck.class,
         NoCastPointerToIntegralCheck.class,
         OctalConstantCheck.class,
-        UnsignedLiteralSuffixCheck.class
+        UnsignedLiteralSuffixCheck.class,
+        SignedBitFieldLengthCheck.class
       ));
   }
 

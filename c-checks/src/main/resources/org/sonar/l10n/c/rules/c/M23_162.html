@@ -1,0 +1,19 @@
+<h2>Why is this an issue?</h2>
+<p>
+    A single-bit signed bit-field is unlikely to behave in a useful way and its presence is likely to indicate an error.
+</p>
+<p>
+    Note: anonymous signed bit-fields of any length are allowed as they cannot be accessed.
+</p>
+<p>
+    <h3>Example:</h3>
+    <pre>
+    struct S {
+        signed int a : 1;    // Noncompliant
+        signed int   : 1;    // Rule does not apply
+        signed int   : 0;    // Rule does not apply
+        signed int b : 2;    // OK
+        int c : 1;    // Noncompliant
+    };
+</pre>
+</p>

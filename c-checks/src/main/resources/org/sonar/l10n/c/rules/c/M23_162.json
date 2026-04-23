@@ -1,0 +1,23 @@
+{
+  "title": "A named bit-field with 'signed integer type' shall not have a length of one bit",
+  "type": "BUG",
+  "code": {
+    "impacts": {
+      "MAINTAINABILITY": "LOW"
+    },
+    "attribute": "CLEAR"
+  },
+  "status": "ready",
+  "remediation": {
+    "func": "Constant/Issue",
+    "constantCost": "5min"
+  },
+  "tags": [
+    "pitfall"
+  ],
+  "defaultSeverity": "Major",
+  "ruleSpecification": "RSPEC-23_162",
+  "sqKey": "M23_162",
+  "scope": "All",
+  "quickfix": "unknown"
+}

@@ -1,0 +1,5 @@
+struct S {
+    signed int a : 1;    // Noncompliant
+    signed int b : 2;    // OK
+    int c : 1;    // Noncompliant
+};
