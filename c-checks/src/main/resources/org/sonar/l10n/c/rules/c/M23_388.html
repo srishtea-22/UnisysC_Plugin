@@ -1,0 +1,70 @@
+<h2>Why is this an issue?</h2>
+<p>
+    Global variables introduce several significant problems in software development:
+    <ul>
+        <li><strong>Hidden Dependencies:</strong> Functions that rely on global state have implicit dependencies that are not visible in their signatures. This makes code harder to understand and maintain.</li>
+        <li><strong>Difficult Testing:</strong> Global state persists across test cases, making it difficult to write isolated unit tests and can cause tests to have unexpected interactions.</li>
+        <li><strong>Concurrency Issues:</strong> In multi-threaded programs, global variables can lead to race conditions and data corruption if not properly synchronized.</li>
+        <li><strong>Reduced Modularity:</strong> Global variables tightly couple different parts of the codebase, making it harder to reuse components or understand isolated functionality.</li>
+        <li><strong>Namespace Pollution:</strong> Global variables occupy space in the global namespace, increasing the risk of naming conflicts and making code less maintainable.</li>
+    </ul>
+</p>
+
+<pre>
+/* Noncompliant: Global variable */
+int globalCounter = 0;
+
+void incrementCounter() {
+    globalCounter++;  // Depends on global state
+}
+
+void resetCounter() {
+    globalCounter = 0;  // Modifies global state
+}
+</pre>
+
+<h3>How to fix it</h3>
+<p>Replace global variables with better design patterns:</p>
+
+<h4>1. Use local variables and pass them as parameters:</h4>
+<pre>
+void incrementCounter(int *counter) {
+    (*counter)++;  // Explicit dependency through parameter
+}
+
+int main() {
+    int counter = 0;  // Local variable
+    incrementCounter(&counter);
+    return 0;
+}
+</pre>
+
+<h4>2. Use structs to encapsulate related data:</h4>
+<pre>
+typedef struct {
+    int count;
+    char name[50];
+} CounterState;
+
+void incrementCounter(CounterState *state) {
+    state->count++;  // Explicit dependency
+}
+
+int main() {
+    CounterState state = {0, "counter"};  // Local encapsulated state
+    incrementCounter(&state);
+    return 0;
+}
+</pre>
+
+<h4>3. Use static variables within functions for state that must persist:</h4>
+<pre>
+int getNextId() {
+    static int nextId = 1;  // Limited scope, implicit state
+    return nextId++;
+}
+</pre>
+
+<p>
+    By eliminating global variables, your code becomes more modular, testable, and easier to reason about.
+</p>

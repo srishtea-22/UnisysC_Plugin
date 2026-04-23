@@ -82,7 +82,8 @@ public final class CheckList {
         GotoStatementCheck.class,
         AsmDeclarationCheck.class,
         NoUnaryPlusCheck.class,
-        NoUnaryMinusOnUnsignedCheck.class
+        NoUnaryMinusOnUnsignedCheck.class,
+        NoGlobalVariablesCheck.class
       ));
   }
 

@@ -1,0 +1,21 @@
+
+int globalCounter;           // Noncompliant
+int globalMax = 100;         // Noncompliant
+static int moduleLevel = 0;  // Noncompliant
+
+typedef int MyInt;           // OK
+struct Point { int x; int y; }; // OK 
+
+void doWork(void);           // OK
+
+void someFunction() {
+    int localVar = 5;        // OK
+    int anotherLocal;        // OK
+    anotherLocal = localVar + 1; // OK
+
+    doWork();
+}
+
+void doWork() {
+    int result = 0;          // OK
+}
