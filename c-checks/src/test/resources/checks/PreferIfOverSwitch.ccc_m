@@ -1,0 +1,31 @@
+void test() {
+    int x = 5;
+
+    switch (x) {              // Noncompliant 
+        case 1: x = 2; break;
+    }
+
+    switch (x) {              // Noncompliant 
+        case 1: x = 2; break;
+        case 2: x = 3; break;
+    }
+
+    switch (x) {              // Noncompliant 
+        case 1: x = 2; break;
+        default: x = 0; break;
+    }
+
+    switch (x) {              // OK 
+        case 1: x = 2; break;
+        case 2: x = 3; break;
+        case 3: x = 4; break;
+        case 4: x = 5; break;
+    }
+
+    switch (x) {              // OK 
+        case 1: x = 2; break;
+        case 2: x = 3; break;
+        case 3: x = 4; break;
+        default: x = 0; break;
+    }
+}
