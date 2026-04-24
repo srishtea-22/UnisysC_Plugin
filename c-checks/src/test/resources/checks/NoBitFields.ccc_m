@@ -1,0 +1,5 @@
+struct message
+{
+unsigned char low  : 4;    // Noncompliant
+unsigned char high : 4;    // Noncompliant
+};

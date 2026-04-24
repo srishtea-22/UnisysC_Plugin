@@ -1,0 +1,23 @@
+{
+  "title": "Bit-fields should not be declared",
+  "type": "CODE_SMELL",
+  "code": {
+    "impacts": {
+      "MAINTAINABILITY": "BLOCKER"
+    },
+    "attribute": "CLEAR"
+  },
+  "status": "ready",
+  "remediation": {
+    "func": "Constant/Issue",
+    "constantCost": "5min"
+  },
+  "tags": [
+    "pitfall"
+  ],
+  "defaultSeverity": "BLOCKER",
+  "ruleSpecification": "RSPEC-23_159",
+  "sqKey": "M23_159",
+  "scope": "All",
+  "quickfix": "unknown"
+}

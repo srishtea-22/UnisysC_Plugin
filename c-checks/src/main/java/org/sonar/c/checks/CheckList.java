@@ -96,7 +96,8 @@ public final class CheckList {
         FileEndsWithNewlineCheck.class,
         PreferIfOverSwitchCheck.class,
         LocalStaticVariableCheck.class,
-        NoLowercaseLSuffixCheck.class
+        NoLowercaseLSuffixCheck.class,
+        NoBitFieldsCheck.class
       ));
   }
 
