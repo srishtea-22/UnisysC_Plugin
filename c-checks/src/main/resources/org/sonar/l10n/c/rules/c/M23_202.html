@@ -1,0 +1,33 @@
+<h2>Why is this an issue?</h2>
+<p>
+    Program-terminating functions such as <code>exit()</code>, <code>abort()</code>, <code>_Exit()</code>, and <code>quick_exit()</code> abruptly terminate program execution without proper cleanup. This can lead to resource leaks, data corruption, and unpredictable behavior.
+</p>
+<p>
+    Using these functions makes code difficult to test, maintain, and integrate into larger systems. Instead, functions should return error codes or use exception-like mechanisms to allow the caller to handle errors gracefully.
+</p>
+<p>
+    <h3>Example:</h3>
+    <pre>
+    #include &lt;stdlib.h&gt;
+    
+    int processFile(const char *filename) {
+        FILE *f = fopen(filename, "r");
+        if (f == NULL) {
+            exit(1);            // Noncompliant - abrupt termination
+        }
+        // process file
+        fclose(f);
+        return 0;
+    }
+    
+    int processFileCompliant(const char *filename) {
+        FILE *f = fopen(filename, "r");
+        if (f == NULL) {
+            return -1;          // OK - return error code
+        }
+        // process file
+        fclose(f);
+        return 0;
+    }
+</pre>
+</p>

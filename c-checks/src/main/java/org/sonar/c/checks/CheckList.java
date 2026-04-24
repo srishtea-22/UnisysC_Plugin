@@ -90,7 +90,8 @@ public final class CheckList {
         SignedBitFieldLengthCheck.class,
         TooManyLinesInFileCheck.class,
         NoPointerSubtractionCheck.class,
-        NoReturnLocalAddressCheck.class
+        NoReturnLocalAddressCheck.class,
+        NoProgramTerminatingFunctionsCheck.class
       ));
   }
 

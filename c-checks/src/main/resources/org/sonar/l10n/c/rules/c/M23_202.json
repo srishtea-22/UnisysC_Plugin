@@ -1,0 +1,23 @@
+{
+  "title": "Program-terminating functions should not be used",
+  "type": "CODE_SMELL",
+  "code": {
+    "impacts": {
+      "MAINTAINABILITY": "LOW"
+    },
+    "attribute": "CLEAR"
+  },
+  "status": "ready",
+  "remediation": {
+    "func": "Constant/Issue",
+    "constantCost": "5min"
+  },
+  "tags": [
+    "pitfall"
+  ],
+  "defaultSeverity": "Critical",
+  "ruleSpecification": "RSPEC-23_202",
+  "sqKey": "M23_202",
+  "scope": "All",
+  "quickfix": "unknown"
+}
