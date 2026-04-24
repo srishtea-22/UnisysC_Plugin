@@ -1,0 +1,14 @@
+void doSomething() {
+    int x = 5;
+}
+
+void test() {
+    int val = 5;
+
+    exit(0);               // Noncompliant
+    exit(1);               // Noncompliant
+    abort();               // Noncompliant
+
+    doSomething();         // OK
+    val = val + 1;         // OK
+}
