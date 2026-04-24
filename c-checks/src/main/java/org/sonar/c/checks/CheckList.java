@@ -93,7 +93,8 @@ public final class CheckList {
         NoReturnLocalAddressCheck.class,
         NoProgramTerminatingFunctionsCheck.class,
         NoFloatForLoopCounterCheck.class,
-        FileEndsWithNewlineCheck.class
+        FileEndsWithNewlineCheck.class,
+        PreferIfOverSwitchCheck.class
       ));
   }
 

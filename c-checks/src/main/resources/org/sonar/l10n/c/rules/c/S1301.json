@@ -1,5 +1,5 @@
 {
-  "title": "\"switch\" statements should have at least 3 \"case\" clauses",
+  "title": "\"if\" statements should be preferred over \"switch\" when simpler",
   "type": "CODE_SMELL",
   "code": {
     "impacts": {
@@ -9,13 +9,13 @@
   },
   "status": "ready",
   "remediation": {
-    "func": "Constant\/Issue",
+    "func": "Constant/Issue",
     "constantCost": "5min"
   },
   "tags": [
     "bad-practice"
   ],
-  "defaultSeverity": "Minor",
+  "defaultSeverity": "MINOR",
   "ruleSpecification": "RSPEC-1301",
   "sqKey": "S1301",
   "scope": "All",
