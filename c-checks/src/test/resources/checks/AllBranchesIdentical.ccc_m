@@ -9,13 +9,13 @@ void if_statement(int a, int b) {
     second();
   }
 
-  if (a) { /* Noncompliant {{Remove this conditional structure or edit its code blocks so that they're not all the same.}} */
+  if (a) { // Noncompliant
     first();
   } else {
     first();
   }
 
-  if (a) { /* Noncompliant */
+  if (a) { // Noncompliant
     first();
     second();
   } else {
@@ -23,7 +23,7 @@ void if_statement(int a, int b) {
     second();
   }
 
-  if (a) { /* Noncompliant */
+  if (a) { // Noncompliant
     first();
     second();
   } else if (b) {
@@ -36,7 +36,7 @@ void if_statement(int a, int b) {
 }
 
 void switch_statement(int a) {
-  switch (a) { /* OK - no default */
+  switch (a) { // OK
     case 1:
       first();
       break;
@@ -44,7 +44,7 @@ void switch_statement(int a) {
       second();
   }
 
-  switch (a) { /* Noncompliant */
+  switch (a) { // Noncompliant
     case 1:
       first();
       second();
@@ -54,7 +54,7 @@ void switch_statement(int a) {
       second();
   }
 
-  switch (a) { /* Noncompliant */
+  switch (a) { // Noncompliant
     case 1:
       first();
       break;
