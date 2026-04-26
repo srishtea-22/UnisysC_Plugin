@@ -18,14 +18,12 @@ package org.sonar.c.checks;
 
 import java.io.File;
 import org.junit.jupiter.api.Test;
-import org.sonar.c.checks.OneStatementPerLineCheck;
 
 public class OneStatementPerLineCheckTest {
 
   @Test
   public void test() {
     OneStatementPerLineCheck check = new OneStatementPerLineCheck();
-
     CVerifier.verify(new File("src/test/resources/checks/OneStatementPerLine.ccc_m"), check);
   }
 

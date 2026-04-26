@@ -35,22 +35,17 @@ public class OneStatementPerLineCheck extends CCheck {
 
   @Override
   public List<AstNodeType> subscribedTo() {
-    // In CGrammar.java, we need to track both general statements and C-style
-    // declarations
-    return Arrays.asList(CGrammar.STATEMENT, CGrammar.DECLARATION);
+    return Arrays.asList(
+        CGrammar.EXPRESSION_STATEMENT,
+        CGrammar.CONTROL_STATEMENT,
+        CGrammar.ITERATION_STATEMENT,
+        CGrammar.JUMP_STATEMENT,
+        CGrammar.DECLARATION);
   }
 
   @Override
   public void visitFile(@Nullable AstNode astNode) {
     statementsPerLine.clear();
-  }
-
-  @Override
-  public void visitNode(AstNode node) {
-    if (!isExcluded(node)) {
-      int line = node.getTokenLine();
-      statementsPerLine.compute(line, (k, v) -> v == null ? 1 : (v + 1));
-    }
   }
 
   @Override
@@ -64,29 +59,53 @@ public class OneStatementPerLineCheck extends CCheck {
             entry.getKey());
       }
     }
+    statementsPerLine.clear();
   }
 
-  private boolean isExcluded(AstNode node) {
-    // 1. Exclude Compound Statements (Blocks) as they wrap other statements
-    if (node.is(CGrammar.COMPOUND_STATEMENT) || node.hasDirectChildren(CGrammar.COMPOUND_STATEMENT)) {
-      return true;
+  @Override
+  public void visitNode(AstNode node) {
+    if (!isTopLevel(node)) {
+      return;
     }
-
-    // 2. Exclude Labeled statements and empty semicolons
-    if (node.is(CGrammar.LABELED_STATEMENT) || node.is(CGrammar.EMPTY_STATEMENT)) {
-      return true;
+    if (isEmptyBodyIteration(node)) {
+      return;
     }
+    statementsPerLine.merge(node.getTokenLine(), 1, Integer::sum);
+  }
 
-    // 3. Prevent double-counting: If a STATEMENT node is just a wrapper for
-    // a more specific node we are already tracking (like another STATEMENT), skip
-    // it.
-    if (node.is(CGrammar.STATEMENT) && node.getNumberOfChildren() == 1) {
-      AstNodeType childType = node.getFirstChild().getType();
-      if (childType.equals(CGrammar.STATEMENT) || childType.equals(CGrammar.COMPOUND_STATEMENT)) {
-        return true;
+  private boolean isTopLevel(AstNode node) {
+    int line = node.getTokenLine();
+    AstNode parent = node.getParent();
+    while (parent != null) {
+      if (parent.getTokenLine() == line
+          && parent.is(
+              CGrammar.EXPRESSION_STATEMENT,
+              CGrammar.CONTROL_STATEMENT,
+              CGrammar.ITERATION_STATEMENT,
+              CGrammar.JUMP_STATEMENT,
+              CGrammar.DECLARATION)) {
+        return false;
       }
+      parent = parent.getParent();
     }
+    return true;
+  }
 
-    return false;
+  private boolean isEmptyBodyIteration(AstNode node) {
+    if (!node.is(CGrammar.EXPRESSION_STATEMENT)) {
+      return false;
+    }
+    if (node.hasDirectChildren(CGrammar.EXPRESSION)) {
+      return false;
+    }
+    AstNode parent = node.getParent();
+    if (parent == null) {
+      return false;
+    }
+    if (parent.is(CGrammar.ITERATION_STATEMENT)) {
+      return true;
+    }
+    AstNode grandParent = parent.getParent();
+    return grandParent != null && grandParent.is(CGrammar.ITERATION_STATEMENT);
   }
 }

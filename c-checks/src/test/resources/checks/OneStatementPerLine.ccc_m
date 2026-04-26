@@ -1,8 +1,8 @@
 void sayHello() {
-  char *foo = "foo";int a=9; // Noncompliant {{At most one statement is allowed per line, but 2 statements were found on this line.}}
+  float t=2.4;int a=9; // Noncompliant 
 
   printf("Hello World!"); printf("Hello World!"); // Noncompliant
-
+  
   if (a) {} // OK
 
   if (a) {} if (b) {} // Noncompliant
