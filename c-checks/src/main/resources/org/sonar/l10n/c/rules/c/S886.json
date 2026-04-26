@@ -1,26 +1,23 @@
 {
-    "key": "c:S886",
-    "name": "The three expressions of a \"for\" statement should only be concerned with loop control",
-    "severity": "MINOR",
-    "status": "READY",
-    "isTemplate": false,
-    "tags": [],
-    "defaultDebtRemFnType": "CONSTANT_ISSUE",
-    "debtRemFnType": "CONSTANT_ISSUE",
+    "title": "The three expressions of a \"for\" statement should only be concerned with loop control",
     "type": "CODE_SMELL",
-    "defaultRemFnType": "CONSTANT_ISSUE",
-    "defaultRemFnBaseEffort": "10min",
-    "remFnType": "CONSTANT_ISSUE",
-    "remFnBaseEffort": "10min",
-    "remFnOverloaded": false,
-    "scope": "MAIN",
-    "isExternal": false,
-    "cleanCodeAttribute": "CLEAR",
-    "cleanCodeAttributeCategory": "INTENTIONAL",
-    "impacts": [
-        {
-            "softwareQuality": "MAINTAINABILITY",
-            "severity": "LOW"
-        }
-    ]
+    "code": {
+        "impacts": {
+            "MAINTAINABILITY": "LOW"
+        },
+        "attribute": "CLEAR"
+    },
+    "status": "ready",
+    "remediation": {
+        "func": "Constant/Issue",
+        "constantCost": "10min"
+    },
+    "tags": [
+        "misra"
+    ],
+    "defaultSeverity": "Minor",
+    "ruleSpecification": "RSPEC-S886",
+    "sqKey": "S886",
+    "scope": "Main",
+    "quickfix": "unknown"
 }
