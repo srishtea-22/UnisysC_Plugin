@@ -94,7 +94,9 @@ public final class CheckList {
         NonVoidFunctionMustReturnCheck.class,
         NoReturnFunctionShouldBeNoreturnCheck.class,
         NoNestedSwitchLabelCheck.class,
-        ForLoopExpressionCheck.class));
+        ForLoopExpressionCheck.class,
+        NoPostfixOperatorCheck.class
+      ));
   }
 
 }

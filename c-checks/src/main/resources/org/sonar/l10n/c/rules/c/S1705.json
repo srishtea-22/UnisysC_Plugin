@@ -1,0 +1,23 @@
+{
+  "title": "The prefix increment/decrement form should be used",
+  "type": "CODE_SMELL",
+  "code": {
+    "impacts": {
+      "MAINTAINABILITY": "LOW"
+    },
+    "attribute": "CLEAR"
+  },
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "2min"
+  },
+  "tags": [
+    "performance"
+  ],
+  "defaultSeverity": "MINOR",
+  "ruleSpecification": "RSPEC-1705",
+  "sqKey": "S1705",
+  "scope": "All",
+  "quickfix": "unknown"
+}

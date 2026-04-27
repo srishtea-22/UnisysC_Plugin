@@ -1,0 +1,13 @@
+void myFunc(int lim) {
+    int i;
+    for (i = 0; i < lim; i++) {     // Noncompliant
+        // do something
+    }
+}
+
+void myFunc(int lim) {
+    int i;
+    for (i = 0; i < lim; ++i) {     // OK
+        // do something
+    }
+}
